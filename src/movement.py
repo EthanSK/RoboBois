@@ -50,16 +50,21 @@ class MovementModule:
     def move_linear(self, length_m, speed_ms = 1):
         rotations = length_m / self.wh_circ
         degrees = rotations * 360
+        if speed_ms < 0:
+            degrees *= -1;
 
         self.wait_x_degrees(degrees)
 
     def wait_x_degrees(self, degrees):
-        degrees_remaining = degrees
+        degrees_remaining = math.abs(degrees)
+        sign = degrees / degrees_remaining
 
         last_rot = self.get_left_rot()
         while degrees_remaining > 0:
             current_rot = self.get_left_rot()
+            if current_rot < last_rot:
+                last_rot -= 360 * sign
+
             delta = current_rot - last_rot
             degrees_remaining -= delta
             last_rot = current_rot
-
