@@ -18,6 +18,12 @@ class MovementModule:
     def set_right_dps(self, dps):
         self.BP.set_motor_power(rmotor, dps)
 
+    def get_left_rot(self):
+        return self.BP.get_motor_encoder(lmotor)
+
+    def get_right_rot(self):
+        return self.BP.get_motor_encoder(rmotor)
+
     def float_all(self):
         self.BP.set_motor_power(lmotor, BP.MOTOR_FLOAT)
         self.BP.set_motor_power(rmotor, BP.MOTOR_FLOAT)
@@ -40,4 +46,20 @@ class MovementModule:
 
     def reset(self):
         BP.reset_all()
+
+    def move_linear(self, length_m, speed_ms = 1):
+        rotations = length_m / self.wh_circ
+        degrees = rotations * 360
+
+        self.wait_x_degrees(degrees)
+
+    def wait_x_degrees(self, degrees):
+        degrees_remaining = degrees
+
+        last_rot = self.get_left_rot()
+        while degrees_remaining > 0:
+            current_rot = self.get_left_rot()
+            delta = current_rot - last_rot
+            degrees_remaining -= delta
+            last_rot = current_rot
 
