@@ -13,20 +13,20 @@ class MovementModule:
         self.bd_circ = bd_radius * 2 * math.pi
 
     def set_left_dps(self, dps):
-        self.BP.set_motor_power(lmotor, dps)
+        self.BP.set_motor_power(self.lmotor, dps)
 
     def set_right_dps(self, dps):
-        self.BP.set_motor_power(rmotor, dps)
+        self.BP.set_motor_power(self.rmotor, dps)
 
     def get_left_rot(self):
-        return self.BP.get_motor_encoder(lmotor)
+        return self.BP.get_motor_encoder(self.lmotor)
 
     def get_right_rot(self):
-        return self.BP.get_motor_encoder(rmotor)
+        return self.BP.get_motor_encoder(self.rmotor)
 
     def float_all(self):
-        self.BP.set_motor_power(lmotor, BP.MOTOR_FLOAT)
-        self.BP.set_motor_power(rmotor, BP.MOTOR_FLOAT)
+        self.BP.set_motor_power(self.motor, BP.MOTOR_FLOAT)
+        self.BP.set_motor_power(self.rmotor, BP.MOTOR_FLOAT)
 
     def set_linear_speed(self, speed_ms):
         rps = speed_ms / self.wh_circ
@@ -45,7 +45,7 @@ class MovementModule:
         self.set_right_dps(-dps)
 
     def reset(self):
-        BP.reset_all()
+        self.BP.reset_all()
 
     def move_linear(self, length_m, speed_ms = 1):
         rotations = length_m / self.wh_circ
