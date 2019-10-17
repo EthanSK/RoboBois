@@ -75,9 +75,6 @@ class MovementModule:
         last_rot = self.get_left_rot()
         while degrees_remaining > 0:
             current_rot = self.get_left_rot()
-            if current_rot < last_rot:
-                last_rot -= 360 * sign
-
             delta = current_rot - last_rot
-            degrees_remaining -= delta
+            degrees_remaining -= delta * sign
             last_rot = current_rot
