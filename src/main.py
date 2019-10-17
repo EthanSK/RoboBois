@@ -7,7 +7,7 @@ body_radius = 9.1 / 100 # 9.1cm
 robot = movement.MovementModule(port_left, port_right, wheel_radius, body_radius)
 
 try:
-    robot.move_linear(0.1, -0.1)
+    robot.move_linear(0.05, -100)
     robot.reset()
 except KeyboardInterrupt:
     robot.reset()
