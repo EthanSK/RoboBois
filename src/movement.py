@@ -53,7 +53,20 @@ class MovementModule:
         if speed_ms < 0:
             degrees *= -1;
 
+        self.set_linear_speed(speed_m)
         self.wait_x_degrees(degrees)
+
+    def turn(self, degrees, turn_dps = 90):
+        turn_rotations = degrees / 360
+        linear_length = turn_rotations * self.bd_circ
+        wheel_rotations = linear_length / self.wh_circ
+        wheel_degrees = wheel_rotations * 360
+        if turn_dps < 0:
+            wheel_degrees *= -1;
+
+        self.set_turn_speed(turn_dps)
+        self.wait_x_degrees(wheel_degrees)
+
 
     def wait_x_degrees(self, degrees):
         degrees_remaining = math.abs(degrees)
