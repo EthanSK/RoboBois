@@ -38,3 +38,6 @@ class MovementModule:
         self.set_left_dps(dps)
         self.set_right_dps(-dps)
 
+    def reset(self):
+        BP.reset_all()
+
