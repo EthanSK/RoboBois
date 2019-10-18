@@ -5,3 +5,4 @@ To connect remotely to the RPi:
     1. Run scripts/remote_connect.sh
     2. From the DoC shell, run ssh pi@<ip_address_of_pi>
     3. Cool.
+    
