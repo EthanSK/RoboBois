@@ -37,17 +37,17 @@ def main(stdscr):
                 lin_speed = c - 49
                 lin_speed = 0.1 + lin_speed / 3
                 if movement == MovementState.FORWARD:
-                    robot.set_linear_speed(lin_speed)
-                elif movement == MovementState.BACKWARD:
                     robot.set_linear_speed(-lin_speed)
+                elif movement == MovementState.BACKWARD:
+                    robot.set_linear_speed(lin_speed)
 
             if c >=54 and c <= 57:
                 turn_speed = c - 54
                 turn_speed = 8 + turn_speed * 30
                 if movement == MovementState.CLOCKWISE:
-                    robot.set_turn_speed(turn_speed)
-                elif movement == MovementState.ANTICLOCKWISE:
                     robot.set_turn_speed(-turn_speed)
+                elif movement == MovementState.ANTICLOCKWISE:
+                    robot.set_turn_speed(turn_speed)
 
             
             if c == 259: #up arrow
@@ -60,7 +60,7 @@ def main(stdscr):
             elif c == 32: #space bar
                 robot.set_linear_speed(0)
                 movement = MovementState.NONE
-                
+
             elif c == 261: #right arrow
                 robot.set_turn_speed(-turn_speed)
                 movement = MovementState.CLOCKWISE
