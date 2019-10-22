@@ -29,9 +29,9 @@ def main(stdscr):
                 robot.set_linear_speed(0)
                 
             if c == 261: #right arrow
-                robot.set_turn_speed(-360)
+                robot.set_turn_speed(-180)
             elif c == 260: #left arrow
-                robot.set_turn_speed(360)
+                robot.set_turn_speed(180)
             elif c == 32: #space bar
                 robot.set_turn_speed(0)
                 
