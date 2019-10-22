@@ -24,7 +24,7 @@ def main(stdscr):
     lin_speed = 0.2 
     turn_speed = 90
 
-    movement = MovementState.NON 
+    movement = MovementState.NONE
 
     while True:
         # get keyboard input, returns -1 if none available
