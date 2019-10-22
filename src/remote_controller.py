@@ -1,7 +1,7 @@
 import keyboard
 import movement, brickpi3
 import curses
-
+from enum import Enum
 
 
 #this script can only be run as root
@@ -11,15 +11,20 @@ wheel_radius = 3.5 / 100 # 3.5cm
 body_radius = 9.1 / 100 # 9.1cm
 robot = movement.MovementModule(port_left, port_right, wheel_radius, body_radius)
 
- 
+class MovementState(Enum):
+    NONE = 0
+    FORWARD = 1
+    BACKWARD = 2
+    CLOCKWISE = 3
+    ANTICLOCKWISE = 4
+
 def main(stdscr):
     # do not wait for input when calling getch
     stdscr.nodelay(1)
     lin_speed = 10
     turn_speed = 90
 
-    is_moving_fwd = False
-    is_turning = False
+    movement = MovementState.NONE
 
     while True:
         # get keyboard input, returns -1 if none available
@@ -27,46 +32,42 @@ def main(stdscr):
         if c != -1:
             print('value of c ')
             print(c)
-
+            #49 is 1 in ascii
             if c >=49 and c <= 53:
                 lin_speed = c - 49
                 lin_speed = 0.1 + lin_speed / 3
-                if is_moving_fwd:
+                if movement == MovementState.FORWARD:
                     robot.set_linear_speed(lin_speed)
+                elif movement == MovementState.BACKWARD:
+                    robot.set_linear_speed(-lin_speed)
 
             if c >=54 and c <= 57:
                 turn_speed = c - 54
                 turn_speed = 8 + turn_speed * 30
-                if is_turning:
+                if movement == MovementState.CLOCKWISE:
                     robot.set_turn_speed(turn_speed)
+                elif movement == MovementState.ANTICLOCKWISE:
+                    robot.set_turn_speed(-turn_speed)
 
             
             if c == 259: #up arrow
                  robot.set_linear_speed(-lin_speed)
-                 is_moving_fwd = True
-                 is_turning = False
+                 movement = MovementState.FORWARD
             elif c == 258: #down arrow
                 robot.set_linear_speed(lin_speed)
-                is_moving_fwd = True
-                is_turning = False
+                movement = MovementState.BACKWARD
 
             elif c == 32: #space bar
                 robot.set_linear_speed(0)
-                is_moving_fwd = False
-                is_turning = False
-
-            if c == 261: #right arrow
+                movement = MovementState.NONE
+                
+            elif c == 261: #right arrow
                 robot.set_turn_speed(-turn_speed)
-                is_turning = True
-                is_moving_fwd = False
+                movement = MovementState.CLOCKWISE
             elif c == 260: #left arrow
                 robot.set_turn_speed(turn_speed)
-                is_turning = True
-                is_moving_fwd = False
-            elif c == 32: #space bar
-                robot.set_turn_speed(0)
-                is_turning = False
-                is_moving_fwd = False
+                movement = MovementState.ANTICLOCKWISE
+ 
                 
                 
             
