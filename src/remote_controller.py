@@ -45,7 +45,7 @@ def main(stdscr):
                  robot.set_linear_speed(lin_speed)
                  is_moving_fwd = True
             elif c == 258: #down arrow
-                robot.set_linear_speed(-1 * lin_speed)
+                robot.set_linear_speed(-lin_speed)
                 is_moving_fwd = True
 
             elif c == 32: #space bar
@@ -56,7 +56,7 @@ def main(stdscr):
                 robot.set_turn_speed(turn_speed)
                 is_turning = True
             elif c == 260: #left arrow
-                robot.set_turn_speed(-1 * turn_speed)
+                robot.set_turn_speed(-turn_speed)
                 is_turning = True
             elif c == 32: #space bar
                 robot.set_turn_speed(0)
