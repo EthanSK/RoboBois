@@ -30,13 +30,13 @@ def main(stdscr):
 
             if c >=49 and c <= 53:
                 lin_speed = c - 49
-                lin_speed = 0.1 + lin_speed
+                lin_speed = 0.1 + lin_speed / 3
                 if is_moving_fwd:
                     robot.set_linear_speed(lin_speed)
 
             if c >=54 and c <= 57:
                 turn_speed = c - 54
-                turn_speed = 5 + turn_speed * 25
+                turn_speed = 8 + turn_speed * 30
                 if is_turning:
                     robot.set_turn_speed(turn_speed)
 
