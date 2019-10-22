@@ -21,10 +21,10 @@ class MovementState(Enum):
 def main(stdscr):
     # do not wait for input when calling getch
     stdscr.nodelay(1)
-    lin_speed = 10
+    lin_speed = 0.2 
     turn_speed = 90
 
-    movement = MovementState.NONE
+    movement = MovementState.NON 
 
     while True:
         # get keyboard input, returns -1 if none available
