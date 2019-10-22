@@ -21,7 +21,7 @@ class MovementState(Enum):
 def main(stdscr):
     # do not wait for input when calling getch
     stdscr.nodelay(1)
-    lin_speed = 0.2 
+    lin_speed = 0.05
     turn_speed = 90
 
     movement = MovementState.NONE
