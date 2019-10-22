@@ -17,11 +17,11 @@ class MovementModule:
 
     def set_left_dps(self, dps):
         self.BP.set_motor_limits(self.lmotor, MovementModule.max_power, MovementModule.max_dps)
-        self.BP.set_motor_dps(self.lmotor, dps)
+        self.BP.set_motor_dps(self.lmotor, -dps)
 
     def set_right_dps(self, dps):
         self.BP.set_motor_limits(self.rmotor, MovementModule.max_power, MovementModule.max_dps)
-        self.BP.set_motor_dps(self.rmotor, dps)
+        self.BP.set_motor_dps(self.rmotor, -dps)
 
     def get_left_rot(self):
         return self.BP.get_motor_encoder(self.lmotor)
