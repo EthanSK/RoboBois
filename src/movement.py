@@ -17,11 +17,11 @@ class MovementModule:
 
     def set_left_dps(self, dps):
         self.BP.set_motor_limits(self.lmotor, MovementModule.max_power, MovementModule.max_dps)
-        self.BP.set_motor_dps(self.lmotor, -dps)
+        self.BP.set_motor_dps(self.lmotor, dps)
 
     def set_right_dps(self, dps):
         self.BP.set_motor_limits(self.rmotor, MovementModule.max_power, MovementModule.max_dps)
-        self.BP.set_motor_dps(self.rmotor, -dps)
+        self.BP.set_motor_dps(self.rmotor, dps)
 
     def get_left_rot(self):
         return self.BP.get_motor_encoder(self.lmotor)
@@ -60,7 +60,7 @@ class MovementModule:
 
         self.set_linear_speed(speed_ms)
         self.wait_x_degrees(degrees)
-        self.reset()
+        self.set_linear_speed(0)
 
     def turn(self, degrees, turn_dps = 90):
         turn_rotations = degrees / 360
@@ -72,7 +72,7 @@ class MovementModule:
 
         self.set_turn_speed(turn_dps)
         self.wait_x_degrees(wheel_degrees)
-        self.reset()
+        self.set_linear_speed(0)
 
     def wait_x_degrees(self, degrees):
         degrees_remaining = abs(degrees)
