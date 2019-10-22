@@ -28,14 +28,14 @@ def main(stdscr):
             print('value of c ')
             print(c)
 
-            if c >='1' and c <= '5':
-                lin_speed = c - '1'
+            if c >=49 and c <= 53:
+                lin_speed = c - 49
                 lin_speed = 0.1 + lin_speed
                 if is_moving_fwd:
                     robot.set_linear_speed(lin_speed)
 
-            if c >='6' and c <= '9':
-                turn_speed = c - '6'
+            if c >=54 and c <= 57:
+                turn_speed = c - 54
                 turn_speed = 5 + turn_speed * 25
                 if is_turning:
                     robot.set_turn_speed(turn_speed)
