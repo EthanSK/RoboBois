@@ -1,6 +1,7 @@
 import keyboard
 import movement, brickpi3
 import curses
+import sounds
 from enum import Enum
 
 
@@ -10,6 +11,7 @@ port_right = brickpi3.BrickPi3.PORT_A
 wheel_radius = 3.5 / 100 # 3.5cm
 body_radius = 9.1 / 100 # 9.1cm
 robot = movement.MovementModule(port_left, port_right, wheel_radius, body_radius)
+
 
 class MovementState(Enum):
     NONE = 0
@@ -68,9 +70,7 @@ def main(stdscr):
                 robot.set_turn_speed(turn_speed)
                 movement = MovementState.ANTICLOCKWISE
  
-                
-                
-            
+                       
                               
             # print numeric value
             stdscr.addstr(str(c) + ' ')
