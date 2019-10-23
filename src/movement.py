@@ -4,7 +4,7 @@ class MovementModule:
     max_power = 50
     max_dps = 0
     
-    def __init__(self, lmotor, rmotor, wh_radius, bd_radius):
+    def __init__(self, lmotor, rmotor, wh_radius, bd_radius, bias = 0):
         self.BP = brickpi3.BrickPi3()
         self.lmotor = lmotor
         self.rmotor = rmotor
@@ -15,13 +15,15 @@ class MovementModule:
         self.bd_radius = bd_radius
         self.bd_circ = bd_radius * 2 * math.pi
 
+        self.bias = bias
+
     def set_left_dps(self, dps):
         self.BP.set_motor_limits(self.lmotor, MovementModule.max_power, MovementModule.max_dps)
         self.BP.set_motor_dps(self.lmotor, dps)
 
     def set_right_dps(self, dps):
         self.BP.set_motor_limits(self.rmotor, MovementModule.max_power, MovementModule.max_dps)
-        self.BP.set_motor_dps(self.rmotor, dps)
+        self.BP.set_motor_dps(self.rmotor, dps * (1 + self.bias))
 
     def get_left_rot(self):
         return self.BP.get_motor_encoder(self.lmotor)
