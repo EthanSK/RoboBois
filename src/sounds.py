@@ -16,5 +16,4 @@ class SoundManager:
         pygame.mixer.music.load(file)
         pygame.mixer.music.set_volume(self.volume)
         pygame.mixer.music.play() 
-        while pygame.mixer.music.get_busy() == True:
-            continue
+        
