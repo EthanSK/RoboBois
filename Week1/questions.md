@@ -1,7 +1,7 @@
 ## Q2
 * What happens in each case if you use your hand to try to gently slow down the running motor, and what can you observe in the power and velocity of the motor, and why?  
 
-Power: Following motor is power consistent, and velocity consistent, in the face of resistance. The following's power corresponds directly, we assume by a mapping, to the angle that leading is rotated to (if we assume that it starts at 0 degrees).
+Power: Following motor is power consistent in the face of resistance. The following's power corresponds directly, we assume by a mapping, to the angle that leading is rotated to (if we assume that it starts at 0 degrees).
 
 Position: The following motor will keep trying to follow the leading motor, even after being held still while the leading motor moves. As for velocity, the following motor keeps consistent velocity regardless of position distance between following and leading. Power is also consistent, regardless of resistance, so more resistance means less velocity.  
 
