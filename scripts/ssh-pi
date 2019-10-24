@@ -14,8 +14,8 @@ use warnings;
 use JSON;
 use DBI;
 
-die "Usage: ssh-pi MAC_address\n" unless @ARGV == 1;
-my $mac = shift @ARGV;
+#die "Usage: ssh-pi MAC_address\n" unless @ARGV == 1;
+my $mac = "b8:27:eb:4b:ca:d4";
 
 my $server       = "db-admin.doc.ic.ac.uk";
 my $database     = "admin";
