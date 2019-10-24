@@ -2,8 +2,9 @@ from math import sqrt
 
 def main():
 
-    xcoords = [0,0,0,2,0,0,1,0,0,1]
-    ycoords = [0,0,0,2,0,0,3,0,0,1]
+    # units in cm
+    ycoords = [-0.25, -0.10, 0.35, 0.60, 0.60, 0.90, 0.85, 1.10, 1.30, 1.40] 
+    xcoords = [-0.05, -0.35, -0.40, -0.20, -0.50, -0.25, -0.65, -0.60, -1.00, -0.35]
 
     N = len(xcoords)
     if(N != len(ycoords)): exit(1)
