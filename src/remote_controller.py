@@ -37,7 +37,7 @@ def main(stdscr):
             #49 is 1 in ascii
             if c >=49 and c <= 53:
                 lin_speed = c - 49
-                lin_speed = 0.05 + lin_speed / 17
+                lin_speed = 0.05 + lin_speed / 15
                 if movement == MovementState.FORWARD:
                     robot.set_linear_speed(-lin_speed)
                 elif movement == MovementState.BACKWARD:
