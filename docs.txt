@@ -2,8 +2,7 @@ Raspberry pi password: robobois
 
 
 To connect remotely to the RPi:
-    1. Run scripts/remote_connect.sh
-    2. From the DoC shell, run ssh pi@<ip_address_of_pi>
-    3. Cool.
-    4. wait no don't ssh into doc.
-    5. just do step 2 from terminal.
+    1. copy the file over to doc machine using: scp scripts/ssh-pi <college username>@shell4.doc.ic.ac.uk:/tmp/  
+    2. connect to the doc computer:  scripts/remote_connect.sh
+    3. on it, move the file from /tmp to the home folder by doing: mv /tmp/ssh-pi .
+    4. now you can run ./ssh-pi after connecting to the doc computer without having to know the ever changing ip of the pi
