@@ -1,0 +1,59 @@
+#!/usr/bin/perl
+#
+#	ssh-pi-minimal:	retrieve (from the persistent tuple store)
+#		the IP address corresponding to a given
+#		RPiWifi MAC address, then ssh to pi@it.
+#		This minimal version folds PTuples and db into here
+#		for ease of installation..
+#
+#	(C) Duncan C. White, Imperial College London, January 2014
+#
+
+use strict;
+use warnings;
+use JSON;
+use DBI;
+
+die "Usage: ssh-pi MAC_address\n" unless @ARGV == 1;
+my $mac = shift @ARGV;
+
+my $server       = "db-admin.doc.ic.ac.uk";
+my $database     = "admin";
+my $dbuser       = "sys_ptuple_readonly";
+my $dbpasswd     = "xdjfkjsdf8743bhjkDHF*(Df7240F6>4yhdr";
+my $table        = "ptuples";
+my $app          = "RPiWifi";
+
+
+my $dbh = DBI->connect("dbi:Pg:dbname=$database;host=$server;port=5432",
+	$dbuser, $dbpasswd, {PrintError => 0, AutoCommit => 1});
+die "ssh-pi: can't connect to database\n" unless $dbh;
+
+# lookup mac up
+my $sql = "select value from $table where app = ? and key = ?";
+my $sth = $dbh->prepare( $sql ) || die "bad sql $sql\n";
+$sth->execute( $app, $mac ) ||
+	die "can't execute $sql with $app and $mac, ". $dbh->errstr."\n";
+
+my $value;
+while( my $row = $sth->fetchrow_hashref )
+{
+	$value = $row->{value};
+}
+die "received no data for $mac\n" unless defined $value;
+
+my $ref = decode_json($value);
+my @tuple = @$ref;
+my $count = @tuple;
+
+if( $count == 1 )
+{
+	my $ip = shift @tuple;
+	print "ssh'ing to pi\@$ip\n";
+	system( "ssh", "pi\@$ip" );
+} else
+{
+	print "debug: retrieved $count elements from ptuple($mac): @tuple\n";
+}
+
+$dbh->disconnect;
