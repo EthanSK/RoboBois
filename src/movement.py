@@ -54,17 +54,21 @@ class MovementModule:
     def reset(self):
         self.BP.reset_all()
 
-    def move_linear(self, length_m, speed_ms = 1):
+    def get_linear_degrees(self, length_m, speed_ms = 1):
         rotations = length_m / self.wh_circ
         degrees = rotations * 360
         if speed_ms < 0:
             degrees *= -1;
 
+        return degrees
+
+    def move_linear(self, length_m, speed_ms = 1):
+        degrees = get_linear_degrees(length_m, speed_ms)
         self.set_linear_speed(speed_ms)
         self.wait_x_degrees(degrees)
         self.set_linear_speed(0)
 
-    def turn(self, degrees, turn_dps = 90):
+    def get_turn_degrees(degrees, turn_dps = 90):
         turn_rotations = degrees / 360
         linear_length = turn_rotations * self.bd_circ
         wheel_rotations = linear_length / self.wh_circ
@@ -72,6 +76,10 @@ class MovementModule:
         if turn_dps < 0:
             wheel_degrees *= -1
 
+        return wheel_degrees
+
+    def turn(self, degrees, turn_dps = 90):
+        wheel_degrees = get_turn_degrees(degrees, turn_dps)
         self.set_turn_speed(turn_dps)
         self.wait_x_degrees(wheel_degrees)
         self.set_linear_speed(0)
