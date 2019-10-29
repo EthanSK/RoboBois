@@ -7,16 +7,28 @@ class SensorModule:
         self.rtouch = rtouch
         self.sonar = sonar
 
-        BP.set_sensor_type(ltouch, BP.SENSOR_TYPE.TOUCH)
-        BP.set_sensor_type(rtouch, BP.SENSOR_TYPE.TOUCH)
-        BP.set_sensor_type(sonar, BP.SENSOR_TYPE.NXT_ULTRASONIC)
+        self.BP.set_sensor_type(ltouch, self.BP.SENSOR_TYPE.TOUCH)
+        self.BP.set_sensor_type(rtouch, self.BP.SENSOR_TYPE.TOUCH)
+        self.BP.set_sensor_type(sonar, self.BP.SENSOR_TYPE.NXT_ULTRASONIC)
     
+    def reset(self):
+        self.BP.reset_all()
+
     def get_left_touch(self):
-        return self.BP.get_sensor(self.ltouch)
+        try:
+            return self.BP.get_sensor(self.ltouch)
+        except brickpi3.SensorError:
+            return False
     
     def get_right_touch(self):
-        return self.BP.get_sensor(self.rtouch)
+        try:
+            return self.BP.get_sensor(self.rtouch)
+        except brickpi3.SensorError:
+            return False
 
     def get_sonar_distance(self):
-        return self.BP.get_sensor(self.sonar) / 100
+        try:
+            return self.BP.get_sensor(self.sonar) / 100
+        except brickpi3.SensorError:
+            return -1
 

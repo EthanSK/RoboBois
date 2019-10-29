@@ -58,7 +58,7 @@ class MovementModule:
         rotations = length_m / self.wh_circ
         degrees = rotations * 360
         if speed_ms < 0:
-            degrees *= -1;
+            degrees *= -1
 
         self.set_linear_speed(speed_ms)
         self.wait_x_degrees(degrees)
