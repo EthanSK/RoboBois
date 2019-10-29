@@ -30,6 +30,7 @@ def main(stdscr):
     turn_speed = 90
     steer_amount = 0
     steer_step = 0.1
+    steer_init_step = 0.3
     movement = MovementState.NONE
 
     while True:
@@ -73,14 +74,16 @@ def main(stdscr):
 
             elif c == 261:  # right arrow
                 if movement is MovementState.FORWARD or movement is MovementState.BACKWARD:
-                    steer_amount = min(1, steer_amount + steer_step)
+                    if steer_amount is 0: steer_amount = steer_init_step
+                    else: steer_amount = min(1, steer_amount + steer_step)
                     robot.steer(lin_speed * lin_speed_mul, steer_amount)
                 else:
                     robot.set_turn_speed(-turn_speed)
                     movement = MovementState.CLOCKWISE
             elif c == 260:  # left arrow
                 if movement is MovementState.FORWARD or movement is MovementState.BACKWARD:
-                    steer_amount = max(-1, steer_amount - steer_step)
+                    if steer_amount is 0: steer_amount = -steer_init_step
+                    else: steer_amount = max(-1, steer_amount - steer_step)
                     robot.steer(lin_speed * lin_speed_mul, steer_amount)
                 else:
                     robot.set_turn_speed(turn_speed)
