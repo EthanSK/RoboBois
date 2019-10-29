@@ -35,9 +35,13 @@ class MovementModule:
         self.BP.set_motor_power(self.motor, BP.MOTOR_FLOAT)
         self.BP.set_motor_power(self.rmotor, BP.MOTOR_FLOAT)
 
-    def set_linear_speed(self, speed_ms):
+    def get_linear_dps(self, speed_ms):
         rps = speed_ms / self.wh_circ
         dps = rps * 360
+        return dps
+
+    def set_linear_speed(self, speed_ms):
+        dps = get_linear_dps(speed_ms)
 
         self.set_left_dps(dps)
         self.set_right_dps(dps)
@@ -94,3 +98,16 @@ class MovementModule:
             delta = current_rot - last_rot
             degrees_remaining -= delta * sign
             last_rot = current_rot
+
+    def steer(self, speed_ms, turn_amount):
+        turn_abs = abs(turn_amount)
+        dps = get_linear_dps(speed_ms)
+        fast_dps = dps * (1 + turn_abs)
+        slow_dps = dps * (1 - turn_abs)
+
+        if turn_amount > 0:
+            set_left_dps(fast_dps)
+            set_right_dps(slow_dps)
+        else:
+            set_left_dps(slow_dps)
+            set_right_dps(fast_dps)
