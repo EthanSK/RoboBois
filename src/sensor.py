@@ -9,11 +9,14 @@ class SensorModule:
 
         BP.set_sensor_type(ltouch, BP.SENSOR_TYPE.TOUCH)
         BP.set_sensor_type(rtouch, BP.SENSOR_TYPE.TOUCH)
-        BP.set_sensor_type(sonar, BP.SENSOR_TYPE.SONAR)
+        BP.set_sensor_type(sonar, BP.SENSOR_TYPE.NXT_ULTRASONIC)
     
     def get_left_touch(self):
-        return self.BP.get_sensor(ltouch)
+        return self.BP.get_sensor(self.ltouch)
     
     def get_right_touch(self):
-        return self.BP.get_sensor(rtouch)
+        return self.BP.get_sensor(self.rtouch)
+
+    def get_sonar_distance(self):
+        return self.BP.get_sensor(self.sonar) / 100
 
