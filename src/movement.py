@@ -41,7 +41,7 @@ class MovementModule:
         return dps
 
     def set_linear_speed(self, speed_ms):
-        dps = get_linear_dps(speed_ms)
+        dps = self.get_linear_dps(speed_ms)
 
         self.set_left_dps(dps)
         self.set_right_dps(dps)
@@ -101,13 +101,13 @@ class MovementModule:
 
     def steer(self, speed_ms, turn_amount):
         turn_abs = abs(turn_amount)
-        dps = get_linear_dps(speed_ms)
+        dps = self.get_linear_dps(speed_ms)
         fast_dps = dps * (1 + turn_abs)
         slow_dps = dps * (1 - turn_abs)
 
         if turn_amount > 0:
-            set_left_dps(fast_dps)
-            set_right_dps(slow_dps)
+            self.set_left_dps(fast_dps)
+            self.set_right_dps(slow_dps)
         else:
-            set_left_dps(slow_dps)
-            set_right_dps(fast_dps)
+            self.set_left_dps(slow_dps)
+            self.set_right_dps(fast_dps)
