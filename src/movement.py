@@ -62,7 +62,7 @@ class MovementModule:
         rotations = length_m / self.wh_circ
         degrees = rotations * 360
         if speed_ms < 0:
-            degrees *= -1;
+            degrees *= -1
 
         return degrees
 
