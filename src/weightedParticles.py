@@ -10,7 +10,7 @@ def straightLineWeightedParticles(x, y, theta, xdistance, ydistance, sdx, sdy, s
     newtheta = theta + random.gauss(0, sdtheta)
 
     newtheta = normaliseAngle(newtheta)
-    print(newtheta)
+
     return newx, newy, newtheta
 
 def rotationWeightedParticles(x, y, theta, turnangle, sdtheta):
