@@ -21,9 +21,10 @@ ideal_dist = 0.3
 
 try:
     while True:
-        distance = roboboi.sensor_module.get_sonar_distance()
+        distance = roboboi.sensor_module.get_sonar_smooth()
+        print(distance)
         delta = ideal_dist - distance
-        roboboi.movement_module.set_linear_speed(delta * 2)
+        roboboi.movement_module.set_linear_speed(delta * 0.2)
         
         if roboboi.sensor_module.get_left_touch() or roboboi.sensor_module.get_right_touch():
             roboboi.movement_module.move_linear(0.3, 0.2)
