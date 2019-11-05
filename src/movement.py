@@ -1,10 +1,12 @@
-import brickpi3, math
+import brickpi3
+import math
+
 
 class MovementModule:
     max_power = 50
     max_dps = 0
-    
-    def __init__(self, lmotor, rmotor, wh_radius, bd_radius, bias = 0):
+
+    def __init__(self, lmotor, rmotor, wh_radius, bd_radius, bias=0):
         self.BP = brickpi3.BrickPi3()
         self.lmotor = lmotor
         self.rmotor = rmotor
@@ -21,12 +23,14 @@ class MovementModule:
         self.rdps = 0
 
     def set_left_dps(self, dps):
-        self.BP.set_motor_limits(self.lmotor, MovementModule.max_power, MovementModule.max_dps)
+        self.BP.set_motor_limits(
+            self.lmotor, MovementModule.max_power, MovementModule.max_dps)
         self.BP.set_motor_dps(self.lmotor, dps)
         self.ldps = dps
 
     def set_right_dps(self, dps):
-        self.BP.set_motor_limits(self.rmotor, MovementModule.max_power, MovementModule.max_dps)
+        self.BP.set_motor_limits(
+            self.rmotor, MovementModule.max_power, MovementModule.max_dps)
         self.BP.set_motor_dps(self.rmotor, dps * (1 + self.bias))
         self.rdps = dps
 
@@ -37,8 +41,8 @@ class MovementModule:
         return self.BP.get_motor_encoder(self.rmotor)
 
     def float_all(self):
-        self.BP.set_motor_power(self.motor, BP.MOTOR_FLOAT)
-        self.BP.set_motor_power(self.rmotor, BP.MOTOR_FLOAT)
+        self.BP.set_motor_power(self.lmotor, self.BP.MOTOR_FLOAT)
+        self.BP.set_motor_power(self.rmotor, self.BP.MOTOR_FLOAT)
 
     def get_linear_dps(self, speed_ms):
         rps = speed_ms / self.wh_circ
@@ -65,7 +69,7 @@ class MovementModule:
         self.ldps = 0
         self.rdps = 0
 
-    def get_linear_degrees(self, length_m, speed_ms = 1):
+    def get_linear_degrees(self, length_m, speed_ms=1):
         rotations = length_m / self.wh_circ
         degrees = rotations * 360
         if speed_ms < 0:
@@ -73,17 +77,17 @@ class MovementModule:
 
         return degrees
 
-    def move_linear(self, length_m, speed_ms = 1):
+    def move_linear(self, length_m, speed_ms=1):
         if length_m < 0:
-            length_m *= -1;
-            speed_ms *= -1;
+            length_m *= -1
+            speed_ms *= -1
 
         degrees = self.get_linear_degrees(length_m, speed_ms)
         self.set_linear_speed(speed_ms)
         self.wait_x_degrees(degrees)
         self.set_linear_speed(0)
 
-    def get_turn_degrees(self, degrees, turn_dps = 90):
+    def get_turn_degrees(self, degrees, turn_dps=90):
         turn_rotations = degrees / 360
         linear_length = turn_rotations * self.bd_circ
         wheel_rotations = linear_length / self.wh_circ
@@ -93,10 +97,10 @@ class MovementModule:
 
         return wheel_degrees
 
-    def turn(self, degrees, turn_dps = 90):
+    def turn(self, degrees, turn_dps=90):
         if degrees < 0:
-            degrees *= -1;
-            turn_dps *= -1;
+            degrees *= -1
+            turn_dps *= -1
 
         wheel_degrees = self.get_turn_degrees(degrees, turn_dps)
         self.set_turn_speed(turn_dps)
