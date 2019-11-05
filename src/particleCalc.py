@@ -57,7 +57,7 @@ def particles():
                 print("drawLine:" + str((450,50,450,450)))
                 print("drawLine:" + str((450,450,50,450)))
                 print("drawLine:" + str((50,450,50,50)))
-      
+                print("HI")
                 print("drawParticles:" + str(newList))
 
             roboboi.movement_module.turn(90)

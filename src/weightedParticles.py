@@ -5,7 +5,7 @@ def straightLineWeightedParticles(x, y, theta, xdistance, ydistance, sdx, sdy, s
     """sdx == sdy?
 
     """
-    newx = x + ((xdistance + random.gauss(0, sdx)) * math.cos(theta + math.pi))
+    newx = x + ((xdistance + random.gauss(0, sdx)) * math.cos(theta))
     newy = y + ((ydistance + random.gauss(0, sdy)) * math.sin(theta))
     newtheta = theta + random.gauss(0, sdtheta)
 
