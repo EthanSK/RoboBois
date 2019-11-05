@@ -25,13 +25,21 @@ def particles():
 
     try:
         for i in range(4):
+            
+            if(i == (1 or 3)): 
+                xdist = 10
+                ydist = 0
+            elif(i == (2 or 4)):
+                xdist = 0
+                ydist = 10
+
             for x in range(4):
                 roboboi.movement_module.move_linear(0.1, 0.05)
                 
                 for j in range(len(scatterList)):   
                     scatterList[j] = ptcls.straightLineWeightedParticles(scatterList[j][0],
                         scatterList[j][1], scatterList[j][2],
-                        10, 0.06, 0.275, 0.08)
+                        xdist, ydist, 0.06, 0.275, 0.08)
 
                 print("Particle output", scatterList)
 
