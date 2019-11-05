@@ -1,12 +1,12 @@
 import random
 import math
 
-def straightLineWeightedParticles(x, y, theta, distance, sdx, sdy, sdtheta):
+def straightLineWeightedParticles(x, y, theta, xdistance, ydistance, sdx, sdy, sdtheta):
     """sdx == sdy?
 
     """
-    newx = x + ((distance + random.gauss(0, sdx)) * math.cos(theta))
-    newy = y + ((distance + random.gauss(0, sdy)) * math.sin(theta))
+    newx = x + ((xdistance + random.gauss(0, sdx)) * math.cos(theta))
+    newy = y + ((ydistance + random.gauss(0, sdy)) * math.sin(theta))
     newtheta = theta + random.gauss(0, sdtheta)
 
     newtheta = normaliseAngle(newtheta)
