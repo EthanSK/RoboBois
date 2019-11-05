@@ -5,12 +5,12 @@ def straightLineWeightedParticles(x, y, theta, xdistance, ydistance, sdx, sdy, s
     """sdx == sdy?
 
     """
-    newx = x + ((xdistance + random.gauss(0, sdx)) * math.cos(theta))
+    newx = x + ((xdistance + random.gauss(0, sdx)) * math.cos(theta + math.pi))
     newy = y + ((ydistance + random.gauss(0, sdy)) * math.sin(theta))
     newtheta = theta + random.gauss(0, sdtheta)
 
     newtheta = normaliseAngle(newtheta)
-
+    print(newtheta)
     return newx, newy, newtheta
 
 def rotationWeightedParticles(x, y, theta, turnangle, sdtheta):
@@ -25,17 +25,17 @@ def rotationWeightedParticles(x, y, theta, turnangle, sdtheta):
 
 def normaliseAngle(angle):
     """
-    For now we need to make sure that angle is never bigger than 720
+    For now we need to make sure that angle is never bigger than pi
     
     parameters: 
-        --angle - angle between -360 and 720
+        --angle - angle between -3pi and 3pi
     returns: 
-        --angle - modified angle
+        --angle - modified angle between -pi and pi
     """
-    if(angle > 360): 
-        return angle - 360
-    elif(angle < 0): 
-        return angle + 360
+    if(angle > (math.pi)): 
+        return angle - 2*(math.pi)
+    elif(angle < -(math.pi)): 
+        return angle + 2*(math.pi)
     else: 
         return angle
 
