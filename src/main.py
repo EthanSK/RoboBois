@@ -1,4 +1,8 @@
-import movement, sensor, robot, brickpi3, time
+import movement
+import sensor
+import robot
+import brickpi3
+import time
 
 motor_port_left = brickpi3.BrickPi3.PORT_D
 motor_port_right = brickpi3.BrickPi3.PORT_A
