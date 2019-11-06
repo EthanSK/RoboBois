@@ -11,6 +11,10 @@ class Robot:
         self.movement_module.reset()
         self.sensor_module.reset()
 
+    def update_pos(self, x, y, rot):
+        self.pos = Vector2(x, y)
+        self.rot = rot
+
     def move_to_pos(self, pos, speed_m = 0.2, turn_speed = 45):
         delta = pos - self.pos
         dist = delta.magnitude()
