@@ -23,5 +23,5 @@ class Robot:
             self.movement_module.turn(360 - angle_delta, turn_speed)
         self.rot = angle
 
-        self.movement_module.move_linear(dist, speed_m)
+        self.movement_module.move_linear(-dist, speed_m)
         self.pos = pos
