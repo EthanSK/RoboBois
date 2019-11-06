@@ -8,6 +8,7 @@ Min:
 -Below 10cm completely breaks
 
 Max:
+-Occasionally dodgy when going after 100cm but rare
 -254.99999999999997cm - is this because it's 8 bit?
 
 * Move the sonar so that it faces the wall at a non-orthogonal incidence angle. What is the maximum angular deviation from perpendicular to the wall at which it will still give sensible readings?
