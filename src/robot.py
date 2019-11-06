@@ -2,6 +2,7 @@ import brickpi3
 import movement
 import sensor
 from vector2 import Vector2
+import math
 
 class Robot:
     def __init__(self, movement_module, sensor_module):
@@ -23,12 +24,13 @@ class Robot:
         dist = delta.magnitude()
         angle = delta.angle()
 
-        angle_delta = angle - self.rot
-        if abs(angle_delta) < 180:
-            self.movement_module.turn(angle_delta, turn_speed)
-        else:
-            self.movement_module.turn(360 - angle_delta, turn_speed)
-        self.rot = angle
+        angle_delta =  self.rot - angle
+        if angle_delta != 0:
+            if abs(angle_delta) < 180:
+                self.movement_module.turn(angle_delta, turn_speed)
+            else:
+                self.movement_module.turn(360 - angle_delta, turn_speed)
+            self.rot = angle
 
         self.movement_module.move_linear(-dist, speed_m)
         self.pos = pos

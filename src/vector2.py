@@ -6,10 +6,10 @@ class Vector2:
         self.y = y
 
     def sqr_magnitude(self):
-        return self.x * self.x + self.y + self.y
+        return self.x * self.x + self.y * self.y
 
     def magnitude(self):
-        return sqrt(self.sqr_magnitude())
+        return math.sqrt(self.sqr_magnitude())
     
     def angle(self):
         return math.degrees(math.atan2(self.x, self.y))

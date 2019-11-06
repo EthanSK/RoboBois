@@ -14,7 +14,7 @@ def weightedMovement():
     targetPosX = float(targetPosX)
     targetPosY = float(targetPosY)
 
-    particles = [0,0,0] * 100
+    particles = [(0,0,0)] * 100
 
     motor_port_left = brickpi3.BrickPi3.PORT_D
     motor_port_right = brickpi3.BrickPi3.PORT_A
@@ -31,11 +31,11 @@ def weightedMovement():
 
     ideal_dist = 0.3
 
-    sum = (0, 0, 0)
+    sum = [0, 0, 0]
 
     for i in range(len(particles)):
         for q in range(3):
-            sum += particles[i][q] / len(particles)
+            sum[q] += particles[i][q] / len(particles)
 
     roboboi.update_pos(sum[0], sum[1], sum[2])
 

@@ -16,7 +16,7 @@ def particles():
     sonar_port = brickpi3.BrickPi3.PORT_2
 
     wheel_radius = 3.5 / 100 # 3.5cm
-    body_radius = 6.5 / 100 # cm
+    body_radius = 7.1 / 100 # cm
 
     movement_module = movement.MovementModule(motor_port_left, motor_port_right, wheel_radius, body_radius)
     sensor_module = sensor.SensorModule(touch_port_left, touch_port_right, sonar_port)
