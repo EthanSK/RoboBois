@@ -25,17 +25,17 @@ def rotationWeightedParticles(x, y, theta, turnangle, sdtheta):
 
 def normaliseAngle(angle):
     """
-    For now we need to make sure that angle is never bigger than 720
+    For now we need to make sure that angle is never bigger than pi
     
     parameters: 
-        --angle - angle between -360 and 720
+        --angle - angle between -3pi and 3pi
     returns: 
-        --angle - modified angle
+        --angle - modified angle between -pi and pi
     """
-    if(angle > 360): 
-        return angle - 360
-    elif(angle < 0): 
-        return angle + 360
+    if(angle > (math.pi)): 
+        return angle - 2*(math.pi)
+    elif(angle < -(math.pi)): 
+        return angle + 2*(math.pi)
     else: 
         return angle
 
