@@ -53,6 +53,7 @@ def particles():
                 newList = [(0,0,0)] * 100
                 for q in range(len(newList)):
                     newList[q] = (((scatterList[q][0] * 10) + 50), ((scatterList[q][1] * 10) + 50), (scatterList[q][2]))
+                time.sleep(1)
                 print("drawLine:" + str((50,50,450,50)))
                 print("drawLine:" + str((450,50,450,450)))
                 print("drawLine:" + str((450,450,50,450)))
@@ -70,6 +71,7 @@ def particles():
             newList = [(0,0,0)] * 100
             for q in range(len(newList)):
                 newList[q] = (((scatterList[q][0] * 10) + 50), ((scatterList[q][1] * 10) + 50), (scatterList[q][2]))
+            time.sleep(1)
             print("drawLine:" + str((50,50,450,50)))
             print("drawLine:" + str((450,50,450,450)))
             print("drawLine:" + str((450,450,50,450)))
