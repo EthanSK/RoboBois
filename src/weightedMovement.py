@@ -3,7 +3,7 @@ import sensor
 import robot
 import brickpi3
 import time
-import vector2
+from vector2 import Vector2
 import weightedParticles
 
 def weightedMovement():

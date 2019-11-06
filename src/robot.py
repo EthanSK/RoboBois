@@ -1,4 +1,7 @@
-import brickpi3, movement, sensor, vector2
+import brickpi3
+import movement
+import sensor
+from vector2 import Vector2
 
 class Robot:
     def __init__(self, movement_module, sensor_module):
