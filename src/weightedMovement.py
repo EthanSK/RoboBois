@@ -8,12 +8,6 @@ import weightedParticles
 
 def weightedMovement():
 
-    targetPosX = input("X co-ord?")
-    targetPosY = input("Y co-ord?")
-
-    targetPosX = float(targetPosX)
-    targetPosY = float(targetPosY)
-
     particles = [(0,0,0)] * 100
 
     motor_port_left = brickpi3.BrickPi3.PORT_D
@@ -39,8 +33,17 @@ def weightedMovement():
 
     roboboi.update_pos(sum[0], sum[1], sum[2])
 
-    vector = Vector2(targetPosX, targetPosY)
-    roboboi.move_to_pos(vector, 0.2, 45)
+    while(True):
+
+        if(input("Continue?(y/n): ") == "n"): break
+        targetPosX = input("X co-ord?")
+        targetPosY = input("Y co-ord?")
+
+        targetPosX = float(targetPosX)
+        targetPosY = float(targetPosY)
+
+        vector = Vector2(targetPosX, targetPosY)
+        roboboi.move_to_pos(vector, 0.2, 45)
 
 if __name__ == "__main__":
     weightedMovement()
