@@ -24,15 +24,12 @@ class Robot:
         dist = delta.magnitude()
         angle = delta.angle()
 
-        angle_delta =  self.rot - angle
+        angle_delta =  (self.rot - angle) % 360
         if angle_delta != 0:
-            if abs(angle_delta) < 180:
+            if angle_delta <= 180:
                 self.movement_module.turn(angle_delta, turn_speed)
             else:
-                angle_delta = 360 - angle_delta
-                if angle_delta > 360: angle_delta -= 360
-                elif angle_delta < 360: angle_delta += 360
-                self.movement_module.turn(angle_delta, turn_speed)
+                self.movement_module.turn(angle_delta - 360, turn_speed)
             self.rot = angle
 
         self.movement_module.move_linear(-dist, speed_m)
