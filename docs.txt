@@ -6,3 +6,9 @@ To connect remotely to the RPi:
     2. connect to the doc computer:  scripts/remote_connect.sh
     3. on it, move the file from /tmp to the home folder by doing: mv /tmp/ssh-pi .
     4. now you can run ./ssh-pi after connecting to the doc computer without having to know the ever changing ip of the pi
+
+Web interface:
+http://ip:9000
+
+web interface code: 
+cd /opt/brickpiexplorer
