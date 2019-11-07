@@ -4,6 +4,7 @@ import robot
 import brickpi3
 import time
 import montecarlo
+from vector2 import Vector2
 
 motor_port_left = brickpi3.BrickPi3.PORT_D
 motor_port_right = brickpi3.BrickPi3.PORT_A
@@ -20,14 +21,15 @@ sensor_module = sensor.SensorModule(
     touch_port_left, touch_port_right, sonar_port)
 roboboi = robot.Robot(movement_module, sensor_module)
 
-ideal_dist = 0.3
 
 try:
     while True:
+        pass
+        roboboi.pos = Vector2(1, 1)
         sensor_distance = sensor_module.get_sonar_distance()
         likelihood = montecarlo.calculate_likelihood(
             roboboi.pos.x, roboboi.pos.y, roboboi.rot, sensor_distance)
-        print("likelihood: " + likelihood)
+        print("likelihood: " + likelihood + "\n")
 
 except KeyboardInterrupt:
     roboboi.reset()
