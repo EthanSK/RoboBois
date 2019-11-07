@@ -36,13 +36,13 @@ def weightedMovement():
     while(True):
 
         if(input("Continue?(y/n): ") == "n"): break
-        targetPosX = input("X co-ord?")
-        targetPosY = input("Y co-ord?")
+        targetPosY = input("X co-ord?")
+        targetPosX = input("Y co-ord?")
 
         targetPosX = float(targetPosX)
         targetPosY = float(targetPosY)
 
-        vector = Vector2(targetPosX, targetPosY)
+        vector = Vector2(-targetPosX, targetPosY)
         roboboi.move_to_pos(vector, 0.2, 45)
 
 if __name__ == "__main__":
