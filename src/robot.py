@@ -32,7 +32,7 @@ class Robot:
                 angle_delta = 360 - angle_delta
                 if angle_delta > 360: angle_delta -= 360
                 elif angle_delta < 360: angle_delta += 360
-                self.movement_module.turn(360 - angle_delta, turn_speed)
+                self.movement_module.turn(angle_delta, turn_speed)
             self.rot = angle
 
         self.movement_module.move_linear(-dist, speed_m)
