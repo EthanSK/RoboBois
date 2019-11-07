@@ -27,23 +27,25 @@ def generate_map():
 
 def calculate_likelihood(x, y, theta, z):
     mymap = generate_map()
-    nearest_wall = find_nearest_wall(x, y, theta, z, mymap)
+    nearest_wall = find_nearest_wall(x, y, theta, mymap)
+    print("nearest wall: ", nearest_wall)
     m = calculate_forward_distance_to_wall(x, y, theta, nearest_wall)
     return likelihood(z, m, 0.03, 0.05)
 
 
 # return (x0, y0, x1, y1)
-def find_nearest_wall(x, y, theta, z, map):
+def find_nearest_wall(x, y, theta, map):
     # loop through all the walls, calculate the distance m, and find which m is closest to the sonar measurement
     min_distance = float("inf")
-    for wall in map.walls:
-        wall = Line(Vector2(wall[0], wall[1]), Vector2(wall[2], wall[3]))
+    for _wall in map.walls:
+        wall = Line(Vector2(_wall[0], _wall[1]), Vector2(_wall[2], _wall[3]))
 
         m = calculate_forward_distance_to_wall(x, y, theta, wall)
-
-        if m < min_distance:
-            x_point_on_line = m * math.cos(math.radians(theta))
-            y_point_on_line = m * math.sin(math.radians(theta))
+            # print(wall)
+        
+        if m > 0 and m < min_distance:
+            x_point_on_line = x + m * math.cos(math.radians(theta))
+            y_point_on_line = y + m * math.sin(math.radians(theta))
 
             #check if distance actually goes through real wall, not wall of inf len
             if wall.overlaps_point(Vector2(x_point_on_line, y_point_on_line)):
@@ -57,10 +59,10 @@ def calculate_forward_distance_to_wall(x, y, theta, wall):
     Ax, Ay, Bx, By = wall.start_point.x, wall.start_point.y, wall.end_point.x, wall.end_point.y
     # uses var names from lecture slides so easier to implement
     numerator = (By - Ay) * (Ax - x) - (Bx - Ax) * (Ay - y)
-    denomenator = (By - Ay) * math.cos(math.radians(theta)) - (Bx - Ax) * math.sin(math.radians(theta))
-    if math.isclose(denomenator, 0):
+    denominator = (By - Ay) * math.cos(math.radians(theta)) - (Bx - Ax) * math.sin(math.radians(theta))
+    if math.isclose(denominator, 0):
         return float("inf") #fine for now, best if we do proper checks later
-    return numerator/denomenator
+    return numerator/denominator
 
 
 def likelihood(z, m, sd, offset):

@@ -20,12 +20,12 @@ movement_module = movement.MovementModule(
 sensor_module = sensor.SensorModule(
     touch_port_left, touch_port_right, sonar_port)
 roboboi = robot.Robot(movement_module, sensor_module)
+roboboi.pos = Vector2(10, 10)
+roboboi.rot = 45
 
 
 try:
     while True:
-        pass
-        # roboboi.pos = Vector2(1, 1)
         sensor_distance = sensor_module.get_sonar_distance()
         likelihood = montecarlo.calculate_likelihood(
             roboboi.pos.x, roboboi.pos.y, roboboi.rot, sensor_distance)

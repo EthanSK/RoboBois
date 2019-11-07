@@ -8,24 +8,16 @@ class Line:
         self.end_point = end_point
 
     def sqr_magnitude(self):
-        x_dist = self.end_point.x - self.start_point.x
-        y_dist = self.end_point.y - self.start_point.y
-        return x_dist * x_dist + y_dist * y_dist
+        return (self.end_point - self.start_point).sqr_magnitude()
 
     def magnitude(self):
         return math.sqrt(self.sqr_magnitude())
 
     def angle_rads(self):
-        x_dist = self.end_point.x - self.start_point.x
-        y_dist = self.end_point.y - self.start_point.y
-        return math.degrees(math.atan2(y_dist, x_dist))
+        return (self.end_point - self.start_point).angle()
 
     def overlaps_point(self, point):
-        if self.start_point.x is point.x:
-            return self.end_point.x == point.x
-        if self.start_point.y is point.y:
-            return self.end_point.y == point.y
-        return (self.start_point.x - point.x)*(self.start_point.y - point.y) == (point.x - self.end_point.x)*(point.y - self.end_point.y)
+        return math.isclose(self.magnitude(), (point - self.start_point).magnitude() + (point - self.end_point).magnitude())
 
     def __eq__(self, other):
         return self.start_point == other.start_point and self.end_point == other.end_point
@@ -34,4 +26,4 @@ class Line:
         return not (self == other)
 
     def __str__(self):
-        return self.start_point, self.end_point
+        return "start point: " + str(self.start_point) + ", end point: " + str(self.end_point)
