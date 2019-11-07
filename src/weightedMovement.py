@@ -17,7 +17,7 @@ def weightedMovement():
     sonar_port = brickpi3.BrickPi3.PORT_2
 
     wheel_radius = 3.5 / 100 # 3.5cm
-    body_radius = 6.5 / 100 # cm
+    body_radius = 7.1 / 100 # cm
 
     movement_module = movement.MovementModule(motor_port_left, motor_port_right, wheel_radius, body_radius)
     sensor_module = sensor.SensorModule(touch_port_left, touch_port_right, sonar_port)
@@ -31,7 +31,7 @@ def weightedMovement():
         for q in range(3):
             sum[q] += particles[i][q] / len(particles)
 
-    roboboi.update_pos(sum[0], sum[1], sum[2])
+    roboboi.update_pos(0, 0, 0)
 
     while(True):
 
