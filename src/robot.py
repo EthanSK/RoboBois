@@ -29,6 +29,9 @@ class Robot:
             if abs(angle_delta) < 180:
                 self.movement_module.turn(angle_delta, turn_speed)
             else:
+                angle_delta = 360 - angle_delta
+                if angle_delta > 360: angle_delta -= 360
+                elif angle_delta < 360: angle_delta += 360
                 self.movement_module.turn(360 - angle_delta, turn_speed)
             self.rot = angle
 
