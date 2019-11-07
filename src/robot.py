@@ -4,6 +4,7 @@ import sensor
 from vector2 import Vector2
 import math
 
+
 class Robot:
     def __init__(self, movement_module, sensor_module):
         self.movement_module = movement_module
@@ -15,17 +16,13 @@ class Robot:
         self.movement_module.reset()
         self.sensor_module.reset()
 
-    def update_pos(self, x, y, rot):
-        self.pos = Vector2(x, y)
-        self.rot = rot
-
-    def move_to_pos(self, pos, speed_m = 0.2, turn_speed = 45):
+    def move_to_pos(self, pos, speed_m=0.2, turn_speed=45):
         if pos != self.pos:
             delta = pos - self.pos
             dist = delta.magnitude()
             angle = delta.angle()
 
-            angle_delta =  (self.rot - angle) % 360
+            angle_delta = (self.rot - angle) % 360
             if angle_delta != 0:
                 if angle_delta <= 180:
                     self.movement_module.turn(angle_delta, turn_speed)
