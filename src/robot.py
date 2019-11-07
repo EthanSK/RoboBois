@@ -10,7 +10,7 @@ class Robot:
         self.movement_module = movement_module
         self.sensor_module = sensor_module
         self.pos = Vector2(0, 0)
-        self.rot = 0
+        self.rot = 90
 
     def reset(self):
         self.movement_module.reset()

@@ -25,7 +25,7 @@ roboboi = robot.Robot(movement_module, sensor_module)
 try:
     while True:
         pass
-        roboboi.pos = Vector2(1, 1)
+        # roboboi.pos = Vector2(1, 1)
         sensor_distance = sensor_module.get_sonar_distance()
         likelihood = montecarlo.calculate_likelihood(
             roboboi.pos.x, roboboi.pos.y, roboboi.rot, sensor_distance)
