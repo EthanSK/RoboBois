@@ -20,6 +20,13 @@ class Line:
         y_dist = self.end_point.y - self.start_point.y
         return math.degrees(math.atan2(y_dist, x_dist))
 
+    def overlaps_point(self, point):
+        if self.start_point.x is point.x:
+            return self.end_point.x == point.x
+        if self.start_point.y is point.y:
+            return self.end_point.y == point.y
+        return (self.start_point.x - point.x)*(self.start_point.y - point.y) == (point.x - self.end_point.x)*(point.y - self.end_point.y)
+
     def __eq__(self, other):
         return self.start_point == other.start_point and self.end_point == other.end_point
 

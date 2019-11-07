@@ -1,6 +1,7 @@
 import math
 import particleDataStructures
 from vector2 import Vector2
+from line import Line
 
 def generate_map():
     mymap = particleDataStructures.Map()
@@ -27,7 +28,7 @@ def generate_map():
 def calculate_likelihood(x, y, theta, z):
     mymap = generate_map()
     nearest_wall = find_nearest_wall(x, y, theta, z, mymap)
-    m = calculate_forward_distance_to_wall(x, y, theta, nearest_wall.wall_start)
+    m = calculate_forward_distance_to_wall(x, y, theta, nearest_wall)
     return likelihood(z, m, 0.03, 0.05)
 
 
@@ -36,25 +37,25 @@ def find_nearest_wall(x, y, theta, z, map):
     # loop through all the walls, calculate the distance m, and find which m is closest to the sonar measurement
     min_distance = float("inf")
     for wall in map.walls:
-        wall_start = Vector2(wall[0], wall[1])
-        wall_end = Vector2(wall[2], wall[3])
-        m = calculate_forward_distance_to_wall(x, y, theta, wall_start, wall_end)
+        wall = Line(Vector2(wall[0], wall[1]), Vector2(wall[2], wall[3]))
+
+        m = calculate_forward_distance_to_wall(x, y, theta, wall)
 
         if m < min_distance:
             x_point_on_line = m * math.cos(math.radians(theta))
             y_point_on_line = m * math.sin(math.radians(theta))
 
             #check if distance actually goes through real wall, not wall of inf len
-            if is_point_on_line(wall_start, wall_end, Vector2(x_point_on_line, y_point_on_line)):
+            if wall.overlaps_point(Vector2(x_point_on_line, y_point_on_line)):
                 min_distance = m
                 nearest_wall = wall
     return nearest_wall
 
 
 # calculates m
-def calculate_forward_distance_to_wall(x, y, theta, wall_start, wall_end):
-    Ax, Ay, Bx, By = wall_start.x, wall_start.y, wall_end.x, wall_end.y
-    # print("wall: " , wall, theta, x, y)
+def calculate_forward_distance_to_wall(x, y, theta, wall):
+    Ax, Ay, Bx, By = wall.start_point.x, wall.start_point.y, wall.end_point.x, wall.end_point.y
+    # uses var names from lecture slides so easier to implement
     numerator = (By - Ay) * (Ax - x) - (Bx - Ax) * (Ay - y)
     denomenator = (By - Ay) * math.cos(math.radians(theta)) - (Bx - Ax) * math.sin(math.radians(theta))
     if math.isclose(denomenator, 0):
@@ -66,7 +67,3 @@ def likelihood(z, m, sd, offset):
     exponent = (-((z - m) ** 2)) / (2 * sd * sd)
     return math.exp(exponent) + offset
 
-def is_point_on_line(line_start, line_end, point):
-    if line_start.x == point.x: return line_end.x == point.x
-    if line_start.y == point.y: return line_end.y == point.y
-    return (line_start.x - point.x)*(line_start.y - point.y) == (point.x - line_end.x)*(point.y - line_end.y)

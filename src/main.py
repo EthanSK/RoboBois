@@ -29,7 +29,7 @@ try:
         sensor_distance = sensor_module.get_sonar_distance()
         likelihood = montecarlo.calculate_likelihood(
             roboboi.pos.x, roboboi.pos.y, roboboi.rot, sensor_distance)
-        print("likelihood: " + likelihood + "\n")
+        print("likelihood: ", likelihood, "\n")
 
 except KeyboardInterrupt:
     roboboi.reset()
