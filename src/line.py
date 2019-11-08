@@ -13,8 +13,11 @@ class Line:
     def magnitude(self):
         return math.sqrt(self.sqr_magnitude())
 
+    def angle(self):
+        return math.degrees(self.angle())
+
     def angle_rads(self):
-        return (self.end_point - self.start_point).angle()
+        return (self.end_point - self.start_point).angle_rads()
 
     def overlaps_point(self, point):
         # a + b = c
