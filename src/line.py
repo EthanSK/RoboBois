@@ -17,7 +17,12 @@ class Line:
         return (self.end_point - self.start_point).angle()
 
     def overlaps_point(self, point):
-        return math.isclose(self.magnitude(), (point - self.start_point).magnitude() + (point - self.end_point).magnitude())
+        # a + b = c
+        # a^2 + 2sqrt(a^2 * b^2) + b^2 = c^2
+        a2 = (point - self.start_point).sqr_magnitude()
+        b2 = (point - self.end_point).sqr_magnitude()
+        c2 = self.sqr_magnitude()
+        return math.isclose(a2 + 2 * math.sqrt(a2 * b2) + b2, c2)
 
     def __eq__(self, other):
         return self.start_point == other.start_point and self.end_point == other.end_point
