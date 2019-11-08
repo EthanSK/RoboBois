@@ -5,6 +5,7 @@
 import time
 import random
 import math
+import montecarlo
 
 # Functions to generate some dummy particles data:
 
@@ -75,13 +76,54 @@ class Map:
 
 
 class Particles:
-    def __init__(self):
-        self.n = 10
+    def __init__(self, num_particles):
+        self.count = num_particles
         self.data = []
 
-    def update(self):
+    # this method was copied from sample
+    def random_sample_data(self):
         self.data = [(calcX(), calcY(), calcTheta(), calcW())
-                     for i in range(self.n)]
+                     for i in range(self.count)]
+
+    def update_weights(self, sensor_distance):
+        for i, el in enumerate(self.data):
+            x, y, theta, weight = el[0], el[1], el[2], el[3]
+            likelihood = montecarlo.calculate_likelihood(
+                x, y, theta, sensor_distance)
+            self.data[i][3] = likelihood * weight  # update weight
+
+    def normalize_weights(self):
+        sum = 0
+        for particle in self.data:  # i am sorry if u have to read this disgusting code
+            sum += particle[3]
+        for i, el in enumerate(self.data):
+            self.data[i][3] = el[3] / sum
+
+    def resample(self):
+        cum = []  # topkek
+        # generate cumulative weight array
+        for i in range(self.count):
+            weight = self.data[i][3]
+            if i > 0:
+                prev = cum[i - 1]
+            else:
+                prev = 0
+            cum[i] = prev + weight
+        # generate <count> random numbers and create a copy of self.data[i] where i is the index of the upper bound of where the random number falls in the range of two consectutive values in the cum array
+        new = []
+        for i in range(self.count):
+            rando = random.random()
+            for j, w in enumerate(cum):
+                if j == 0 and rando < cum[j]:
+                    el = self.data[j]
+                elif j == cum.count - 1 and rando > cum[j]:
+                    el = self.data[j]
+                elif rando > cum[j] and rando <= cum[j + 1]:
+                    el = self.data[j + 1]
+                x, y, theta = el[0], el[1], el[2]
+                # append with new weight
+                new.append((x, y, theta, 1/self.count))
+        self.data = new
 
     def draw(self):
         canvas.drawParticles(self.data)
@@ -111,9 +153,9 @@ canvas = Canvas()  # global canvas we are going to draw on
 
 # particles = Particles()
 
-# t = 0
+t = 0
 # while True:
-#     particles.update()
+#     particles.random_sample_data()
 #     particles.draw()
 #     t += 0.05
 #     time.sleep(0.05)

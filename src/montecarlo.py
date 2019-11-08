@@ -3,6 +3,7 @@ import particleDataStructures
 from vector2 import Vector2
 from line import Line
 
+
 def generate_map():
     mymap = particleDataStructures.Map()
     # Definitions of walls
@@ -41,13 +42,13 @@ def find_nearest_wall(x, y, theta, map):
         wall = Line(Vector2(_wall[0], _wall[1]), Vector2(_wall[2], _wall[3]))
 
         m = calculate_forward_distance_to_wall(x, y, theta, wall)
-            # print(wall)
-        
+        # print(wall)
+
         if m > 0 and m < min_distance:
             x_point_on_line = x + m * math.cos(math.radians(theta))
             y_point_on_line = y + m * math.sin(math.radians(theta))
 
-            #check if distance actually goes through real wall, not wall of inf len
+            # check if distance actually goes through real wall, not wall of inf len
             if wall.overlaps_point(Vector2(x_point_on_line, y_point_on_line)):
                 min_distance = m
                 nearest_wall = wall
@@ -59,9 +60,10 @@ def calculate_forward_distance_to_wall(x, y, theta, wall):
     Ax, Ay, Bx, By = wall.start_point.x, wall.start_point.y, wall.end_point.x, wall.end_point.y
     # uses var names from lecture slides so easier to implement
     numerator = (By - Ay) * (Ax - x) - (Bx - Ax) * (Ay - y)
-    denominator = (By - Ay) * math.cos(math.radians(theta)) - (Bx - Ax) * math.sin(math.radians(theta))
+    denominator = (By - Ay) * math.cos(math.radians(theta)) - \
+        (Bx - Ax) * math.sin(math.radians(theta))
     if math.isclose(denominator, 0):
-        return float("inf") #fine for now, best if we do proper checks later
+        return float("inf")  # fine for now
     return numerator/denominator
 
 
@@ -69,3 +71,14 @@ def likelihood(z, m, sd, offset):
     exponent = (-((z - m) ** 2)) / (2 * sd * sd)
     return math.exp(exponent) + offset
 
+# difference between wall normal and line made with sonar facing wall
+
+
+def calculate_sonar_angle_to_wall(x, y, theta, wall):
+    Ax, Ay, Bx, By = wall.start_point.x, wall.start_point.y, wall.end_point.x, wall.end_point.y
+
+    numerator = math.cos(math.radians(theta)) * (Ay - By) + \
+        math.sin(math.radians(theta)) * (Bx - Ax)
+    denominator = math.sqrt((Ay - By) ** 2 + (Bx - Ax) ** 2)
+
+    return math.degrees(math.acos(numerator/denominator))

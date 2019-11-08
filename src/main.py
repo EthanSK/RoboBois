@@ -5,6 +5,8 @@ import brickpi3
 import time
 import montecarlo
 from vector2 import Vector2
+from particleDataStructures import Particles
+
 
 motor_port_left = brickpi3.BrickPi3.PORT_D
 motor_port_right = brickpi3.BrickPi3.PORT_A
@@ -23,13 +25,17 @@ roboboi = robot.Robot(movement_module, sensor_module)
 roboboi.pos = Vector2(10, 10)
 roboboi.rot = 45
 
+particles = Particles(10)
 
 try:
     while True:
         sensor_distance = sensor_module.get_sonar_distance()
-        likelihood = montecarlo.calculate_likelihood(
-            roboboi.pos.x, roboboi.pos.y, roboboi.rot, sensor_distance)
-        print("likelihood: ", likelihood, "\n")
+        particles.update_weights(sensor_distance)
+        particles.normalize_weights()
+        particles.resample()
+        # likelihood = montecarlo.calculate_likelihood(
+        #     roboboi.pos.x, roboboi.pos.y, roboboi.rot, sensor_distance)
+        # print("likelihood: ", likelihood, "\n")
 
 except KeyboardInterrupt:
     roboboi.reset()
