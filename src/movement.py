@@ -83,8 +83,10 @@ class MovementModule:
             speed_ms *= -1
 
         degrees = self.get_linear_degrees(length_m, speed_ms)
-        self.set_linear_speed(speed_ms)
-        self.wait_x_degrees(degrees)
+        if degrees != 0:
+            self.set_linear_speed(speed_ms)
+            self.wait_x_degrees(degrees)
+
         self.set_linear_speed(0)
 
     def get_turn_degrees(self, degrees, turn_dps=90):
@@ -103,8 +105,10 @@ class MovementModule:
             turn_dps *= -1
 
         wheel_degrees = self.get_turn_degrees(degrees, turn_dps)
-        self.set_turn_speed(turn_dps)
-        self.wait_x_degrees(wheel_degrees)
+        if wheel_degrees != 0:
+            self.set_turn_speed(turn_dps)
+            self.wait_x_degrees(wheel_degrees)
+
         self.set_linear_speed(0)
 
     def wait_x_degrees(self, degrees):
