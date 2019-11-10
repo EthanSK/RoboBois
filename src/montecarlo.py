@@ -37,7 +37,7 @@ def calculate_likelihood(x, y, theta, z):
 # return (x0, y0, x1, y1)
 def find_nearest_wall(x, y, theta, map):
     # loop through all the walls, calculate the distance m, and find which m is closest to the sonar measurement
-    min_distance = float("inf")
+    min_distance = math.inf
     for _wall in map.walls:
         wall = Line(Vector2(_wall[0], _wall[1]), Vector2(_wall[2], _wall[3]))
 
@@ -59,12 +59,13 @@ def find_nearest_wall(x, y, theta, map):
 def calculate_forward_distance_to_wall(x, y, theta, wall):
     Ax, Ay, Bx, By = wall.start_point.x, wall.start_point.y, wall.end_point.x, wall.end_point.y
     # uses var names from lecture slides so easier to implement
-    numerator = (By - Ay) * (Ax - x) - (Bx - Ax) * (Ay - y)
     denominator = (By - Ay) * math.cos(math.radians(theta)) - \
         (Bx - Ax) * math.sin(math.radians(theta))
-    if math.isclose(denominator, 0):
-        return float("inf")  # fine for now
-    return numerator/denominator
+    if denominator == 0:
+        return math.inf
+
+    numerator = (By - Ay) * (Ax - x) - (Bx - Ax) * (Ay - y)
+    return numerator / denominator
 
 
 def likelihood(z, m, sd, offset):
