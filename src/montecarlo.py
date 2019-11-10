@@ -28,21 +28,20 @@ def generate_map():
 
 def calculate_likelihood(x, y, theta, z):
     mymap = generate_map()
-    nearest_wall = find_nearest_wall(x, y, theta, mymap)
+    (nearest_wall, m) = find_nearest_wall(x, y, theta, mymap)
     print("nearest wall: ", nearest_wall)
-    m = calculate_forward_distance_to_wall(x, y, theta, nearest_wall)
     return likelihood(z, m, 0.03, 0.05)
 
 
 # return (x0, y0, x1, y1)
 def find_nearest_wall(x, y, theta, map):
     # loop through all the walls, calculate the distance m, and find which m is closest to the sonar measurement
+    nearest_wall = None
     min_distance = math.inf
+
     for _wall in map.walls:
         wall = Line(Vector2(_wall[0], _wall[1]), Vector2(_wall[2], _wall[3]))
-
         m = calculate_forward_distance_to_wall(x, y, theta, wall)
-        # print(wall)
 
         if m > 0 and m < min_distance:
             x_point_on_line = x + m * math.cos(math.radians(theta))
@@ -52,7 +51,8 @@ def find_nearest_wall(x, y, theta, map):
             if wall.bounds_point(Vector2(x_point_on_line, y_point_on_line)):
                 min_distance = m
                 nearest_wall = wall
-    return nearest_wall
+
+    return (nearest_wall, min_distance)
 
 
 # calculates m
