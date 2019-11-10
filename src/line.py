@@ -27,6 +27,13 @@ class Line:
         c2 = self.sqr_magnitude()
         return math.isclose(a2 + 2 * math.sqrt(a2 * b2) + b2, c2)
 
+    def bounds_point(self, point):
+        if point.x > max(self.start_point.x, self.end_point.x): return False
+        if point.x < min(self.start_point.x, self.end_point.x): return False
+        if point.y > max(self.start_point.y, self.end_point.y): return False
+        if point.y < min(self.start_point.y, self.end_point.y): return False
+        return True
+
     def __eq__(self, other):
         return self.start_point == other.start_point and self.end_point == other.end_point
 

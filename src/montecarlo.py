@@ -49,7 +49,7 @@ def find_nearest_wall(x, y, theta, map):
             y_point_on_line = y + m * math.sin(math.radians(theta))
 
             # check if distance actually goes through real wall, not wall of inf len
-            if wall.overlaps_point(Vector2(x_point_on_line, y_point_on_line)):
+            if wall.bounds_point(Vector2(x_point_on_line, y_point_on_line)):
                 min_distance = m
                 nearest_wall = wall
     return nearest_wall
