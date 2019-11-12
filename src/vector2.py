@@ -18,11 +18,17 @@ class Vector2:
     def angle_rads(self):
         return math.atan2(self.y, self.x)
 
+    def normalized(self):
+        return self / self.magnitude()
+
     def __add__(self, other):
         return Vector2(self.x + other.x, self.y + other.y)
 
     def __mul__(self, other):
         return Vector2(self.x * other, self.y * other)
+
+    def __truediv__(self, other):
+        return Vector2(self.x / other, self.y / other)
 
     def __truediv__(self, other):
         return Vector2(self.x / other, self.y / other)
