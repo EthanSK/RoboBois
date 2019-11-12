@@ -29,7 +29,6 @@ def generate_map():
 def calculate_likelihood(x, y, theta, z):
     mymap = generate_map()
     (nearest_wall, m) = find_nearest_wall(x, y, theta, mymap)
-    print("nearest wall: ", nearest_wall)
     return likelihood(z, m, 0.03, 0.05)
 
 

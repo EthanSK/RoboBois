@@ -15,8 +15,8 @@ touch_port_left = brickpi3.BrickPi3.PORT_4
 touch_port_right = brickpi3.BrickPi3.PORT_1
 sonar_port = brickpi3.BrickPi3.PORT_2
 
-wheel_radius = 3.5 / 100  # 3.5cm
-body_radius = 9.1 / 100  # 9.1cm
+wheel_radius = 3.5  # 3.5cm
+body_radius = 9.1  # 9.1cm
 movement = movement.MovementModule(
     motor_port_left, motor_port_right, wheel_radius, body_radius)
 sensor_module = sensor.SensorModule(touch_port_left, touch_port_right, sonar_port)
@@ -35,7 +35,7 @@ class MovementState(Enum):
 def main(stdscr):
     # do not wait for input when calling getch
     stdscr.nodelay(1)
-    lin_speed = 0.05
+    lin_speed = 5
     turn_speed = 90
     steer_amount = 0
     steer_step = 0.1
@@ -58,7 +58,7 @@ def main(stdscr):
             # 49 is 1 in ascii
             if c >= 49 and c <= 53:
                 lin_speed = c - 49
-                lin_speed = 0.05 + lin_speed / 15
+                lin_speed = 5 + lin_speed / 0.15
                 if movement_state == MovementState.FORWARD:
                     movement.steer(-lin_speed, steer_amount)
                 elif movement_state == MovementState.BACKWARD:
@@ -106,7 +106,7 @@ def main(stdscr):
                     movement_state = MovementState.ANTICLOCKWISE
 
             elif c == 113:  # q
-                print("{}cm".format(sensor_module.get_sonar_distance() * 100))
+                print("{}cm".format(sensor_module.get_sonar_distance()))
 
             # print numeric value
             stdscr.addstr(str(c) + ' ')
@@ -118,7 +118,7 @@ def crash_recovery_routine(lin_speed, turn_speed, direction):
     print("crash recovery started")
     ldps = movement.ldps
     rdps = movement.rdps
-    movement.move_linear(0.15, lin_speed)
+    movement.move_linear(15, lin_speed)
     movement.turn(25, direction * turn_speed)
     movement.set_left_dps(ldps)
     movement.set_right_dps(rdps)

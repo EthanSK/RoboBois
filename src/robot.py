@@ -16,7 +16,7 @@ class Robot:
         self.movement_module.reset()
         self.sensor_module.reset()
 
-    def move_to_pos(self, pos, speed_m=0.2, turn_speed=45):
+    def move_to_pos(self, pos, speed_m=20, turn_speed=45):
         if pos != self.pos:
             delta = pos - self.pos
             dist = delta.magnitude()

@@ -69,7 +69,7 @@ class MovementModule:
         self.ldps = 0
         self.rdps = 0
 
-    def get_linear_degrees(self, length_m, speed_ms=1):
+    def get_linear_degrees(self, length_m, speed_ms=10):
         rotations = length_m / self.wh_circ
         degrees = rotations * 360
         if speed_ms < 0:
@@ -77,7 +77,7 @@ class MovementModule:
 
         return degrees
 
-    def move_linear(self, length_m, speed_ms=1):
+    def move_linear(self, length_m, speed_ms=10):
         if length_m < 0:
             length_m *= -1
             speed_ms *= -1
