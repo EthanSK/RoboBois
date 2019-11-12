@@ -21,7 +21,7 @@ movement_module = movement.MovementModule(
     motor_port_left, motor_port_right, wheel_radius, body_radius)
 sensor_module = sensor.SensorModule(
     touch_port_left, touch_port_right, sonar_port, 8)
-roboboi = robot.Robot(movement_module, sensor_module, 1)
+roboboi = robot.Robot(movement_module, sensor_module)
 
 
 
@@ -34,9 +34,11 @@ try:
         ]
         roboboi.force_pos_rot(Vector2(waypoints[0][0], waypoints[0][1]), 0)
         for waypoint in waypoints:
-            print("old pose: ", roboboi.pos, roboboi.rot)
-            roboboi.move_to_pos(Vector2(waypoint[0], waypoint[1]))
-            print("new pose: ", roboboi.pos, roboboi.rot)
+            # print("old pose: ", roboboi.pos, roboboi.rot)
+            roboboi.move_to_pos(Vector2(waypoint[0], waypoint[1]), 15)
+            # roboboi.move_to_pos(Vector2(waypoint[0], waypoint[1]), 15)
+
+            # print("new pose: ", roboboi.pos, roboboi.rot)
             canvas.drawParticles(roboboi.particles.data)
 
 
