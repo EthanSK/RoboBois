@@ -20,19 +20,14 @@ body_radius = 6.5  # cm
 movement_module = movement.MovementModule(
     motor_port_left, motor_port_right, wheel_radius, body_radius)
 sensor_module = sensor.SensorModule(
-    touch_port_left, touch_port_right, sonar_port)
+    touch_port_left, touch_port_right, sonar_port, 8)
 roboboi = robot.Robot(movement_module, sensor_module)
 roboboi.pos = Vector2(10, 10)
 roboboi.rot = 45
 
-particles = Particles(10)
 
 try:
     while True:
-        sensor_distance = sensor_module.get_sonar_snapshot()
-        particles.update_weights(sensor_distance)
-        particles.normalize_weights()
-        particles.resample()
 
         # likelihood = montecarlo.calculate_likelihood(
         #     roboboi.pos.x, roboboi.pos.y, roboboi.rot, sensor_distance)

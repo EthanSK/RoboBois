@@ -46,7 +46,7 @@ class Canvas:
         print("drawLine:" + str((x1, y1, x2, y2)))
 
     def drawParticles(self, data):
-        display = [(self.__screenX(d[0]), self.__screenY(d[1])) + d[2:]
+        display = [(self.__screenX(d.pos.x), self.__screenY(d.pos.y)) + (d.theta, d.weight)
                    for d in data]
         print("drawParticles:" + str(display))
 
@@ -85,12 +85,15 @@ class Particles:
     def __init__(self, num_particles):
         self.count = num_particles
         self.data = []
-        self.random_sample_data()
 
     # this method was copied from sample
     def random_sample_data(self):
         self.data = [Particle(calcX(), calcY(), calcTheta(), calcW())
                      for i in range(self.count)]
+
+    def init_particles(self, pos, theta):
+        self.data = [Particle(pos.x, pos.y, theta, 1 / self.count)
+                     for i in range(self.count)] 
 
     def update_weights(self, sensor_distance):
         for p in self.data:

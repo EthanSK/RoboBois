@@ -3,11 +3,12 @@ import math
 
 
 class SensorModule:
-    def __init__(self, ltouch, rtouch, sonar):
+    def __init__(self, ltouch, rtouch, sonar, sonar_offset=0):
         self.BP = brickpi3.BrickPi3()
         self.ltouch = ltouch
         self.rtouch = rtouch
         self.sonar = sonar
+        self.sonar_offset = sonar_offset
 
         self.BP.set_sensor_type(ltouch, self.BP.SENSOR_TYPE.TOUCH)
         self.BP.set_sensor_type(rtouch, self.BP.SENSOR_TYPE.TOUCH)
@@ -33,7 +34,7 @@ class SensorModule:
 
     def get_sonar_distance(self):
         try:
-            dist = self.BP.get_sensor(self.sonar)
+            dist = self.BP.get_sensor(self.sonar) + self.sonar_offset
             self.sonar_frames.insert(0, dist)
             if len(self.sonar_frames) > self.smooth_size:
                 self.sonar_frames.pop()
