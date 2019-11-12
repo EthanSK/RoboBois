@@ -117,17 +117,15 @@ class Particles:
         new = []
         for i in range(self.count):
             rando = random.random()
-            for j, w in enumerate(cum):
-                if j == 0 and rando < cum[j]:
-                    el = self.data[j]
-                elif j == len(cum) - 1 and rando > cum[j]:
-                    el = self.data[j]
-                elif rando > cum[j] and rando <= cum[j + 1]:
-                    el = self.data[j + 1]
-                x, y, theta = el.pos.x, el.pos.y, el.theta
-                # append with new weight
-                new.append(Particle(x, y, theta, 1/self.count))
+            for j in range(len(cum)):
+                if cum[j] > rando:
+                    particle = self.data[j]
+                    particle.weight = 1 / self.count
+                    new.append(particle)
+                    break
+
         self.data = new
+
 
     def draw(self):
         canvas.drawParticles(self.data)
