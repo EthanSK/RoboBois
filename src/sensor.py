@@ -49,3 +49,15 @@ class SensorModule:
         else:
             return -1
 
+    def get_sonar_snapshot(self, n=10):
+        snaps = 0
+        acc = 0
+        while snaps < n:
+            dist = self.get_sonar_distance()
+            if dist >= 0:
+                acc += dist
+                snaps += 1
+
+        return acc / n
+
+
