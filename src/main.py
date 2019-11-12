@@ -21,7 +21,7 @@ movement_module = movement.MovementModule(
     motor_port_left, motor_port_right, wheel_radius, body_radius)
 sensor_module = sensor.SensorModule(
     touch_port_left, touch_port_right, sonar_port, 8)
-roboboi = robot.Robot(movement_module, sensor_module)
+roboboi = robot.Robot(movement_module, sensor_module, 100)
 
 
 
@@ -33,7 +33,7 @@ try:
         waypoints = [
              Vector2(84, 30), Vector2(180, 30), Vector2(180, 54) ,Vector2(138, 54) ,Vector2(138, 168), Vector2(114, 168), Vector2(114, 84) , Vector2(84, 84) ,Vector2(84, 30)
         ]
-        split = montecarlo.split_up_waypoints(waypoints, 3)
+        split = montecarlo.split_path(waypoints, 30)
         # [print(w) for w in split]
         roboboi.force_pos_rot(waypoints[0], 0)
         for waypoint in split:

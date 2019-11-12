@@ -50,7 +50,7 @@ def find_nearest_wall(x, y, theta, map):
         wall = Line(Vector2(_wall[0], _wall[1]), Vector2(_wall[2], _wall[3]))
         m = calculate_forward_distance_to_wall(x, y, theta, wall)
 
-        if m > 0 and m < min_distance:
+        if m > 0 and m < min_distance: #and calculate_forward_angle_to_wall(x, y, theta, wall) < MAX_ANGLE:
             x_point_on_line = x + m * math.cos(math.radians(theta))
             y_point_on_line = y + m * math.sin(math.radians(theta))
 
@@ -82,7 +82,7 @@ def likelihood(z, m, sd, offset):
 # difference between wall normal and line made with sonar facing wall
 
 
-def calculate_sonar_angle_to_wall(x, y, theta, wall):
+def calculate_forward_angle_to_wall(x, y, theta, wall):
     Ax, Ay, Bx, By = wall.start_point.x, wall.start_point.y, wall.end_point.x, wall.end_point.y
 
     numerator = math.cos(math.radians(theta)) * (Ay - By) + \
