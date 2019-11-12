@@ -74,11 +74,17 @@ class Map:
 
 # Simple Particles set
 
+class Particle:
+    def __init__(self, x, y, theta, w):
+        self.x = x
+        self.y = y
+        self.theta = theta
+        self.w = w
 
 class Particles:
     def __init__(self, num_particles):
         self.count = num_particles
-        self.data = []
+        self.data = ["""(x, y, theta, weight)"""]
 
     # this method was copied from sample
     def random_sample_data(self):
@@ -86,29 +92,26 @@ class Particles:
                      for i in range(self.count)]
 
     def update_weights(self, sensor_distance):
-        for i, el in enumerate(self.data):
-            x, y, theta, weight = el[0], el[1], el[2], el[3]
-            likelihood = montecarlo.calculate_likelihood(
-                x, y, theta, sensor_distance)
-            self.data[i][3] = likelihood * weight  # update weight
+        for particle in self.data:
+            x, y, theta, weight = particle[0], particle[1], particle[2], particle[3]
+            likelihood = montecarlo.calculate_likelihood(x, y, theta, sensor_distance)
+            particle[3] = likelihood * weight  # update weight
 
     def normalize_weights(self):
         sum = 0
         for particle in self.data:  # i am sorry if u have to read this disgusting code
             sum += particle[3]
-        for i, el in enumerate(self.data):
-            self.data[i][3] = el[3] / sum
+        for particle in self.data:
+            particle[3] /= sum
 
     def resample(self):
         cum = []  # topkek
         # generate cumulative weight array
-        for i in range(self.count):
-            weight = self.data[i][3]
-            if i > 0:
-                prev = cum[i - 1]
-            else:
-                prev = 0
-            cum[i] = prev + weight
+        acc = 0 # weight accumulator
+        for particle in self.data:
+            acc += particle[3]
+            cum.append(acc)
+
         # generate <count> random numbers and create a copy of self.data[i] where i is the index of the upper bound of where the random number falls in the range of two consectutive values in the cum array
         new = []
         for i in range(self.count):
