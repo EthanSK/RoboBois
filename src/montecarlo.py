@@ -59,8 +59,7 @@ def find_nearest_wall(x, y, theta, map):
 def calculate_forward_distance_to_wall(x, y, theta, wall):
     Ax, Ay, Bx, By = wall.start_point.x, wall.start_point.y, wall.end_point.x, wall.end_point.y
     # uses var names from lecture slides so easier to implement
-    denominator = (By - Ay) * math.cos(math.radians(theta)) - \
-        (Bx - Ax) * math.sin(math.radians(theta))
+    denominator = (By - Ay) * math.cos(math.radians(theta)) - (Bx - Ax) * math.sin(math.radians(theta))
     if denominator == 0:
         return math.inf
 

@@ -6,6 +6,7 @@ import time
 import random
 import math
 import montecarlo
+from vector2 import Vector2
 
 # Functions to generate some dummy particles data:
 
@@ -75,57 +76,57 @@ class Map:
 # Simple Particles set
 
 class Particle:
-    def __init__(self, x, y, theta, w):
-        self.x = x
-        self.y = y
+    def __init__(self, x, y, theta, weight):
+        self.pos = Vector2(x, y)
         self.theta = theta
-        self.w = w
+        self.weight = weight
 
 class Particles:
     def __init__(self, num_particles):
         self.count = num_particles
-        self.data = ["""(x, y, theta, weight)"""]
+        self.data = []
+        self.random_sample_data()
 
     # this method was copied from sample
     def random_sample_data(self):
-        self.data = [(calcX(), calcY(), calcTheta(), calcW())
+        self.data = [Particle(calcX(), calcY(), calcTheta(), calcW())
                      for i in range(self.count)]
 
     def update_weights(self, sensor_distance):
-        for particle in self.data:
-            x, y, theta, weight = particle[0], particle[1], particle[2], particle[3]
-            likelihood = montecarlo.calculate_likelihood(x, y, theta, sensor_distance)
-            particle[3] = likelihood * weight  # update weight
+        for p in self.data:
+            likelihood = montecarlo.calculate_likelihood(p.pos.x, p.pos.y, p.theta, sensor_distance)
+            p.weight *= likelihood  # update weight
 
     def normalize_weights(self):
-        sum = 0
-        for particle in self.data:  # i am sorry if u have to read this disgusting code
-            sum += particle[3]
-        for particle in self.data:
-            particle[3] /= sum
+        acc = 0
+        for p in self.data:  # i am sorry if u have to read this disgusting code
+            acc += p.weight
+        for p in self.data:
+            p.weight /= acc
 
     def resample(self):
         cum = []  # topkek
         # generate cumulative weight array
         acc = 0 # weight accumulator
-        for particle in self.data:
-            acc += particle[3]
+        for p in self.data:
+            acc += p.weight
             cum.append(acc)
 
         # generate <count> random numbers and create a copy of self.data[i] where i is the index of the upper bound of where the random number falls in the range of two consectutive values in the cum array
+        #https://robotics.stackexchange.com/a/481
         new = []
         for i in range(self.count):
             rando = random.random()
             for j, w in enumerate(cum):
                 if j == 0 and rando < cum[j]:
                     el = self.data[j]
-                elif j == cum.count - 1 and rando > cum[j]:
+                elif j == len(cum) - 1 and rando > cum[j]:
                     el = self.data[j]
                 elif rando > cum[j] and rando <= cum[j + 1]:
                     el = self.data[j + 1]
-                x, y, theta = el[0], el[1], el[2]
+                x, y, theta = el.pos.x, el.pos.y, el.theta
                 # append with new weight
-                new.append((x, y, theta, 1/self.count))
+                new.append(Particle(x, y, theta, 1/self.count))
         self.data = new
 
     def draw(self):
