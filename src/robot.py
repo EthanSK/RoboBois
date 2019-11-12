@@ -5,13 +5,14 @@ from vector2 import Vector2
 import math
 from particleDataStructures import Particles
 import weightedParticles as ptcls
-
+from cmath import rect, phase
+from math import radians, degrees
 
 class Robot:
-    SD_X = 3  # cm
-    SD_Y = 3  # cm
-    SD_THETA_MOV = 1  # degrees
-    SD_THETA_ROT = 4  # degrees
+    SD_X = 0  # cm
+    SD_Y = 0  # cm
+    SD_THETA_MOV = 0  # degrees
+    SD_THETA_ROT = 0  # degrees
 
     def __init__(self, movement_module, sensor_module, num_particles=100):
         self.movement_module = movement_module
@@ -38,23 +39,27 @@ class Robot:
             angle_delta = (self.rot - angle) % 360
             if angle_delta != 0:
                 if angle_delta > 180:
-                    angle_delta -= 360
+                    angle_delta = 360 - angle_delta
 
-                self.rotate_particles(angle_delta)
                 self.movement_module.turn(angle_delta, turn_speed)
                 self.rot = angle
-
+                # self.rotate_particles(angle_delta)
             if dist != 0:
-                self.move_particles(delta)
                 self.movement_module.move_linear(-dist, speed_m)
                 self.pos = pos
+                # self.move_particles(delta)
 
-            self.update_real_pos()
+
+            # self.update_real_pos() # turn off monte carlo for now
 
     def move_particles(self, delta):
         for p in self.particles.data:
-            p.pos.x, p.pos.y, p.theta = ptcls.straightLineWeightedParticles(
-                p.pos.x, p.pos.y, p.theta, delta.x, delta.y, self.SD_X, self.SD_Y, self.SD_THETA_MOV)
+            print("old pos", p.pos, "delta y: ",  delta.y, "theta: ", p.theta)
+            p.pos.x, p.pos.y, p.theta= ptcls.straightLineWeightedParticles(
+                p.pos.x, p.pos.y, math.radians(p.theta), delta.x, delta.y, self.SD_X, self.SD_Y, self.SD_THETA_MOV)
+            p.theta = math.degrees(p.theta)
+            print("new pos", p.pos, "new theta: ", p.theta)
+
 
     def rotate_particles(self, delta):
         for p in self.particles.data:
@@ -67,13 +72,16 @@ class Robot:
         self.particles.normalize_weights()
 
         acc_pos = Vector2(0, 0)
-        acc_rot = 0
+
+        def mean_angle(deg):
+            return degrees(phase(sum(rect(1, radians(d)) for d in deg)/len(deg)))
 
         for p in self.particles.data:
-            acc_pos += p.pos * p.weight
-            acc_rot += p.theta * p.weight
+            acc_pos = acc_pos + p.pos * p.weight
 
         self.pos = acc_pos
-        self.rot = acc_rot #dunno if this is right
+        self.rot = mean_angle([p.theta for p in self.particles.data])  # dunno if this is right
 
         self.particles.resample()
+        
+        

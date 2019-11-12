@@ -13,7 +13,7 @@ class Vector2:
         return math.sqrt(self.sqr_magnitude())
 
     def angle(self):
-        return math.degrees(self.angle)
+        return math.degrees(self.angle_rads())
 
     def angle_rads(self):
         return math.atan2(self.y, self.x)

@@ -2,15 +2,15 @@ import random
 import math
 
 
-def straightLineWeightedParticles(x, y, theta, xdistance, ydistance, sdx, sdy, sdtheta):
-    """sdx == sdy?
+def straightLineWeightedParticles(x, y, theta_degrees, xdistance, ydistance, sdx, sdy, sdtheta):
 
-    """
-    newx = x + ((xdistance + random.gauss(0, sdx)) * math.cos(theta))
-    newy = y + ((ydistance + random.gauss(0, sdy)) * math.sin(theta))
-    newtheta = theta + random.gauss(0, sdtheta)
+    newx = x + ((xdistance + random.gauss(0, sdx)) *
+                math.cos(math.radians(theta_degrees)))
+    newy = y + ((ydistance + random.gauss(0, sdy)) *
+                math.sin(math.radians(theta_degrees)))
+    newtheta = theta_degrees + random.gauss(0, sdtheta)
 
-    newtheta = normaliseAngle(newtheta)
+    newtheta = normalize_angle(theta_degrees)
 
     return newx, newy, newtheta
 
@@ -21,28 +21,16 @@ def rotationWeightedParticles(x, y, theta, turnangle, sdtheta):
     newy = y
     newtheta = theta + turnangle + random.gauss(0, sdtheta)
 
-    newtheta = normaliseAngle(newtheta)
+    newtheta = normalize_angle(newtheta)
 
     return newx, newy, newtheta
 
 
-def normaliseAngle(angle):
-    """
-    For now we need to make sure that angle is never bigger than pi
+def normalize_angle(angle):
+   # Make angle between 0 and 360
+    angle %= 360
 
-    parameters: 
-        --angle - angle between -3pi and 3pi
-    returns: 
-        --angle - modified angle between -pi and pi
-    """
-    if(angle > (math.pi)):
-        return angle - 2*(math.pi)
-    elif(angle < -(math.pi)):
-        return angle + 2*(math.pi)
-    else:
-        return angle
-
-
-if __name__ == "__main__":
-    straightLineWeightedParticles(0, 0, 0, 1, 0.2, 0.3, 0.1, 100)
-    # rotationWeightedParticles(0, 0, 0, 360, 0.2, 100) # wrong number of arguments
+    # Make angle between -179 and 180
+    if angle > 180:
+        angle -= 360
+    return angle

@@ -4,6 +4,8 @@ from vector2 import Vector2
 from line import Line
 
 
+MAX_ANGLE = 40
+
 def generate_map():
     mymap = particleDataStructures.Map()
     # Definitions of walls
@@ -26,10 +28,15 @@ def generate_map():
     return mymap
 
 
+def draw_lines():
+    mymap = generate_map()
+    mymap.draw()
+
+
 def calculate_likelihood(x, y, theta, z):
     mymap = generate_map()
     (nearest_wall, m) = find_nearest_wall(x, y, theta, mymap)
-    return likelihood(z, m, 0.03, 0.05)
+    return likelihood(z, m, 3, 0.05)
 
 
 # return (x0, y0, x1, y1)

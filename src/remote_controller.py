@@ -47,9 +47,11 @@ def main(stdscr):
         # get keyboard input, returns -1 if none available
 
         if sensor_module.get_left_touch(): 
-            crash_recovery_routine(lin_speed, turn_speed, -1)
+            # crash_recovery_routine(lin_speed, turn_speed, -1)
+            pass
         if sensor_module.get_right_touch(): 
-            crash_recovery_routine(lin_speed, turn_speed, 1)
+            # crash_recovery_routine(lin_speed, turn_speed, 1)
+            pass
 
         c = stdscr.getch()
         if c != -1:

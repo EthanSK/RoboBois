@@ -102,8 +102,9 @@ class Particles:
 
     def normalize_weights(self):
         acc = 0
-        for p in self.data:  # i am sorry if u have to read this disgusting code
+        for p in self.data:   
             acc += p.weight
+                    
         for p in self.data:
             p.weight /= acc
 
@@ -122,9 +123,9 @@ class Particles:
             rando = random.random()
             for j in range(len(cum)):
                 if cum[j] > rando:
-                    particle = self.data[j]
-                    particle.weight = 1 / self.count
-                    new.append(particle)
+                    old_p = self.data[j]
+                    new_p = Particle(old_p.pos.x, old_p.pos.y, old_p.theta, 1 / self.count)
+                    new.append(new_p)
                     break
 
         self.data = new
