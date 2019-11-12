@@ -20,20 +20,18 @@ body_radius = 8.4  # cm #works on carpet at 8.4
 movement_module = movement.MovementModule(
     motor_port_left, motor_port_right, wheel_radius, body_radius)
 sensor_module = sensor.SensorModule(
-    touch_port_left, touch_port_right, sonar_port, 8)
+    touch_port_left, touch_port_right, sonar_port, 4)
 roboboi = robot.Robot(movement_module, sensor_module)
 
 
 
 try:
     montecarlo.draw_lines()
-    
     while True:
-        
         waypoints = [
              Vector2(84, 30), Vector2(180, 30), Vector2(180, 54) ,Vector2(138, 54) ,Vector2(138, 168), Vector2(114, 168), Vector2(114, 84) , Vector2(84, 84) ,Vector2(84, 30)
         ]
-        split = montecarlo.split_up_waypoints(waypoints, 3)
+        split = montecarlo.split_up_waypoints(waypoints, 4)
         # [print(w) for w in split]
         roboboi.force_pos_rot(waypoints[0], 0)
         for waypoint in split:

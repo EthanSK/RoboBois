@@ -6,7 +6,6 @@ from line import Line
 
 MAX_ANGLE = 40
 
-
 def generate_map():
     mymap = particleDataStructures.Map()
     # Definitions of walls
@@ -66,8 +65,7 @@ def find_nearest_wall(x, y, theta, map):
 def calculate_forward_distance_to_wall(x, y, theta, wall):
     Ax, Ay, Bx, By = wall.start_point.x, wall.start_point.y, wall.end_point.x, wall.end_point.y
     # uses var names from lecture slides so easier to implement
-    denominator = (By - Ay) * math.cos(math.radians(theta)) - \
-        (Bx - Ax) * math.sin(math.radians(theta))
+    denominator = (By - Ay) * math.cos(math.radians(theta)) - (Bx - Ax) * math.sin(math.radians(theta))
     if denominator == 0:
         return math.inf
 
@@ -91,23 +89,14 @@ def calculate_sonar_angle_to_wall(x, y, theta, wall):
 
     return math.degrees(math.acos(numerator/denominator))
 
-
-def split_up_waypoints_count(waypoints, split_precision):
+def split_up_waypoints(waypoints, split_precision):
     new = []
     for i in range(len(waypoints) - 1):
         distance = waypoints[i + 1] - waypoints[i]
         step = distance / split_precision
         for j in range(split_precision):
-            new.append(waypoints[i] + step * j)
+            new.append(waypoints[i] + step * j) 
     new.append(waypoints[-1])
     return new
 
-
-def split_up_waypoints_distance(waypoints, split_distance):
-    new = []
-    for i in range(len(waypoints) - 1):
-        dist_reached = waypoints[i]
-        new_dist = dist_reached + Vector2(split_distance, split_distance)
-        while new_dist < waypoints[i + 1]:
-            new.append(new_dist)
-    return new
+            

@@ -12,8 +12,8 @@ from math import radians, degrees
 class Robot:
     SD_X = 3  # cm
     SD_Y = 3  # cm
-    SD_THETA_MOV = 3  # degrees
-    SD_THETA_ROT = 5  # degrees
+    SD_THETA_MOV = 10  # degrees
+    SD_THETA_ROT = 20 # degrees
 
     def __init__(self, movement_module, sensor_module, num_particles=100):
         self.movement_module = movement_module
