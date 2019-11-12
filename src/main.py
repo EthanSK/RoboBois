@@ -22,17 +22,13 @@ movement_module = movement.MovementModule(
 sensor_module = sensor.SensorModule(
     touch_port_left, touch_port_right, sonar_port, 8)
 roboboi = robot.Robot(movement_module, sensor_module, 1)
-roboboi.pos = Vector2(10, 10)
-roboboi.rot = 45
+
 
 
 try:
-    # roboboi.movement_module.turn(90)
-    # montecarlo.draw_lines()
-    roboboi.move_to_pos(Vector2(0, 10))
-
+    montecarlo.draw_lines()
     while True:
-        break
+        # break
         waypoints = [
              (84, 30), (180, 30), (180, 54) ,(138, 54) ,(138, 168), (114, 168), (114, 84) , (84, 84) ,(84, 30)
         ]

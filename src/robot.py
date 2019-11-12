@@ -36,25 +36,25 @@ class Robot:
             dist = delta.magnitude()
             angle = delta.angle()
 
-            angle_delta = (self.rot - angle) % 360
+            angle_delta = (angle - self.rot) % 360
             if angle_delta != 0:
                 if angle_delta > 180:
-                    angle_delta = 360 - angle_delta
+                    angle_delta = angle_delta - 360
 
                 self.movement_module.turn(angle_delta, turn_speed)
                 self.rot = angle
-                # self.rotate_particles(angle_delta)
+                self.rotate_particles(angle_delta)
             if dist != 0:
                 self.movement_module.move_linear(-dist, speed_m)
                 self.pos = pos
-                # self.move_particles(delta)
+                self.move_particles(delta)
 
 
             # self.update_real_pos() # turn off monte carlo for now
 
     def move_particles(self, delta):
         for p in self.particles.data:
-            print("old pos", p.pos, "delta y: ",  delta.y, "theta: ", p.theta)
+            print("old pos", p.pos,  delta.y, "theta: ", p.theta)
             p.pos.x, p.pos.y, p.theta= ptcls.straightLineWeightedParticles(
                 p.pos.x, p.pos.y, math.radians(p.theta), delta.x, delta.y, self.SD_X, self.SD_Y, self.SD_THETA_MOV)
             p.theta = math.degrees(p.theta)
