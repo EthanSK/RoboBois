@@ -27,15 +27,18 @@ roboboi = robot.Robot(movement_module, sensor_module)
 
 try:
     montecarlo.draw_lines()
+    
     while True:
-        # break
+        
         waypoints = [
-             (84, 30), (180, 30), (180, 54) ,(138, 54) ,(138, 168), (114, 168), (114, 84) , (84, 84) ,(84, 30)
+             Vector2(84, 30), Vector2(180, 30), Vector2(180, 54) ,Vector2(138, 54) ,Vector2(138, 168), Vector2(114, 168), Vector2(114, 84) , Vector2(84, 84) ,Vector2(84, 30)
         ]
-        roboboi.force_pos_rot(Vector2(waypoints[0][0], waypoints[0][1]), 0)
-        for waypoint in waypoints:
+        split = montecarlo.split_up_waypoints(waypoints, 3)
+        # [print(w) for w in split]
+        roboboi.force_pos_rot(waypoints[0], 0)
+        for waypoint in split:
             # print("old pose: ", roboboi.pos, roboboi.rot)
-            roboboi.move_to_pos(Vector2(waypoint[0], waypoint[1]), 15)
+            roboboi.move_to_pos(waypoint, 15)
             # roboboi.move_to_pos(Vector2(waypoint[0], waypoint[1]), 15)
 
             # print("new pose: ", roboboi.pos, roboboi.rot)

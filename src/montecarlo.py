@@ -88,3 +88,15 @@ def calculate_sonar_angle_to_wall(x, y, theta, wall):
     denominator = math.sqrt((Ay - By) ** 2 + (Bx - Ax) ** 2)
 
     return math.degrees(math.acos(numerator/denominator))
+
+def split_up_waypoints(waypoints, split_precision):
+    new = []
+    for i in range(len(waypoints) - 1):
+        distance = waypoints[i + 1] - waypoints[i]
+        step = distance / split_precision
+        for j in range(split_precision):
+            new.append(waypoints[i] + step * j) 
+    new.append(waypoints[-1])
+    return new
+
+            

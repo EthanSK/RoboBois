@@ -79,5 +79,4 @@ class Robot:
         self.pos = acc_pos
         self.rot = mean_angle([p.theta for p in self.particles.data]) # dunno if this is right
 
-
         self.particles.resample()
