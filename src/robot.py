@@ -76,7 +76,7 @@ class Robot:
                 p.pos.x, p.pos.y, p.theta, delta, sdtheta)
 
     def update_real_pos(self):
-        sensor_distance = self.sensor_module.get_sonar_snapshot(20, 500)
+        sensor_distance = self.sensor_module.get_sonar_snapshot()
         self.particles.update_weights(sensor_distance)
         self.particles.normalize_weights()
 

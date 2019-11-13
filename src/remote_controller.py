@@ -17,10 +17,17 @@ sonar_port = brickpi3.BrickPi3.PORT_3
 
 wheel_radius = 3.5  # 3.5cm
 body_radius = 9.1  # 9.1cm
-movement = movement.MovementModule(
+
+BP = brickpi3.BrickPi3()
+BP.reset_all()
+
+movement = movement.MovementModule(BP,
     motor_port_left, motor_port_right, wheel_radius, body_radius)
-sensor_module = sensor.SensorModule(touch_port_left, touch_port_right, sonar_port)
-roboboi = robot.Robot(movement, sensor_module)
+
+sensor_module = sensor.SensorModule(BP,
+    touch_port_left, touch_port_right, sonar_port, 8)
+
+roboboi = robot.Robot(BP, movement, sensor_module)
 
 
 

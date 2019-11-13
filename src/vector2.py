@@ -30,9 +30,6 @@ class Vector2:
     def __truediv__(self, other):
         return Vector2(self.x / other, self.y / other)
 
-    def __truediv__(self, other):
-        return Vector2(self.x / other, self.y / other)
-
     def __sub__(self, other):
         return Vector2(self.x - other.x, self.y - other.y)
 
@@ -51,4 +48,4 @@ class Vector2:
         return not (self == other)
 
     def __str__(self):
-        return "(" + str(self.x) + ", " + str(self.y) + ")"
+        return "(" + str(int(self.x)) + ", " + str(int(self.y)) + ")"
