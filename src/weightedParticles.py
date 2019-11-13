@@ -3,11 +3,12 @@ import math
 
 
 def straightLineWeightedParticles(x, y, theta_degrees, xdistance, ydistance, sdx, sdy, sdtheta):
+    min_noise = 0.1
+    vary_noise = 1 - min_noise
+    rads = math.radians(theta_degrees)
 
-    newx = x + xdistance + (random.gauss(0, sdx) *
-                            math.cos(math.radians(theta_degrees)))
-    newy = y + ydistance + (random.gauss(0, sdy) *
-                            math.sin(math.radians(theta_degrees)))
+    newx = x + xdistance + (random.gauss(0, sdx) * (min_noise + vary_noise * math.cos(rads)))
+    newy = y + ydistance + (random.gauss(0, sdy) * (min_noise + vary_noise * math.sin(rads)))
     newtheta = theta_degrees + random.gauss(0, sdtheta)
 
     newtheta = normalize_angle(theta_degrees)
