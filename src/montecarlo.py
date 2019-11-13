@@ -37,7 +37,7 @@ def draw_lines():
 def calculate_likelihood(x, y, theta, z):
     mymap = generate_map()
     (nearest_wall, m) = find_nearest_wall(x, y, theta, mymap)
-    return likelihood(z, m, 3, 0.0001)
+    return likelihood(z, m, 2.5, 0.01)
 
 
 # return (x0, y0, x1, y1)
