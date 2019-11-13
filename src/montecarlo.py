@@ -7,7 +7,6 @@ from line import Line
 MAX_ANGLE = 40
 
 
-
 def generate_map():
     mymap = particleDataStructures.Map()
     # Definitions of walls
@@ -36,10 +35,9 @@ def draw_lines():
 
 
 def calculate_likelihood(x, y, theta, z):
-    return 1
     mymap = generate_map()
     (nearest_wall, m) = find_nearest_wall(x, y, theta, mymap)
-    return likelihood(z, m, 3, 0.01)
+    return likelihood(z, m, 3, 0.0001)
 
 
 # return (x0, y0, x1, y1)
@@ -52,7 +50,8 @@ def find_nearest_wall(x, y, theta, map):
         wall = Line(Vector2(_wall[0], _wall[1]), Vector2(_wall[2], _wall[3]))
         m = calculate_forward_distance_to_wall(x, y, theta, wall)
 
-        if m > 0 and m < min_distance: #and calculate_forward_angle_to_wall(x, y, theta, wall) < MAX_ANGLE:
+        # and calculate_forward_angle_to_wall(x, y, theta, wall) < MAX_ANGLE:
+        if m > 0 and m < min_distance:
             x_point_on_line = x + m * math.cos(math.radians(theta))
             y_point_on_line = y + m * math.sin(math.radians(theta))
 
@@ -68,7 +67,8 @@ def find_nearest_wall(x, y, theta, map):
 def calculate_forward_distance_to_wall(x, y, theta, wall):
     Ax, Ay, Bx, By = wall.start_point.x, wall.start_point.y, wall.end_point.x, wall.end_point.y
     # uses var names from lecture slides so easier to implement
-    denominator = (By - Ay) * math.cos(math.radians(theta)) - (Bx - Ax) * math.sin(math.radians(theta))
+    denominator = (By - Ay) * math.cos(math.radians(theta)) - \
+        (Bx - Ax) * math.sin(math.radians(theta))
     if denominator == 0:
         return math.inf
 
@@ -78,7 +78,7 @@ def calculate_forward_distance_to_wall(x, y, theta, wall):
 
 def likelihood(z, m, sd, offset):
     exponent = (-((z - m) ** 2)) / (2 * sd ** 2)
-    return math.exp(exponent) + offset
+    return (math.exp(exponent) + offset) * 10000
 
 # difference between wall normal and line made with sonar facing wall
 
@@ -91,6 +91,7 @@ def calculate_forward_angle_to_wall(x, y, theta, wall):
     denominator = math.sqrt((Ay - By) ** 2 + (Bx - Ax) ** 2)
 
     return math.degrees(math.acos(numerator/denominator))
+
 
 def split_path(waypoints, split_dist):
     new_points = []
@@ -106,5 +107,3 @@ def split_path(waypoints, split_dist):
 
     new_points.append(waypoints[-1])
     return new_points
-
-
