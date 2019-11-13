@@ -10,10 +10,16 @@ from math import radians, degrees
 
 
 class Robot:
-    SD_X = 3  # cm
-    SD_Y = 3  # cm
-    SD_THETA_MOV = 3  # degrees
-    SD_THETA_ROT = 5  # degrees
+    SD_X_FIXED = 1  # cm
+    SD_Y_FIXED = 1  # cm
+    SD_THETA_MOV_FIXED = 3  # degrees
+    SD_THETA_ROT_FIXED = 5  # degrees
+
+    SD_X_GROWTH = 0.15 # cm
+    SD_Y_GROWTH = 0.15  # cm
+    SD_THETA_MOV_GROWTH = 0.05 # degrees
+    SD_THETA_ROT_GROWTH= 0.01  # degrees
+
 
     def __init__(self, movement_module, sensor_module, num_particles=100):
         self.movement_module = movement_module
@@ -41,27 +47,33 @@ class Robot:
             if angle_delta != 0:
                 if angle_delta > 180:
                     angle_delta = angle_delta - 360
+
                 self.rotate_particles(angle_delta)
                 self.movement_module.turn(angle_delta, turn_speed)
                 self.rot = angle
             if dist != 0:
-                self.move_particles(delta)
+                self.move_particles(delta, dist)
                 self.movement_module.move_linear(-dist, speed_m)
                 self.pos = pos
 
             self.update_real_pos() # turn off monte carlo for now
 
-    def move_particles(self, delta):
-        for p in self.particles.data:
-            # print("old pos", p.pos, "delta x",  delta.x, "theta: ", p.theta)
+    def move_particles(self, delta, dist):
+        dist_sqrt = math.sqrt(dist)
+        sdx = self.SD_X_FIXED + self.SD_X_GROWTH * dist_sqrt
+        sdy = self.SD_Y_FIXED + self.SD_Y_GROWTH * dist_sqrt
+        sdtheta = self.SD_THETA_MOV_FIXED + self.SD_THETA_MOV_GROWTH * dist_sqrt
+
+        for p in self.particles.data:            
             p.pos.x, p.pos.y, p.theta = ptcls.straightLineWeightedParticles(
-                p.pos.x, p.pos.y, p.theta, delta.x, delta.y, self.SD_X, self.SD_Y, self.SD_THETA_MOV)
-            # print("new pos", p.pos, "new theta: ", p.theta)
+                p.pos.x, p.pos.y, p.theta, delta.x, delta.y, sdx, sdy, sdtheta)
 
     def rotate_particles(self, delta):
+        delta_sqrt = math.sqrt(delta)
+        sdtheta = self.SD_THETA_ROT_FIXED + self.SD_THETA_ROT_GROWTH * delta_sqrt
         for p in self.particles.data:
             p.pos.x, p.pos.y, p.theta = ptcls.rotationWeightedParticles(
-                p.pos.x, p.pos.y, p.theta, delta, self.SD_THETA_ROT)
+                p.pos.x, p.pos.y, p.theta, delta, sdtheta)
 
     def update_real_pos(self):
         sensor_distance = self.sensor_module.get_sonar_snapshot()
@@ -77,6 +89,6 @@ class Robot:
             acc_pos = acc_pos + p.pos * p.weight
 
         self.pos = acc_pos
-        self.rot = mean_angle([p.theta for p in self.particles.data]) # dunno if this is right
+        self.rot = mean_angle([p.theta for p in self.particles.data])
 
         self.particles.resample()

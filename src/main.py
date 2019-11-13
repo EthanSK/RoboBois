@@ -43,6 +43,8 @@ try:
 
             # print("new pose: ", roboboi.pos, roboboi.rot)
             canvas.drawParticles(roboboi.particles.data)
+        roboboi.reset()
+        break
 
 
 except KeyboardInterrupt:

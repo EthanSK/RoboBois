@@ -37,7 +37,7 @@ def draw_lines():
 def calculate_likelihood(x, y, theta, z):
     mymap = generate_map()
     (nearest_wall, m) = find_nearest_wall(x, y, theta, mymap)
-    return likelihood(z, m, 3, 0.05)
+    return likelihood(z, m, 3, 0.01)
 
 
 # return (x0, y0, x1, y1)
@@ -76,7 +76,7 @@ def calculate_forward_distance_to_wall(x, y, theta, wall):
 
 
 def likelihood(z, m, sd, offset):
-    exponent = (-((z - m) ** 2)) / (2 * sd * sd)
+    exponent = (-((z - m) ** 2)) / (2 * sd ** 2)
     return math.exp(exponent) + offset
 
 # difference between wall normal and line made with sonar facing wall
