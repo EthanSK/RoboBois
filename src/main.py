@@ -27,7 +27,7 @@ movement_module = movement.MovementModule(
 sensor_module = sensor.SensorModule(
     BP, touch_port_left, touch_port_right, sonar_port, 8)
 
-roboboi = robot.Robot(BP, movement_module, sensor_module, 100)
+roboboi = robot.Robot(BP, movement_module, sensor_module, 500)
 
 
 try:
@@ -75,7 +75,7 @@ try:
 
             print("poo ", waypoint, roboboi.pos, roboboi.rot)
             canvas.drawParticles(roboboi.particles.data)
-            time.sleep(0.5)
+            # time.sleep(0.5)
         roboboi.reset()
         break
 

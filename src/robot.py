@@ -12,13 +12,13 @@ from math import radians, degrees
 class Robot:
     SD_X_FIXED = 3  # cm
     SD_Y_FIXED = 3  # cm
-    SD_THETA_MOV_FIXED = 3  # degrees
-    SD_THETA_ROT_FIXED = 5  # degrees
+    SD_THETA_MOV_FIXED = 5 # degrees
+    SD_THETA_ROT_FIXED = 10  # degrees
 
-    SD_X_GROWTH = 0.5  # cm
-    SD_Y_GROWTH = 0.5  # cm
-    SD_THETA_MOV_GROWTH = 0.2  # degrees
-    SD_THETA_ROT_GROWTH = 0.2  # degrees
+    SD_X_GROWTH = 0.2  # cm
+    SD_Y_GROWTH = 0.2  # cm
+    SD_THETA_MOV_GROWTH = 0.1  # degrees
+    SD_THETA_ROT_GROWTH = 0.3  # degrees
 
     def __init__(self, BP, movement_module, sensor_module, num_particles=100):
         self.BP = BP
