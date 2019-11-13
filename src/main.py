@@ -25,7 +25,7 @@ movement_module = movement.MovementModule(
     BP, motor_port_left, motor_port_right, wheel_radius, body_radius)
 
 sensor_module = sensor.SensorModule(
-    BP, touch_port_left, touch_port_right, sonar_port, 8)
+    BP, touch_port_left, touch_port_right, sonar_port, 5)
 
 roboboi = robot.Robot(BP, movement_module, sensor_module, 500)
 
@@ -69,7 +69,7 @@ try:
         for waypoint in split:
             # print("old pose: ", roboboi.pos, roboboi.rot)
 
-            roboboi.move_to_pos(waypoint, 12, 25)
+            roboboi.move_to_pos(waypoint, 15, 25)
             # sensor_distance = roboboi.sensor_module.get_sonar_distance()
             # print(sensor_distance)
 

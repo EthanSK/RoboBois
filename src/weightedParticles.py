@@ -3,7 +3,7 @@ import math
 
 
 def straightLineWeightedParticles(x, y, theta_degrees, xdistance, ydistance, sdx, sdy, sdtheta):
-    min_noise = 0.2
+    min_noise = 0.1
     vary_noise = 1 - min_noise
     rads = math.radians(theta_degrees)
 

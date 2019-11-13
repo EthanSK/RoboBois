@@ -10,7 +10,7 @@ from math import radians, degrees
 
 
 class Robot:
-    SD_X_FIXED = 3  # cm
+    SD_X_FIXED = 3  # cm 
     SD_Y_FIXED = 3  # cm
     SD_THETA_MOV_FIXED = 5 # degrees
     SD_THETA_ROT_FIXED = 10  # degrees
