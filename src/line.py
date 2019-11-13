@@ -28,10 +28,11 @@ class Line:
         return math.isclose(a2 + 2 * math.sqrt(a2 * b2) + b2, c2)
 
     def bounds_point(self, point):
-        if point.x > max(self.start_point.x, self.end_point.x): return False
-        if point.x < min(self.start_point.x, self.end_point.x): return False
-        if point.y > max(self.start_point.y, self.end_point.y): return False
-        if point.y < min(self.start_point.y, self.end_point.y): return False
+        epsilon = 0.001
+        if point.x > max(self.start_point.x, self.end_point.x) + epsilon: return False
+        if point.x < min(self.start_point.x, self.end_point.x) - epsilon: return False
+        if point.y > max(self.start_point.y, self.end_point.y) + epsilon: return False
+        if point.y < min(self.start_point.y, self.end_point.y) - epsilon: return False
         return True
 
     def __eq__(self, other):

@@ -15,13 +15,14 @@ class Robot:
     SD_THETA_MOV_FIXED = 3  # degrees
     SD_THETA_ROT_FIXED = 5  # degrees
 
-    SD_X_GROWTH = 0.15 # cm
-    SD_Y_GROWTH = 0.15  # cm
-    SD_THETA_MOV_GROWTH = 0.05 # degrees
-    SD_THETA_ROT_GROWTH= 0.01  # degrees
+    SD_X_GROWTH = 0.25 # cm
+    SD_Y_GROWTH = 0.25  # cm
+    SD_THETA_MOV_GROWTH = 0.1 # degrees
+    SD_THETA_ROT_GROWTH= 0.1  # degrees
 
 
-    def __init__(self, movement_module, sensor_module, num_particles=100):
+    def __init__(self, BP, movement_module, sensor_module, num_particles=100):
+        self.BP = BP
         self.movement_module = movement_module
         self.sensor_module = sensor_module
         self.pos = Vector2(0, 0)
@@ -29,8 +30,7 @@ class Robot:
         self.particles = Particles(num_particles)
 
     def reset(self):
-        self.movement_module.reset()
-        self.sensor_module.reset()
+        self.BP.reset_all()
 
     def force_pos_rot(self, pos, theta):
         self.pos = pos
@@ -69,14 +69,14 @@ class Robot:
                 p.pos.x, p.pos.y, p.theta, delta.x, delta.y, sdx, sdy, sdtheta)
 
     def rotate_particles(self, delta):
-        delta_sqrt = math.sqrt(delta)
+        delta_sqrt = math.sqrt(abs(delta))
         sdtheta = self.SD_THETA_ROT_FIXED + self.SD_THETA_ROT_GROWTH * delta_sqrt
         for p in self.particles.data:
             p.pos.x, p.pos.y, p.theta = ptcls.rotationWeightedParticles(
                 p.pos.x, p.pos.y, p.theta, delta, sdtheta)
 
     def update_real_pos(self):
-        sensor_distance = self.sensor_module.get_sonar_snapshot()
+        sensor_distance = self.sensor_module.get_sonar_snapshot(20, 500)
         self.particles.update_weights(sensor_distance)
         self.particles.normalize_weights()
 

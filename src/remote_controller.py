@@ -13,7 +13,7 @@ motor_port_left = brickpi3.BrickPi3.PORT_D
 motor_port_right = brickpi3.BrickPi3.PORT_A
 touch_port_left = brickpi3.BrickPi3.PORT_4
 touch_port_right = brickpi3.BrickPi3.PORT_1
-sonar_port = brickpi3.BrickPi3.PORT_2
+sonar_port = brickpi3.BrickPi3.PORT_3
 
 wheel_radius = 3.5  # 3.5cm
 body_radius = 9.1  # 9.1cm

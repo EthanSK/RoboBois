@@ -17,23 +17,32 @@ sonar_port = brickpi3.BrickPi3.PORT_2
 wheel_radius = 3.5  # 3.5cm
 body_radius = 8.4  # cm #works on carpet at 8.4
 
-movement_module = movement.MovementModule(
+
+BP = brickpi3.BrickPi3()
+BP.reset_all()
+
+movement_module = movement.MovementModule(BP,
     motor_port_left, motor_port_right, wheel_radius, body_radius)
-sensor_module = sensor.SensorModule(
+
+sensor_module = sensor.SensorModule(BP,
     touch_port_left, touch_port_right, sonar_port, 8)
-roboboi = robot.Robot(movement_module, sensor_module, 100)
+
+roboboi = robot.Robot(BP, movement_module, sensor_module, 100)
 
 
 
 try:
     montecarlo.draw_lines()
+    # a = montecarlo.find_nearest_wall(84, 30, -45, montecarlo.generate_map())
+    # print("walllll: ", a[0], a[1])
+    # print("actual sensor reading: ", roboboi.sensor_module.get_sonar_snapshot(10, 1000))
     
     while True:
         
         waypoints = [
              Vector2(84, 30), Vector2(180, 30), Vector2(180, 54) ,Vector2(138, 54) ,Vector2(138, 168), Vector2(114, 168), Vector2(114, 84) , Vector2(84, 84) ,Vector2(84, 30)
         ]
-        split = montecarlo.split_path(waypoints, 30)
+        split = montecarlo.split_path(waypoints, 20)
         # [print(w) for w in split]
         roboboi.force_pos_rot(waypoints[0], 0)
         for waypoint in split:

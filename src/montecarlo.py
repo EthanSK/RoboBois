@@ -7,6 +7,7 @@ from line import Line
 MAX_ANGLE = 40
 
 
+
 def generate_map():
     mymap = particleDataStructures.Map()
     # Definitions of walls
@@ -35,6 +36,7 @@ def draw_lines():
 
 
 def calculate_likelihood(x, y, theta, z):
+    return 1
     mymap = generate_map()
     (nearest_wall, m) = find_nearest_wall(x, y, theta, mymap)
     return likelihood(z, m, 3, 0.01)
@@ -66,8 +68,7 @@ def find_nearest_wall(x, y, theta, map):
 def calculate_forward_distance_to_wall(x, y, theta, wall):
     Ax, Ay, Bx, By = wall.start_point.x, wall.start_point.y, wall.end_point.x, wall.end_point.y
     # uses var names from lecture slides so easier to implement
-    denominator = (By - Ay) * math.cos(math.radians(theta)) - \
-        (Bx - Ax) * math.sin(math.radians(theta))
+    denominator = (By - Ay) * math.cos(math.radians(theta)) - (Bx - Ax) * math.sin(math.radians(theta))
     if denominator == 0:
         return math.inf
 
@@ -105,4 +106,5 @@ def split_path(waypoints, split_dist):
 
     new_points.append(waypoints[-1])
     return new_points
+
 

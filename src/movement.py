@@ -6,8 +6,8 @@ class MovementModule:
     max_power = 50
     max_dps = 0
 
-    def __init__(self, lmotor, rmotor, wh_radius, bd_radius, bias=0):
-        self.BP = brickpi3.BrickPi3()
+    def __init__(self, BP, lmotor, rmotor, wh_radius, bd_radius, bias=0):
+        self.BP = BP
         self.lmotor = lmotor
         self.rmotor = rmotor
 

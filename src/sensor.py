@@ -1,10 +1,11 @@
 import brickpi3
 import math
+import time
 
 
 class SensorModule:
-    def __init__(self, ltouch, rtouch, sonar, sonar_offset=0):
-        self.BP = brickpi3.BrickPi3()
+    def __init__(self, BP, ltouch, rtouch, sonar, sonar_offset=0):
+        self.BP = BP
         self.ltouch = ltouch
         self.rtouch = rtouch
         self.sonar = sonar
@@ -33,6 +34,7 @@ class SensorModule:
             return False
 
     def get_sonar_distance(self):
+        # time.sleep(0.02)
         try:
             dist = self.BP.get_sensor(self.sonar) + self.sonar_offset
             self.sonar_frames.insert(0, dist)
@@ -52,11 +54,15 @@ class SensorModule:
         else:
             return -1
 
-    def get_sonar_snapshot(self, n=10):
+    def get_sonar_snapshot(self, n=10, warmup=0):
+        if warmup > 0:
+            self.get_sonar_snapshot(warmup, 0)
+
         snaps = 0
         acc = 0
         while snaps < n:
             dist = self.get_sonar_distance()
+            # print(dist)
             if dist >= 0:
                 acc += dist
                 snaps += 1
