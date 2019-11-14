@@ -42,8 +42,8 @@ class MovementState(Enum):
 def main(stdscr):
     # do not wait for input when calling getch
     stdscr.nodelay(1)
-    lin_speed = 5
-    turn_speed = 90
+    lin_speed = 12
+    turn_speed = 25
     steer_amount = 0
     steer_step = 0.1
     steer_init_step = 0.3

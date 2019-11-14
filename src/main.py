@@ -25,33 +25,15 @@ movement_module = movement.MovementModule(
     BP, motor_port_left, motor_port_right, wheel_radius, body_radius)
 
 sensor_module = sensor.SensorModule(
-    BP, touch_port_left, touch_port_right, sonar_port, 5)
+    BP, touch_port_left, touch_port_right, sonar_port, 7.7)
 
 roboboi = robot.Robot(BP, movement_module, sensor_module, 500)
 
 
 try:
     montecarlo.draw_lines()
-    # a = montecarlo.find_nearest_wall(84, 30, -45, montecarlo.generate_map())
-    # print("walllll: ", a[0], a[1])
-    # print("actual sensor reading: ", roboboi.sensor_module.get_sonar_snapshot(10, 1000))
+
     while True:
-        # testing resampling
-        # ps = Particles(1000)
-        # for i in range(ps.count):
-        #     x = random.random() * 100
-        #     y = random.random() * 100
-        #     ps.data.append(Particle(x, y, 0, 90))
-
-        # for i in range(ps.count):
-        #     x = random.random() * 100 + 100
-        #     y = random.random() * 100
-        #     ps.data.append(Particle(x, y, 0, 10))
-        # ps.normalize_weights()
-        # ps.resample()
-        # ps.draw()
-        # break
-
         waypoints = [
             Vector2(84, 30),
             Vector2(180, 30),
@@ -64,18 +46,13 @@ try:
             Vector2(84, 30)
         ]
         split = montecarlo.split_path(waypoints, 20)
-        # [print(w) for w in split]
         roboboi.force_pos_rot(waypoints[0], 0)
         for waypoint in split:
-            # print("old pose: ", roboboi.pos, roboboi.rot)
+            roboboi.move_to_pos(waypoint, 12, 25)
 
-            roboboi.move_to_pos(waypoint, 15, 25)
-            # sensor_distance = roboboi.sensor_module.get_sonar_distance()
-            # print(sensor_distance)
-
-            print("poo ", waypoint, roboboi.pos, roboboi.rot)
+            # print("pos ", waypoint, roboboi.pos, roboboi.rot)
+            time.sleep(1)
             canvas.drawParticles(roboboi.particles.data)
-            # time.sleep(0.5)
         roboboi.reset()
         break
 

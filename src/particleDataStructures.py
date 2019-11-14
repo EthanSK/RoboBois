@@ -109,7 +109,7 @@ class Particles:
             p.weight /= acc
 
     def resample(self):
-        cum = []  # topkek
+        cum = [] 
         # generate cumulative weight array
         acc = 0 # weight accumulator
         for p in self.data:

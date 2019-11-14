@@ -79,7 +79,7 @@ class Robot:
         print("sensor distance: ", sensor_distance)
         self.particles.update_weights(sensor_distance)
         self.particles.normalize_weights()
-        # self.particles.draw()
+        self.particles.draw()
         self.particles.resample()
 
         acc_pos = Vector2(0, 0)
@@ -90,7 +90,7 @@ class Robot:
         for p in self.particles.data:
             acc_pos = acc_pos + p.pos
 
-        self.pos = acc_pos/self.particles.count
+        self.pos = acc_pos / self.particles.count
         self.rot = mean_angle([p.theta for p in self.particles.data])
         
 
