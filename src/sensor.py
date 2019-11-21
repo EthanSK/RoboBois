@@ -4,12 +4,13 @@ import time
 
 
 class SensorModule:
-    def __init__(self, BP, ltouch, rtouch, sonar, sonar_offset=0):
+    def __init__(self, BP, ltouch, rtouch, sonar, sonar_motor, sonar_offset=0):
         self.BP = BP
         self.ltouch = ltouch
         self.rtouch = rtouch
         self.sonar = sonar
         self.sonar_offset = sonar_offset
+        self.sonar_motor = sonar_motor
 
         self.BP.set_sensor_type(ltouch, self.BP.SENSOR_TYPE.TOUCH)
         self.BP.set_sensor_type(rtouch, self.BP.SENSOR_TYPE.TOUCH)
@@ -68,3 +69,5 @@ class SensorModule:
                 snaps += 1
 
         return acc / n
+
+    def get_sonar_full_rotation(self, interval=1):

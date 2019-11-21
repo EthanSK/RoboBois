@@ -14,6 +14,7 @@ motor_port_right = brickpi3.BrickPi3.PORT_A
 touch_port_left = brickpi3.BrickPi3.PORT_4
 touch_port_right = brickpi3.BrickPi3.PORT_1
 sonar_port = brickpi3.BrickPi3.PORT_3
+sonar_motor_port = brickpi3.BrickPi3.PORT_C
 
 wheel_radius = 3.5  # 3.5cm
 body_radius = 9.1  # 9.1cm
@@ -25,7 +26,7 @@ movement = movement.MovementModule(BP,
     motor_port_left, motor_port_right, wheel_radius, body_radius)
 
 sensor_module = sensor.SensorModule(BP,
-    touch_port_left, touch_port_right, sonar_port, 8)
+    touch_port_left, touch_port_right, sonar_port, sonar_motor_port)
 
 roboboi = robot.Robot(BP, movement, sensor_module)
 
