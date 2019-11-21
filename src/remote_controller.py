@@ -12,7 +12,7 @@ from enum import Enum
 motor_port_left = brickpi3.BrickPi3.PORT_D
 motor_port_right = brickpi3.BrickPi3.PORT_A
 touch_port_left = brickpi3.BrickPi3.PORT_4
-touch_port_right = brickpi3.BrickPi3.PORT_1
+touch_port_right = brickpi3.BrickPi3.PORT_3
 sonar_port = brickpi3.BrickPi3.PORT_3
 sonar_motor_port = brickpi3.BrickPi3.PORT_C
 

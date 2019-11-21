@@ -71,17 +71,16 @@ class SensorModule:
 
         return acc / n
 
-    def get_sonar_full_rotation(self, snap_interval=1, rotate_dps=90, non_snap_rotate_dps=360):
+    def get_sonar_full_rotation(self, snap_interval=1, rotate_dps=90, non_snap_rotate_dps=180):
         self.BP.set_motor_limits(
             self.sonar_motor, MovementModule.max_power, MovementModule.max_dps)
         res = []
 
         def rotate_and_observe(up_to_degress):
             self.BP.set_motor_dps(self.sonar_motor, rotate_dps)
-            return
             cur_degrees = self.BP.get_motor_encoder(self.sonar_motor)
             prev_snap_degrees = cur_degrees
-            while cur_degrees <= up_to_degress:
+            while cur_degrees < up_to_degress: #must be < not <= or too many elems in res
                 cur_degrees = self.BP.get_motor_encoder(self.sonar_motor)
 
                 if cur_degrees >= prev_snap_degrees + snap_interval:
@@ -91,7 +90,6 @@ class SensorModule:
                     prev_snap_degrees = cur_degrees
             self.BP.set_motor_dps(self.sonar_motor, 0)
 
-        self.BP.set_motor_dps(self.sonar_motor, rotate_dps)
         # rotate 180 one way, rotate 360 other way, then rotate 180 until reach start
         start_degrees = self.BP.get_motor_encoder(self.sonar_motor)
         rotate_and_observe(start_degrees + 180)

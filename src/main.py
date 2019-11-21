@@ -13,7 +13,7 @@ import random
 motor_port_left = brickpi3.BrickPi3.PORT_D
 motor_port_right = brickpi3.BrickPi3.PORT_A
 touch_port_left = brickpi3.BrickPi3.PORT_4
-touch_port_right = brickpi3.BrickPi3.PORT_1
+touch_port_right = brickpi3.BrickPi3.PORT_3
 sonar_port = brickpi3.BrickPi3.PORT_3
 sonar_motor_port = brickpi3.BrickPi3.PORT_C
 
@@ -22,7 +22,7 @@ body_radius = 8.4  # cm #works on carpet at 8.4
 
 
 BP = brickpi3.BrickPi3()
-BP.reset_all()
+# BP.reset_all()
 
 movement_module = movement.MovementModule(
     BP, motor_port_left, motor_port_right, wheel_radius, body_radius)
@@ -45,11 +45,12 @@ waypoints = [
 ]
 
 try:
-    roboboi.movement_module.set_left_dps(5)
-    # full_rot = roboboi.sensor_module.get_sonar_full_rotation()
-    # print(full_rot)
+    print(roboboi.sensor_module.get_sonar_distance())
+    full_rot = roboboi.sensor_module.get_sonar_full_rotation()
+    print(full_rot)
     while True:
         break
+    roboboi.reset()
 
 except KeyboardInterrupt:
     roboboi.reset()
