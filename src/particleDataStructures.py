@@ -98,7 +98,7 @@ class Particles:
     def update_weights(self, sensor_distance):
         for p in self.data:
             likelihood = montecarlo.calculate_likelihood(p.pos.x, p.pos.y, p.theta, sensor_distance)
-            p.weight *= likelihood  # update weight
+            p.weight = likelihood  # update weight
 
     def normalize_weights(self):
         acc = 0
@@ -109,7 +109,7 @@ class Particles:
             p.weight /= acc
 
     def resample(self):
-        cum = []  # topkek
+        cum = [] 
         # generate cumulative weight array
         acc = 0 # weight accumulator
         for p in self.data:

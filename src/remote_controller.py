@@ -13,14 +13,21 @@ motor_port_left = brickpi3.BrickPi3.PORT_D
 motor_port_right = brickpi3.BrickPi3.PORT_A
 touch_port_left = brickpi3.BrickPi3.PORT_4
 touch_port_right = brickpi3.BrickPi3.PORT_1
-sonar_port = brickpi3.BrickPi3.PORT_2
+sonar_port = brickpi3.BrickPi3.PORT_3
 
 wheel_radius = 3.5  # 3.5cm
 body_radius = 9.1  # 9.1cm
-movement = movement.MovementModule(
+
+BP = brickpi3.BrickPi3()
+BP.reset_all()
+
+movement = movement.MovementModule(BP,
     motor_port_left, motor_port_right, wheel_radius, body_radius)
-sensor_module = sensor.SensorModule(touch_port_left, touch_port_right, sonar_port)
-roboboi = robot.Robot(movement, sensor_module)
+
+sensor_module = sensor.SensorModule(BP,
+    touch_port_left, touch_port_right, sonar_port, 8)
+
+roboboi = robot.Robot(BP, movement, sensor_module)
 
 
 
@@ -35,8 +42,8 @@ class MovementState(Enum):
 def main(stdscr):
     # do not wait for input when calling getch
     stdscr.nodelay(1)
-    lin_speed = 5
-    turn_speed = 90
+    lin_speed = 12
+    turn_speed = 25
     steer_amount = 0
     steer_step = 0.1
     steer_init_step = 0.3

@@ -36,7 +36,8 @@ def draw_lines():
 def calculate_likelihood(x, y, theta, z):
     mymap = generate_map()
     (nearest_wall, m) = find_nearest_wall(x, y, theta, mymap)
-    return likelihood(z, m, 3, 0.05)
+    # print("nearest wall: ", chr(65 + mymap.walls.index((nearest_wall.start_point.x, nearest_wall.start_point.y, nearest_wall.end_point.x, nearest_wall.end_point.y))))
+    return likelihood(z, m, 3, 0.001)
 
 
 # return (x0, y0, x1, y1)
@@ -49,6 +50,7 @@ def find_nearest_wall(x, y, theta, map):
         wall = Line(Vector2(_wall[0], _wall[1]), Vector2(_wall[2], _wall[3]))
         m = calculate_forward_distance_to_wall(x, y, theta, wall)
 
+        # and calculate_forward_angle_to_wall(x, y, theta, wall) < MAX_ANGLE:
         if m > 0 and m < min_distance:
             x_point_on_line = x + m * math.cos(math.radians(theta))
             y_point_on_line = y + m * math.sin(math.radians(theta))
@@ -74,13 +76,13 @@ def calculate_forward_distance_to_wall(x, y, theta, wall):
 
 
 def likelihood(z, m, sd, offset):
-    exponent = (-((z - m) ** 2)) / (2 * sd * sd)
-    return math.exp(exponent) + offset
+    exponent = (-((z - m) ** 2)) / (2 * sd ** 2)
+    return (math.exp(exponent) + offset) * 10000
 
 # difference between wall normal and line made with sonar facing wall
 
 
-def calculate_sonar_angle_to_wall(x, y, theta, wall):
+def calculate_forward_angle_to_wall(x, y, theta, wall):
     Ax, Ay, Bx, By = wall.start_point.x, wall.start_point.y, wall.end_point.x, wall.end_point.y
 
     numerator = math.cos(math.radians(theta)) * (Ay - By) + \
@@ -89,14 +91,18 @@ def calculate_sonar_angle_to_wall(x, y, theta, wall):
 
     return math.degrees(math.acos(numerator/denominator))
 
-def split_up_waypoints(waypoints, split_precision):
-    new = []
-    for i in range(len(waypoints) - 1):
-        distance = waypoints[i + 1] - waypoints[i]
-        step = distance / split_precision
-        for j in range(split_precision):
-            new.append(waypoints[i] + step * j) 
-    new.append(waypoints[-1])
-    return new
 
-            
+def split_path(waypoints, split_dist):
+    new_points = []
+    for i in range(len(waypoints) - 1):
+        start = waypoints[i]
+        end = waypoints[i + 1]
+        delta = end - start
+        path_dist = delta.magnitude()
+        split_delta = delta.normalized() * split_dist
+        split_count = int(path_dist // split_dist)
+        for i in range(split_count + 1):
+            new_points.append(start + split_delta * i)
+
+    new_points.append(waypoints[-1])
+    return new_points
