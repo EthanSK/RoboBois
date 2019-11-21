@@ -8,11 +8,13 @@ from vector2 import Vector2
 from particleDataStructures import Particles, canvas, Particle
 import random
 
+
+# this script can only be run as root
 motor_port_left = brickpi3.BrickPi3.PORT_D
 motor_port_right = brickpi3.BrickPi3.PORT_A
 touch_port_left = brickpi3.BrickPi3.PORT_4
 touch_port_right = brickpi3.BrickPi3.PORT_1
-sonar_port = brickpi3.BrickPi3.PORT_2
+sonar_port = brickpi3.BrickPi3.PORT_3
 sonar_motor_port = brickpi3.BrickPi3.PORT_C
 
 wheel_radius = 3.5  # 3.5cm
@@ -28,34 +30,26 @@ movement_module = movement.MovementModule(
 sensor_module = sensor.SensorModule(
     BP, touch_port_left, touch_port_right, sonar_port, sonar_motor_port)
 
-roboboi = robot.Robot(BP, movement_module, sensor_module, 500)
+roboboi = robot.Robot(BP, movement_module, sensor_module)
 
+waypoints = [
+    Vector2(84, 30),
+    Vector2(180, 30),
+    Vector2(180, 54),
+    Vector2(138, 54),
+    Vector2(138, 168),
+    Vector2(114, 168),
+    Vector2(114, 84),
+    Vector2(84, 84),
+    Vector2(84, 30)
+]
 
 try:
-    montecarlo.draw_lines()
+    roboboi.movement_module.set_left_dps(5)
+    # full_rot = roboboi.sensor_module.get_sonar_full_rotation()
+    # print(full_rot)
     while True:
-        waypoints = [
-            Vector2(84, 30),
-            Vector2(180, 30),
-            Vector2(180, 54),
-            Vector2(138, 54),
-            Vector2(138, 168),
-            Vector2(114, 168),
-            Vector2(114, 84),
-            Vector2(84, 84),
-            Vector2(84, 30)
-        ]
-        split = montecarlo.split_path(waypoints, 20)
-        roboboi.force_pos_rot(waypoints[0], 0)
-        for waypoint in split:
-            roboboi.move_to_pos(waypoint, 12, 25)
-
-            # print("pos ", waypoint, roboboi.pos, roboboi.rot)
-            time.sleep(1)
-            canvas.drawParticles(roboboi.particles.data)
-        roboboi.reset()
         break
-
 
 except KeyboardInterrupt:
     roboboi.reset()

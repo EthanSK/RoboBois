@@ -1,6 +1,7 @@
 import brickpi3
 import math
 import time
+from movement import MovementModule
 
 
 class SensorModule:
@@ -70,4 +71,36 @@ class SensorModule:
 
         return acc / n
 
-    def get_sonar_full_rotation(self, interval=1):
+    def get_sonar_full_rotation(self, snap_interval=1, rotate_dps=90, non_snap_rotate_dps=360):
+        self.BP.set_motor_limits(
+            self.sonar_motor, MovementModule.max_power, MovementModule.max_dps)
+        res = []
+
+        def rotate_and_observe(up_to_degress):
+            self.BP.set_motor_dps(self.sonar_motor, rotate_dps)
+            return
+            cur_degrees = self.BP.get_motor_encoder(self.sonar_motor)
+            prev_snap_degrees = cur_degrees
+            while cur_degrees <= up_to_degress:
+                cur_degrees = self.BP.get_motor_encoder(self.sonar_motor)
+
+                if cur_degrees >= prev_snap_degrees + snap_interval:
+                    # take a snapshot
+                    dist = self.get_sonar_distance()
+                    res.append(dist)
+                    prev_snap_degrees = cur_degrees
+            self.BP.set_motor_dps(self.sonar_motor, 0)
+
+        self.BP.set_motor_dps(self.sonar_motor, rotate_dps)
+        # rotate 180 one way, rotate 360 other way, then rotate 180 until reach start
+        start_degrees = self.BP.get_motor_encoder(self.sonar_motor)
+        rotate_and_observe(start_degrees + 180)
+
+        self.BP.set_motor_dps(self.sonar_motor, -non_snap_rotate_dps)
+        cur_degrees = self.BP.get_motor_encoder(self.sonar_motor)
+        while cur_degrees >= start_degrees - 180:
+            cur_degrees = self.BP.get_motor_encoder(self.sonar_motor)
+
+        rotate_and_observe(start_degrees)
+
+        return res
