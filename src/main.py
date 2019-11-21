@@ -48,7 +48,7 @@ try:
     montecarlo.draw_lines()
     full_rot = roboboi.sensor_module.get_sonar_full_rotation(10)
     print(full_rot)
-    roboboi.sensor_module.draw_sonar_full_rotation(full_rot)
+    # roboboi.sensor_module.draw_sonar_full_rotation(full_rot)
     while True:
         break
     roboboi.reset()
