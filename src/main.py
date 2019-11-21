@@ -14,7 +14,7 @@ motor_port_left = brickpi3.BrickPi3.PORT_D
 motor_port_right = brickpi3.BrickPi3.PORT_A
 touch_port_left = brickpi3.BrickPi3.PORT_4
 touch_port_right = brickpi3.BrickPi3.PORT_3
-sonar_port = brickpi3.BrickPi3.PORT_3
+sonar_port = brickpi3.BrickPi3.PORT_2
 sonar_motor_port = brickpi3.BrickPi3.PORT_C
 
 wheel_radius = 3.5  # 3.5cm
@@ -45,9 +45,10 @@ waypoints = [
 ]
 
 try:
-    print(roboboi.sensor_module.get_sonar_distance())
-    full_rot = roboboi.sensor_module.get_sonar_full_rotation()
+    montecarlo.draw_lines()
+    full_rot = roboboi.sensor_module.get_sonar_full_rotation(10)
     print(full_rot)
+    roboboi.sensor_module.draw_sonar_full_rotation(full_rot)
     while True:
         break
     roboboi.reset()
