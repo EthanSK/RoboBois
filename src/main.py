@@ -47,13 +47,14 @@ waypoints = [
 
 try:
     montecarlo.draw_lines()
-    full_rot = roboboi.sensor_module.get_sonar_full_rotation()
-    print(full_rot)
-    # signatures = place_recog.SignatureContainer(5)
-    # signatures.delete_loc_files()  # delete from previous runs
+    # full_rot = roboboi.sensor_module.get_sonar_full_rotation()
+    # print(full_rot)
 
-    # # yes this is not nice and oop, i'm just lazy and using his code.
-    # place_recog.learn_location(roboboi, False)
+    signatures = place_recog.SignatureContainer(5)
+    signatures.delete_loc_files()  # delete from previous runs
+
+    # yes this is not nice and oop, i'm just lazy and using his code.
+    place_recog.learn_location(roboboi, signatures, False)
     # place_recog.recognize_location()
 
     roboboi.reset()

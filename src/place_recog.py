@@ -83,14 +83,14 @@ def characterize_location_rot_variant(robot):
     ls = LocationSignature(len(readings))
     for i in range(len(readings)):
         ls.sig[i] = readings[i][1] #store distance for each rotation
-    return 
+    return ls
 
 #doesn't matter what direction robot is facing. sig based on num of occurences of each distance measurement.
 def characterize_location_rot_invariant(robot):
     pass
 
 
-# FILL IN: compare two signatures
+# compare two signatures
 def compare_signatures(ls1, ls2):
     dist = 0
     if len(ls1.sig) != len(ls2.sig): raise Exception("The lengths of the two signatures being compared are different")
@@ -100,11 +100,11 @@ def compare_signatures(ls1, ls2):
 
 # This function characterizes the current location, and stores the obtained 
 # signature into the next available file.
-def learn_location(robot, is_rotation_invariant=True):
+def learn_location(robot, signatures, is_rotation_invariant=True):
     if is_rotation_invariant:
-        ls = characterize_location_rot_invariant()
+        ls = characterize_location_rot_invariant(robot)
     else:
-        ls = characterize_location_rot_variant()
+        ls = characterize_location_rot_variant(robot)
     idx = signatures.get_free_index()
     if (idx == -1): # run out of signature files
         print("\nWARNING:")
