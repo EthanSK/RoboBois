@@ -73,36 +73,47 @@ class SignatureContainer():
                     ls.sig[i] = int(s)
             f.close()
         else:
-            print "WARNING: Signature does not exist."
+            print("WARNING: Signature does not exist.")
         
         return ls
-        
-# FILL IN: spin robot or sonar to capture a signature and store it in ls
-def characterize_location(ls):
-    print "TODO:    You should implement the function that captures a signature."
-    for i in range(len(ls.sig)):
-        ls.sig[i] = random.randint(0, 255)
+
+#requires robot to be facing 0 to start.
+def characterize_location_rot_variant(robot):
+    readings = robot.sensor_module.get_sonar_full_rotation()
+    ls = LocationSignature(len(readings))
+    for i in range(len(readings)):
+        ls.sig[i] = readings[i][1] #store distance for each rotation
+    return 
+
+#doesn't matter what direction robot is facing. sig based on num of occurences of each distance measurement.
+def characterize_location_rot_invariant(robot):
+    pass
+
 
 # FILL IN: compare two signatures
 def compare_signatures(ls1, ls2):
     dist = 0
-    print "TODO:    You should implement the function that compares two signatures."
+    if len(ls1.sig) != len(ls2.sig): raise Exception("The lengths of the two signatures being compared are different")
+    for i in range(len(ls1.sig)):
+        dist += (ls1.sig[i] - ls2.sig[i]) ** 2
     return dist
 
 # This function characterizes the current location, and stores the obtained 
 # signature into the next available file.
-def learn_location():
-    ls = LocationSignature()
-    characterize_location(ls)
+def learn_location(robot, is_rotation_invariant=True):
+    if is_rotation_invariant:
+        ls = characterize_location_rot_invariant()
+    else:
+        ls = characterize_location_rot_variant()
     idx = signatures.get_free_index()
     if (idx == -1): # run out of signature files
-        print "\nWARNING:"
-        print "No signature file is available. NOTHING NEW will be learned and stored."
-        print "Please remove some loc_%%.dat files.\n"
+        print("\nWARNING:")
+        print("No signature file is available. NOTHING NEW will be learned and stored.")
+        print("Please remove some loc_%%.dat files.\n")
         return
     
     signatures.save(ls,idx)
-    print "STATUS:  Location " + str(idx) + " learned and saved."
+    print("STATUS:  Location " + str(idx) + " learned and saved.")
 
 # This function tries to recognize the current location.
 # 1.   Characterize current location
@@ -118,7 +129,7 @@ def recognize_location():
 
     # FILL IN: COMPARE ls_read with ls_obs and find the best match
     for idx in range(signatures.size):
-        print "STATUS:  Comparing signature " + str(idx) + " with the observed signature."
+        print("STATUS:  Comparing signature " + str(idx) + " with the observed signature.")
         ls_read = signatures.read(idx)
         dist    = compare_signatures(ls_obs, ls_read)
 
@@ -127,9 +138,9 @@ def recognize_location():
 # Then, either learn a location, until all the locations are learned, or try to
 # recognize one of them, if locations have already been learned.
 
-signatures = SignatureContainer(5)
-#signatures.delete_loc_files()
+# signatures = SignatureContainer(5)
+# # signatures.delete_loc_files()
 
-learn_location()
-recognize_location()
+# learn_location()
+# recognize_location()
 

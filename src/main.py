@@ -7,6 +7,7 @@ import montecarlo
 from vector2 import Vector2
 from particleDataStructures import Particles, canvas, Particle
 import random
+import place_recog
 
 
 # this script can only be run as root
@@ -46,11 +47,15 @@ waypoints = [
 
 try:
     montecarlo.draw_lines()
-    full_rot = roboboi.sensor_module.get_sonar_full_rotation(10)
+    full_rot = roboboi.sensor_module.get_sonar_full_rotation()
     print(full_rot)
-    # roboboi.sensor_module.draw_sonar_full_rotation(full_rot)
-    while True:
-        break
+    # signatures = place_recog.SignatureContainer(5)
+    # signatures.delete_loc_files()  # delete from previous runs
+
+    # # yes this is not nice and oop, i'm just lazy and using his code.
+    # place_recog.learn_location(roboboi, False)
+    # place_recog.recognize_location()
+
     roboboi.reset()
 
 except KeyboardInterrupt:

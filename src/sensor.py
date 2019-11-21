@@ -72,55 +72,47 @@ class SensorModule:
 
         return acc / n
 
-    def get_sonar_full_rotation(self, snap_interval=1, rotate_dps=90, non_snap_rotate_dps=180, should_draw_live=True):
+    def get_sonar_full_rotation(self, snapshot_interval=2, sleep_between_rot_delta=0.01, should_draw_live=True):
         self.BP.set_motor_limits(
             self.sonar_motor, MovementModule.max_power, MovementModule.max_dps)
+        self.BP.offset_motor_encoder(self.sonar_motor, self.BP.get_motor_encoder(self.sonar_motor)) #reset encoder
         res = []
-        start_degrees = self.BP.get_motor_encoder(self.sonar_motor)
-        offset = start_degrees % 360
-        canvas = Canvas(512) #for live drawing
+        canvas = Canvas(512)  # for live drawing
 
-        def rotate_and_observe(up_to_degress):
-            self.BP.set_motor_dps(self.sonar_motor, rotate_dps)
+        def rotate_and_observe(up_to_degrees, no_observe = False):
             cur_degrees = self.BP.get_motor_encoder(self.sonar_motor)
-            prev_snap_degrees = cur_degrees
-            while cur_degrees < up_to_degress:  # must be < not <= or too many elems in res
-                cur_degrees = self.BP.get_motor_encoder(self.sonar_motor)
-
-                if cur_degrees >= prev_snap_degrees + snap_interval:
-                    # take a snapshot
-                    dist = self.get_sonar_distance()
-                    # we return the exact rot at which this dist was gotten
-                    new = -(cur_degrees - offset), dist
-                    res.append(new) #-ve so the angle matches with the map angle convention
-                    if should_draw_live: self.draw_sonar_line(new, canvas, 256, 256)
-                    prev_snap_degrees = cur_degrees
-            self.BP.set_motor_dps(self.sonar_motor, 0)
+            interval = snapshot_interval if cur_degrees < up_to_degrees else -snapshot_interval
+            loop = range(cur_degrees, up_to_degrees + interval, interval)
+            for new_rot in loop:
+                self.BP.set_motor_position(self.sonar_motor, new_rot)
+                time.sleep(sleep_between_rot_delta)
+                if no_observe: continue
+                dist = self.get_sonar_distance()
+                new = (-new_rot, dist) # -ve so the angle matches with the map angle convention
+                res.append(new)
+                if should_draw_live:
+                    self.draw_sonar_line(new, canvas, 256, 256)
 
         # rotate 180 one way, rotate 360 other way, then rotate 180 until reach start
-        rotate_and_observe(start_degrees + 180)
-        self.BP.set_motor_dps(self.sonar_motor, 0)
-        time.sleep(0.3) #for accuracy
-        self.BP.set_motor_dps(self.sonar_motor, -non_snap_rotate_dps)
-        cur_degrees = self.BP.get_motor_encoder(self.sonar_motor)
-        while cur_degrees >= start_degrees - 180:
-            cur_degrees = self.BP.get_motor_encoder(self.sonar_motor)
-        self.BP.set_motor_dps(self.sonar_motor, 0)
+        rotate_and_observe(180)
+        time.sleep(0.3)  # for accuracy
+        rotate_and_observe(-180, True) # no observing here
         time.sleep(0.3)
-        rotate_and_observe(start_degrees)
+        rotate_and_observe(0)
+        time.sleep(0.3)
 
         return res
-    
+
     def draw_sonar_line(self, data, canvas, start_line_x, start_line_y):
-            rot_degrees = data[0]
-            distance = data[1]
-            if distance == -1:
-                return
-            # we add start because that is essentially the new origin of the graph since we're dealing with distances.
-            end_x = start_line_x + distance * math.cos(math.radians(rot_degrees))
-            end_y = start_line_y + distance * math.sin(math.radians(rot_degrees))
-            canvas.drawLine(
-                (start_line_x, start_line_y, end_x, end_y))
+        rot_degrees = data[0]
+        distance = data[1]
+        if distance == -1:
+            return
+        # we add start because that is essentially the new origin of the graph since we're dealing with distances.
+        end_x = start_line_x + distance * math.cos(math.radians(rot_degrees))
+        end_y = start_line_y + distance * math.sin(math.radians(rot_degrees))
+        canvas.drawLine(
+            (start_line_x, start_line_y, end_x, end_y))
 
     def draw_sonar_full_rotation(self, data):
         # canvas size is bigger since distances can go up to 255
