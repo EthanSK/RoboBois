@@ -23,7 +23,7 @@ body_radius = 8.4  # cm #works on carpet at 8.4
 
 
 BP = brickpi3.BrickPi3()
-# BP.reset_all()
+BP.reset_all()
 
 movement_module = movement.MovementModule(
     BP, motor_port_left, motor_port_right, wheel_radius, body_radius)
@@ -47,15 +47,23 @@ waypoints = [
 
 try:
     montecarlo.draw_lines()
+
     # full_rot = roboboi.sensor_module.get_sonar_full_rotation()
     # print(full_rot)
 
     signatures = place_recog.SignatureContainer(5)
     signatures.delete_loc_files()  # delete from previous runs
 
-    # yes this is not nice and oop, i'm just lazy and using his code.
+    input("set location 1 (Press Enter when ready)")
     place_recog.learn_location(roboboi, signatures)
-    # place_recog.recognize_location()
+    input("set location 2 (Press Enter when ready)")
+    place_recog.learn_location(roboboi, signatures)
+    input("set in location to guess (Press Enter when ready)")
+    res = place_recog.recognize_location(roboboi, signatures, False)
+    # print("location index: ", res[0], "angle shift: ", res[1])
+    # while True:
+    #     dist = roboboi.sensor_module.get_sonar_distance()
+    #     print(dist)
 
     roboboi.reset()
 

@@ -4,6 +4,7 @@
 
 import random
 import os
+import copy
 
 # Location signature class: stores a signature characterizing one location
 
@@ -113,19 +114,19 @@ def compare_signatures(ls1, ls2):
 def calc_sig_shift_degrees(ls1, ls2):
     min_dist = 0
     shift_at_min_dist = 0
-    sliding_sig = ls1.sig
+    sliding_ls = copy.copy(ls1)
     if len(ls1.sig) != len(ls2.sig):
         raise Exception(
             "The lengths of the two signatures being compared are different")
     # need to slide one signature over the other, and calculate the min dist at every slide delta
     # When sliding (ls1 over ls2), values over 360 should wrap around. should do the shift 360 times
     for shift in range(len(ls1.sig)):
-        dist = compare_signatures(sliding_sig, ls2)
+        dist = compare_signatures(sliding_ls, ls2)
         if dist < min_dist:
             min_dist = dist
             shift_at_min_dist = shift
         # rotate
-        sliding_sig = ls1.sig[shift:] + ls1.sig[:shift]
+        sliding_ls.sig = ls1.sig[shift:] + ls1.sig[:shift]
     return shift_at_min_dist
 
 # This function characterizes the current location, and stores the obtained
@@ -157,6 +158,7 @@ def learn_location(robot, signatures):
 
 def recognize_location(robot, signatures, is_rotation_invariant=True):
     ls_obs = characterize_location(robot)
+    print("ls obs:", len(ls_obs.sig), ls_obs.sig)
     if is_rotation_invariant:
         ls_obs_invariant = convert_sig_to_rot_invariant(ls_obs)
 
