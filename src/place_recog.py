@@ -81,8 +81,6 @@ class SignatureContainer():
 
         return ls
 
-# requires robot to be facing 0 to start.
-
 
 def characterize_location(robot):
     readings = robot.sensor_module.get_sonar_full_rotation()
@@ -90,8 +88,6 @@ def characterize_location(robot):
     for i in range(len(readings)):
         ls.sig[i] = readings[i][1]  # store distance for each rotation
     return ls
-
-# doesn't matter what direction robot is facing. sig based on num of occurences of each distance measurement.
 
 
 def convert_sig_to_rot_invariant(ls):
