@@ -82,7 +82,7 @@ def main(stdscr):
                     else: steer_amount = min(1, steer_amount + steer_step)
                     movement.steer(lin_speed * lin_speed_mul, steer_amount)
                 else:
-                    movement.set_turn_speed(-turn_speed)
+                    movement.set_turn_speed(turn_speed)
                     movement_state = MovementState.CLOCKWISE
             elif c == 260:  # left arrow
                 if movement_state is MovementState.FORWARD or movement_state is MovementState.BACKWARD:
@@ -90,7 +90,7 @@ def main(stdscr):
                     else: steer_amount = max(-1, steer_amount - steer_step)
                     movement.steer(lin_speed * lin_speed_mul, steer_amount)
                 else:
-                    movement.set_turn_speed(turn_speed)
+                    movement.set_turn_speed(-turn_speed)
                     movement_state = MovementState.ANTICLOCKWISE
 
             elif c == 113:  # q

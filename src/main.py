@@ -23,7 +23,7 @@ body_radius = 8.4  # cm #works on carpet at 8.4
 
 
 BP = brickpi3.BrickPi3()
-BP.reset_all()
+# BP.reset_all()
 
 movement_module = movement.MovementModule(
     BP, motor_port_left, motor_port_right, wheel_radius, body_radius)
@@ -47,6 +47,9 @@ waypoints = [
 if __name__ == "__main__":
     try:
         montecarlo.draw_lines()
+
+        roboboi.movement_module.move_linear(10, 10)
+        roboboi.movement_module.turn(45, 90)
 
         # while True:
         #     full_rot = roboboi.sensor_module.get_sonar_full_rotation(

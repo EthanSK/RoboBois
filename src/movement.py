@@ -61,8 +61,8 @@ class MovementModule:
         rps = lin_ms / self.wh_circ
         dps = rps * 360
 
-        self.set_left_dps(dps)
-        self.set_right_dps(-dps)
+        self.set_left_dps(-dps)
+        self.set_right_dps(dps)
 
     def reset(self):
         self.BP.reset_all()
@@ -77,12 +77,12 @@ class MovementModule:
 
         return degrees
 
-    def move_linear(self, length_m, speed_ms=10):
-        if length_m < 0:
-            length_m *= -1
+    def move_linear(self, length_cm, speed_ms=10):
+        if length_cm < 0:
+            length_cm *= -1
             speed_ms *= -1
 
-        degrees = self.get_linear_degrees(length_m, speed_ms)
+        degrees = self.get_linear_degrees(length_cm, speed_ms)
         if degrees != 0:
             self.set_linear_speed(speed_ms)
             self.wait_x_degrees(degrees)
