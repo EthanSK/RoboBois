@@ -44,28 +44,24 @@ waypoints = [
     Vector2(84, 84),
     Vector2(84, 30)
 ]
+if __name__ == "__main__":
+    try:
+        montecarlo.draw_lines()
 
-try:
-    montecarlo.draw_lines()
+        # while True:
+        #     full_rot = roboboi.sensor_module.get_sonar_full_rotation(
+        #         1, 0.004, True, (180, 30))
+        #     print(full_rot)
 
-    # full_rot = roboboi.sensor_module.get_sonar_full_rotation()
-    # print(full_rot)
 
-    signatures = place_recog.SignatureContainer(5)
-    signatures.delete_loc_files()  # delete from previous runs
+        # input("set in location to guess (Press Enter when ready)")
+        # res = place_recog.recognize_location(roboboi, signatures, False)
+        # print("location index: ", res[0], "angle shift: ", res[1])
+        # while True:
+        #     dist = roboboi.sensor_module.get_sonar_distance()
+        #     print(dist)
 
-    input("set location 1 (Press Enter when ready)")
-    place_recog.learn_location(roboboi, signatures)
-    input("set location 2 (Press Enter when ready)")
-    place_recog.learn_location(roboboi, signatures)
-    input("set in location to guess (Press Enter when ready)")
-    res = place_recog.recognize_location(roboboi, signatures, True)
-    # print("location index: ", res[0], "angle shift: ", res[1])
-    # while True:
-    #     dist = roboboi.sensor_module.get_sonar_distance()
-    #     print(dist)
+        roboboi.reset()
 
-    roboboi.reset()
-
-except KeyboardInterrupt:
-    roboboi.reset()
+    except KeyboardInterrupt:
+        roboboi.reset()

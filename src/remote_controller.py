@@ -6,29 +6,7 @@ import brickpi3
 import curses
 import sounds
 from enum import Enum
-
-
-# this script can only be run as root
-motor_port_left = brickpi3.BrickPi3.PORT_D
-motor_port_right = brickpi3.BrickPi3.PORT_A
-touch_port_left = brickpi3.BrickPi3.PORT_4
-touch_port_right = brickpi3.BrickPi3.PORT_3
-sonar_port = brickpi3.BrickPi3.PORT_2
-sonar_motor_port = brickpi3.BrickPi3.PORT_C
-
-wheel_radius = 3.5  # 3.5cm
-body_radius = 9.1  # 9.1cm
-
-BP = brickpi3.BrickPi3()
-BP.reset_all()
-
-movement = movement.MovementModule(BP,
-    motor_port_left, motor_port_right, wheel_radius, body_radius)
-
-sensor_module = sensor.SensorModule(BP,
-    touch_port_left, touch_port_right, sonar_port, sonar_motor_port)
-
-roboboi = robot.Robot(BP, movement, sensor_module)
+from main import roboboi, sensor_module, movement_module as movement
 
 
 
@@ -44,7 +22,7 @@ def main(stdscr):
     # do not wait for input when calling getch
     stdscr.nodelay(1)
     lin_speed = 12
-    turn_speed = 25
+    turn_speed = 100
     steer_amount = 0
     steer_step = 0.1
     steer_init_step = 0.3

@@ -193,3 +193,5 @@ def recognize_location(robot, signatures, is_rotation_invariant=True):
 
 # learn_location()
 # recognize_location()
+
+    
