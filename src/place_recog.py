@@ -92,7 +92,7 @@ def characterize_location(robot):
 
 
 def convert_sig_to_rot_invariant(ls):
-    new_ls = LocationSignature(255)
+    new_ls = LocationSignature(256)
     for i in range(len(ls.sig)):
         new_ls.sig[ls.sig[i]] += 1  # count num occurences of distance
     return new_ls
@@ -112,7 +112,7 @@ def compare_signatures(ls1, ls2):
 
 
 def calc_sig_shift_degrees(ls1, ls2):
-    min_dist = 0
+    min_dist = float('inf')
     shift_at_min_dist = 0
     sliding_ls = copy.copy(ls1)
     if len(ls1.sig) != len(ls2.sig):
@@ -158,7 +158,7 @@ def learn_location(robot, signatures):
 
 def recognize_location(robot, signatures, is_rotation_invariant=True):
     ls_obs = characterize_location(robot)
-    print("ls obs:", len(ls_obs.sig), ls_obs.sig)
+    
     if is_rotation_invariant:
         ls_obs_invariant = convert_sig_to_rot_invariant(ls_obs)
 
@@ -179,6 +179,7 @@ def recognize_location(robot, signatures, is_rotation_invariant=True):
             min_dist = dist
             min_index = idx
             min_ls_read = ls_read
+    # print("ls obs:", len(ls_obs.sig), ls_obs.sig, "ls read: ", len(min_ls_read.sig), min_ls_read.sig)
     shift = calc_sig_shift_degrees(ls_obs, min_ls_read)
     print("Index of closest signature match: ", min_index, "shift: ", shift)
     return (min_index, shift)

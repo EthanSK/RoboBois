@@ -59,7 +59,7 @@ try:
     input("set location 2 (Press Enter when ready)")
     place_recog.learn_location(roboboi, signatures)
     input("set in location to guess (Press Enter when ready)")
-    res = place_recog.recognize_location(roboboi, signatures, False)
+    res = place_recog.recognize_location(roboboi, signatures, True)
     # print("location index: ", res[0], "angle shift: ", res[1])
     # while True:
     #     dist = roboboi.sensor_module.get_sonar_distance()

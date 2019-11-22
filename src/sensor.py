@@ -75,30 +75,34 @@ class SensorModule:
     def get_sonar_full_rotation(self, snapshot_interval=1, sleep_between_rot_delta=0.005, should_draw_live=True):
         self.BP.set_motor_limits(
             self.sonar_motor, MovementModule.max_power, MovementModule.max_dps)
-        self.BP.offset_motor_encoder(self.sonar_motor, self.BP.get_motor_encoder(self.sonar_motor)) #reset encoder
+        self.BP.offset_motor_encoder(
+            self.sonar_motor, self.BP.get_motor_encoder(self.sonar_motor))  # reset encoder
         res = []
         canvas = Canvas(512)  # for live drawing
+        cur_degrees = 0  # using motor encoder is too unreliable, we need hard theoretical values
 
-        def rotate_and_observe(up_to_degrees, no_observe = False):
-            cur_degrees = self.BP.get_motor_encoder(self.sonar_motor)
+        def rotate_and_observe(up_to_degrees, no_observe=False):
             step = snapshot_interval if cur_degrees < up_to_degrees else -snapshot_interval
-            loop = range(cur_degrees, up_to_degrees + step, step)
+            loop = range(cur_degrees, up_to_degrees, step)
             for new_rot in loop:
                 self.BP.set_motor_position(self.sonar_motor, new_rot)
                 time.sleep(sleep_between_rot_delta)
-                if no_observe: continue
+                if no_observe:
+                    continue
                 dist = self.get_sonar_distance()
-                new = (-new_rot, dist) # -ve so the angle matches with the map angle convention
+                # -ve so the angle matches with the map angle convention
+                new = (-new_rot, dist)
                 res.append(new)
                 if should_draw_live:
                     self.draw_sonar_line(new, canvas, 256, 256)
+            return up_to_degrees #python is so retarded i have to do this
 
         # rotate 180 one way, rotate 360 other way, then rotate 180 until reach start
-        rotate_and_observe(180)
+        cur_degrees = rotate_and_observe(180) 
         time.sleep(0.3)  # for accuracy
-        rotate_and_observe(-179, True) # no observing here
+        cur_degrees = rotate_and_observe(-180, True)  # no observing here
         time.sleep(0.3)
-        rotate_and_observe(0)
+        cur_degrees = rotate_and_observe(0)
         time.sleep(0.3)
 
         return res
