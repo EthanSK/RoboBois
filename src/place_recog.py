@@ -84,7 +84,7 @@ class SignatureContainer():
 # requires robot to be facing 0 to start.
 
 
-def characterize_location_rot_variant(robot):
+def characterize_location(robot):
     readings = robot.sensor_module.get_sonar_full_rotation()
     ls = LocationSignature(len(readings))
     for i in range(len(readings)):
@@ -94,12 +94,11 @@ def characterize_location_rot_variant(robot):
 # doesn't matter what direction robot is facing. sig based on num of occurences of each distance measurement.
 
 
-def characterize_location_rot_invariant(robot):
-    readings = robot.sensor_module.get_sonar_full_rotation()
-    ls = LocationSignature(255)  # 255 bins for 255 possible values of distance
-    for i in range(len(readings)):
-        ls.sig[readings[i][1]] += 1  # count num occurences of distance
-    return ls
+def convert_sig_to_rot_invariant(ls):
+    new_ls = LocationSignature(255)
+    for i in range(len(ls.sig)):
+        new_ls.sig[ls.sig[i]] += 1  # count num occurences of distance
+    return new_ls
 
 
 # compare two signatures
@@ -112,15 +111,34 @@ def compare_signatures(ls1, ls2):
         dist += (ls1.sig[i] - ls2.sig[i]) ** 2
     return dist
 
+# calculate the shift in degrees between two signatures (histograms of distance against rotation)
+
+
+def calc_sig_shift_degrees(ls1, ls2):
+    min_dist = 0
+    shift_at_min_dist = 0
+    sliding_sig = ls1.sig
+    if len(ls1.sig) != len(ls2.sig):
+        raise Exception(
+            "The lengths of the two signatures being compared are different")
+    # need to slide one signature over the other, and calculate the min dist at every slide delta
+    # When sliding (ls1 over ls2), values over 360 should wrap around. should do the shift 360 times
+    for shift in range(len(ls1.sig)):
+        dist = compare_signatures(sliding_sig, ls2)
+        if dist < min_dist:
+            min_dist = dist
+            shift_at_min_dist = shift
+        # rotate
+        sliding_sig = ls1.sig[shift:] + ls1.sig[:shift]
+    return shift_at_min_dist
+
 # This function characterizes the current location, and stores the obtained
 # signature into the next available file.
 
 
-def learn_location(robot, signatures, is_rotation_invariant=True):
-    if is_rotation_invariant:
-        ls = characterize_location_rot_invariant(robot)
-    else:
-        ls = characterize_location_rot_variant(robot)
+def learn_location(robot, signatures):
+    ls = characterize_location(robot)
+
     idx = signatures.get_free_index()
     if (idx == -1):  # run out of signature files
         print("\nWARNING:")
@@ -142,23 +160,31 @@ def learn_location(robot, signatures, is_rotation_invariant=True):
 
 
 def recognize_location(robot, signatures, is_rotation_invariant=True):
+    ls_obs = characterize_location(robot)
     if is_rotation_invariant:
-        ls_obs = characterize_location_rot_invariant(robot)
-    else:
-        ls_obs = characterize_location_rot_variant(robot)
-    # FILL IN: COMPARE ls_read with ls_obs and find the best match
+        ls_obs_invariant = convert_sig_to_rot_invariant(ls_obs)
+
+    #  COMPARE ls_read with ls_obs and find the best match
     min_dist = float('inf')
     min_index = 69
     for idx in range(signatures.size):
         print("STATUS:  Comparing signature " +
               str(idx) + " with the observed signature.")
         ls_read = signatures.read(idx)
-        dist = compare_signatures(ls_obs, ls_read)
+
+        if is_rotation_invariant:
+            ls_read_invariant = convert_sig_to_rot_invariant(ls_read)
+            dist = compare_signatures(ls_obs_invariant, ls_read_invariant)
+        else:
+            dist = compare_signatures(ls_obs, ls_read)
+
         if dist < min_dist:
             min_dist = dist
             min_index = idx
-    print("Index of closest signature match: ", min_index)
-    return min_index
+            min_ls_read = ls_read
+    shift = calc_sig_shift_degrees(ls_obs, min_ls_read)
+    print("Index of closest signature match: ", min_index, "shift: ", shift)
+    return (min_index, shift)
 # Prior to starting learning the locations, it should delete files from previous
 # learning either manually or by calling signatures.delete_loc_files().
 # Then, either learn a location, until all the locations are learned, or try to

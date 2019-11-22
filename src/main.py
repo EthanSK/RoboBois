@@ -54,7 +54,7 @@ try:
     signatures.delete_loc_files()  # delete from previous runs
 
     # yes this is not nice and oop, i'm just lazy and using his code.
-    place_recog.learn_location(roboboi, signatures, False)
+    place_recog.learn_location(roboboi, signatures)
     # place_recog.recognize_location()
 
     roboboi.reset()
