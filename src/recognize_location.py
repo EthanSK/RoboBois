@@ -11,18 +11,6 @@ import place_recog
 from main import roboboi
 
 
-waypoints = [
-    Vector2(84, 30),
-    Vector2(180, 30),
-    Vector2(180, 54),
-    Vector2(138, 54),
-    Vector2(138, 168),
-    Vector2(114, 168),
-    Vector2(114, 84),
-    Vector2(84, 84),
-    Vector2(84, 30)
-]
-
 try:
     signatures = place_recog.SignatureContainer(5)
 
