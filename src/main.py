@@ -48,18 +48,14 @@ if __name__ == "__main__":
     try:
         montecarlo.draw_lines()
 
-        # while True:
-        #     full_rot = roboboi.sensor_module.get_sonar_full_rotation(
-        #         1, 0.004, True, (180, 30))
-        #     print(full_rot)
+        split = montecarlo.split_path(waypoints, 20)
+        roboboi.force_pos_rot(waypoints[0], 0)
+        for waypoint in split:
+            roboboi.move_to_pos(waypoint, 12, 25)
 
-        # input("set in location to guess (Press Enter when ready)")
-        # res = place_recog.recognize_location(roboboi, signatures, False)
-        # print("location index: ", res[0], "angle shift: ", res[1])
-        # while True:
-        #     dist = roboboi.sensor_module.get_sonar_distance()
-        #     print(dist)
-
+            # print("pos ", waypoint, roboboi.pos, roboboi.rot)
+            time.sleep(1)
+            canvas.drawParticles(roboboi.particles.data)
         roboboi.reset()
 
     except KeyboardInterrupt:
