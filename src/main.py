@@ -11,8 +11,8 @@ import place_recog
 
 
 # this script can only be run as root
-motor_port_left = brickpi3.BrickPi3.PORT_D
-motor_port_right = brickpi3.BrickPi3.PORT_A
+motor_port_left = brickpi3.BrickPi3.PORT_A
+motor_port_right = brickpi3.BrickPi3.PORT_D
 touch_port_left = brickpi3.BrickPi3.PORT_4
 touch_port_right = brickpi3.BrickPi3.PORT_3
 sonar_port = brickpi3.BrickPi3.PORT_2
@@ -52,7 +52,6 @@ if __name__ == "__main__":
         #     full_rot = roboboi.sensor_module.get_sonar_full_rotation(
         #         1, 0.004, True, (180, 30))
         #     print(full_rot)
-
 
         # input("set in location to guess (Press Enter when ready)")
         # res = place_recog.recognize_location(roboboi, signatures, False)
