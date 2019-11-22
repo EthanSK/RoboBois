@@ -6,26 +6,30 @@ import random
 import os
 
 # Location signature class: stores a signature characterizing one location
+
+
 class LocationSignature:
-    def __init__(self, no_bins = 360):
+    def __init__(self, no_bins=360):
         self.sig = [0] * no_bins
-        
+
     def print_signature(self):
         for i in range(len(self.sig)):
             print(self.sig[i])
 
 # --------------------- File management class ---------------
+
+
 class SignatureContainer():
-    def __init__(self, size = 5):
-        self.size      = size # max number of signatures that can be stored
+    def __init__(self, size=5):
+        self.size = size  # max number of signatures that can be stored
         self.filenames = []
-        
-        # Fills the filenames variable with names like loc_%%.dat 
-        # where %% are 2 digits (00, 01, 02...) indicating the location number. 
+
+        # Fills the filenames variable with names like loc_%%.dat
+        # where %% are 2 digits (00, 01, 02...) indicating the location number.
         for i in range(self.size):
             self.filenames.append('loc_{0:02d}.dat'.format(i))
 
-    # Get the index of a filename for the new signature. If all filenames are 
+    # Get the index of a filename for the new signature. If all filenames are
     # used, it returns -1
     def get_free_index(self):
         n = 0
@@ -33,26 +37,26 @@ class SignatureContainer():
             if (os.path.isfile(self.filenames[n]) == False):
                 break
             n += 1
-            
+
         if (n >= self.size):
             return -1
-        else:    
+        else:
             return n
- 
+
     # Delete all loc_%%.dat files
     def delete_loc_files(self):
         print("STATUS:  All signature files removed.")
         for n in range(self.size):
             if os.path.isfile(self.filenames[n]):
                 os.remove(self.filenames[n])
-            
+
     # Writes the signature to the file identified by index (e.g, if index is 1
     # it will be file loc_01.dat). If file already exists, it will be replaced.
     def save(self, signature, index):
         filename = self.filenames[index]
         if os.path.isfile(filename):
             os.remove(filename)
-            
+
         f = open(filename, 'w')
 
         for i in range(len(signature.sig)):
@@ -74,45 +78,57 @@ class SignatureContainer():
             f.close()
         else:
             print("WARNING: Signature does not exist.")
-        
+
         return ls
 
-#requires robot to be facing 0 to start.
+# requires robot to be facing 0 to start.
+
+
 def characterize_location_rot_variant(robot):
     readings = robot.sensor_module.get_sonar_full_rotation()
     ls = LocationSignature(len(readings))
     for i in range(len(readings)):
-        ls.sig[i] = readings[i][1] #store distance for each rotation
+        ls.sig[i] = readings[i][1]  # store distance for each rotation
     return ls
 
-#doesn't matter what direction robot is facing. sig based on num of occurences of each distance measurement.
+# doesn't matter what direction robot is facing. sig based on num of occurences of each distance measurement.
+
+
 def characterize_location_rot_invariant(robot):
-    pass
+    readings = robot.sensor_module.get_sonar_full_rotation()
+    ls = LocationSignature(255)  # 255 bins for 255 possible values of distance
+    for i in range(len(readings)):
+        ls.sig[readings[i][1]] += 1  # count num occurences of distance
+    return ls
 
 
 # compare two signatures
 def compare_signatures(ls1, ls2):
     dist = 0
-    if len(ls1.sig) != len(ls2.sig): raise Exception("The lengths of the two signatures being compared are different")
+    if len(ls1.sig) != len(ls2.sig):
+        raise Exception(
+            "The lengths of the two signatures being compared are different")
     for i in range(len(ls1.sig)):
         dist += (ls1.sig[i] - ls2.sig[i]) ** 2
     return dist
 
-# This function characterizes the current location, and stores the obtained 
+# This function characterizes the current location, and stores the obtained
 # signature into the next available file.
+
+
 def learn_location(robot, signatures, is_rotation_invariant=True):
     if is_rotation_invariant:
         ls = characterize_location_rot_invariant(robot)
     else:
         ls = characterize_location_rot_variant(robot)
     idx = signatures.get_free_index()
-    if (idx == -1): # run out of signature files
+    if (idx == -1):  # run out of signature files
         print("\nWARNING:")
         print("No signature file is available. NOTHING NEW will be learned and stored.")
         print("Please remove some loc_%%.dat files.\n")
         return
-    
-    signatures.save(ls,idx)
+
+    signatures.save(ls, idx)
     print("STATUS:  Location " + str(idx) + " learned and saved.")
 
 # This function tries to recognize the current location.
@@ -123,18 +139,28 @@ def learn_location(robot, signatures, is_rotation_invariant=True):
 # 3.   Retain the learned location whose minimum distance with
 #      actual characterization is the smallest.
 # 4.   Display the index of the recognized location on the screen
-def recognize_location():
-    ls_obs = LocationSignature()
-    characterize_location(ls_obs)
 
+
+def recognize_location(robot, signatures, is_rotation_invariant=True):
+    if is_rotation_invariant:
+        ls_obs = characterize_location_rot_invariant(robot)
+    else:
+        ls_obs = characterize_location_rot_variant(robot)
     # FILL IN: COMPARE ls_read with ls_obs and find the best match
+    min_dist = float('inf')
+    min_index = 69
     for idx in range(signatures.size):
-        print("STATUS:  Comparing signature " + str(idx) + " with the observed signature.")
+        print("STATUS:  Comparing signature " +
+              str(idx) + " with the observed signature.")
         ls_read = signatures.read(idx)
-        dist    = compare_signatures(ls_obs, ls_read)
-
+        dist = compare_signatures(ls_obs, ls_read)
+        if dist < min_dist:
+            min_dist = dist
+            min_index = idx
+    print("Index of closest signature match: ", min_index)
+    return min_index
 # Prior to starting learning the locations, it should delete files from previous
-# learning either manually or by calling signatures.delete_loc_files(). 
+# learning either manually or by calling signatures.delete_loc_files().
 # Then, either learn a location, until all the locations are learned, or try to
 # recognize one of them, if locations have already been learned.
 
@@ -143,4 +169,3 @@ def recognize_location():
 
 # learn_location()
 # recognize_location()
-
