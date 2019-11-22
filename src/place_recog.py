@@ -149,6 +149,7 @@ def learn_location(robot, signatures):
     signatures.save(ls, idx)
     print("STATUS:  Location " + str(idx) + " learned and saved.")
 
+
 # This function tries to recognize the current location.
 # 1.   Characterize current location
 # 2.   For every learned locations
@@ -158,7 +159,6 @@ def learn_location(robot, signatures):
 #      actual characterization is the smallest.
 # 4.   Display the index of the recognized location on the screen
 
-
 def recognize_location(robot, signatures, is_rotation_invariant=True):
     ls_obs = characterize_location(robot)
     if is_rotation_invariant:
@@ -166,7 +166,6 @@ def recognize_location(robot, signatures, is_rotation_invariant=True):
 
     #  COMPARE ls_read with ls_obs and find the best match
     min_dist = float('inf')
-    min_index = 69
     for idx in range(signatures.size):
         print("STATUS:  Comparing signature " +
               str(idx) + " with the observed signature.")
