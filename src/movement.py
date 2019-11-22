@@ -25,13 +25,13 @@ class MovementModule:
     def set_left_dps(self, dps):
         self.BP.set_motor_limits(
             self.lmotor, MovementModule.max_power, MovementModule.max_dps)
-        self.BP.set_motor_dps(self.lmotor, dps)
+        self.BP.set_motor_dps(self.lmotor, -dps)
         self.ldps = dps
 
     def set_right_dps(self, dps):
         self.BP.set_motor_limits(
             self.rmotor, MovementModule.max_power, MovementModule.max_dps)
-        self.BP.set_motor_dps(self.rmotor, dps * (1 + self.bias))
+        self.BP.set_motor_dps(self.rmotor, -dps)
         self.rdps = dps
 
     def get_left_rot(self):
@@ -52,8 +52,8 @@ class MovementModule:
     def set_linear_speed(self, speed_ms):
         dps = self.get_linear_dps(speed_ms)
 
-        self.set_left_dps(dps)
-        self.set_right_dps(dps)
+        self.set_left_dps(-dps)
+        self.set_right_dps(-dps)
 
     def set_turn_speed(self, turn_dps):
         turn_rps = turn_dps / 360
