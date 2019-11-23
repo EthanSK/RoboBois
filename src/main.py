@@ -33,6 +33,8 @@ sensor_module = sensor.SensorModule(
 
 roboboi = robot.Robot(BP, movement_module, sensor_module)
 
+roboboi.force_pos_rot(Vector2(0, 0), 0)
+
 waypoints = [
     Vector2(84, 30),
     Vector2(180, 30),
@@ -47,9 +49,8 @@ waypoints = [
 if __name__ == "__main__":
     try:
         montecarlo.draw_lines()
-
-        roboboi.movement_module.move_linear(10, 10)
-        roboboi.movement_module.turn(45, 90)
+        roboboi.move_to_pos(Vector2(5, 0))
+        # roboboi.movement_module.turn(-10)
 
         # while True:
         #     full_rot = roboboi.sensor_module.get_sonar_full_rotation(
