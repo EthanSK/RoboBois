@@ -12,3 +12,23 @@ http://ip:9000
 
 web interface code: 
 cd /opt/brickpiexplorer
+
+
+plan for the challenge:
+
+- we know our location, and we know the map
+
+- create an occupancy grid of particles, each particle having a flag stating if it is part of the wall or not (to ensure we don't change the weights of particles that are walls)
+
+- go to the center of each area A B and C, spin the sonar, and update the occupancy grid (we update it by adding sonar angle and depth measurement to the robot rotation and position)
+- remember we have to stop every few cm and spin sonar along the way to the center of each area
+
+- after the update, scan the new grid of particles for clusters of particles (that are not part of the wall) where each particle in that cluster have weight > n.
+
+([roughly] we can find clusters by looping through each particle in the grid, if particle.weight > n, then trigger a function that recursively calls for the adjacent particles, and whose stop condition is if the particle weight < n or if the particle is part of the wall.)
+
+- if the number of particles in a found cluster (within a certain area A B or C) is > x, we know it is probably a soda bottle. Therefore, move to the mean of the particles in that cluster. 
+
+- move until the bump sensor detects a collision. If we have moved way past the average (y cm) and still havent detected a bump, then something fucked up and we need to go back to step 1.
+
+- After a successful collision, move to the next area and repeat.
