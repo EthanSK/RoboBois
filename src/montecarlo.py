@@ -2,42 +2,21 @@ import math
 import particleDataStructures
 from vector2 import Vector2
 from line import Line
+import map_data
 
 
 MAX_ANGLE = 40
 
-def generate_map():
-    mymap = particleDataStructures.Map()
-    # Definitions of walls
-    # a: O to A
-    # b: A to B
-    # c: C to D
-    # d: D to E
-    # e: E to F
-    # f: F to G
-    # g: G to H
-    # h: H to O
-    mymap.add_wall((0, 0, 0, 168))        # a
-    mymap.add_wall((0, 168, 84, 168))     # b
-    mymap.add_wall((84, 126, 84, 210))    # c
-    mymap.add_wall((84, 210, 168, 210))   # d
-    mymap.add_wall((168, 210, 168, 84))   # e
-    mymap.add_wall((168, 84, 210, 84))    # f
-    mymap.add_wall((210, 84, 210, 0))     # g
-    mymap.add_wall((210, 0, 0, 0))        # h
-    return mymap
-
-
 def draw_lines():
-    mymap = generate_map()
+    mymap = map_data.generate_map()
     mymap.draw()
 
 
 def calculate_likelihood(x, y, theta, z):
-    mymap = generate_map()
+    mymap = map_data.generate_map()
     (nearest_wall, m) = find_nearest_wall(x, y, theta, mymap)
     # print("nearest wall: ", chr(65 + mymap.walls.index((nearest_wall.start_point.x, nearest_wall.start_point.y, nearest_wall.end_point.x, nearest_wall.end_point.y))))
-    return likelihood(z, m, 3, 0.001)
+    return likelihood(z, m, 3, 0)
 
 
 # return (x0, y0, x1, y1)
@@ -45,9 +24,8 @@ def find_nearest_wall(x, y, theta, map):
     # loop through all the walls, calculate the distance m, and find which m is closest to the sonar measurement
     nearest_wall = None
     min_distance = math.inf
-
-    for _wall in map.walls:
-        wall = Line(Vector2(_wall[0], _wall[1]), Vector2(_wall[2], _wall[3]))
+    walls_as_lines = map.convert_walls_to_lines()
+    for wall in walls_as_lines:
         m = calculate_forward_distance_to_wall(x, y, theta, wall)
 
         # and calculate_forward_angle_to_wall(x, y, theta, wall) < MAX_ANGLE:

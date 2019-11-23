@@ -4,10 +4,12 @@ import robot
 import brickpi3
 import time
 import montecarlo
+import map_data
 from vector2 import Vector2
 from particleDataStructures import Particles, canvas, Particle
 import random
 import place_recog
+import occupancy_map
 
 
 # this script can only be run as root
@@ -35,23 +37,13 @@ roboboi = robot.Robot(BP, movement_module, sensor_module)
 
 roboboi.force_pos_rot(Vector2(0, 0), 0)
 
-waypoints = [
-    Vector2(84, 30),
-    Vector2(180, 30),
-    Vector2(180, 54),
-    Vector2(138, 54),
-    Vector2(138, 168),
-    Vector2(114, 168),
-    Vector2(114, 84),
-    Vector2(84, 84),
-    Vector2(84, 30)
-]
+
 if __name__ == "__main__":
     try:
         montecarlo.draw_lines()
-        roboboi.move_to_pos(Vector2(5, 0))
-        # roboboi.movement_module.turn(-10)
-
+        walls = map_data.generate_map().convert_walls_to_lines()
+        occ_map = occupancy_map.OccupancyMap(walls, 1)
+        occ_map.draw_grid()
         # while True:
         #     full_rot = roboboi.sensor_module.get_sonar_full_rotation(
         #         1, 0.004, True, (180, 30))

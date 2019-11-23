@@ -7,6 +7,7 @@ import random
 import math
 import montecarlo
 from vector2 import Vector2
+from line import Line
 
 # Functions to generate some dummy particles data:
 
@@ -73,6 +74,11 @@ class Map:
         for wall in self.walls:
             canvas.drawLine(wall)
 
+    def convert_walls_to_lines(self):
+        res = []
+        for wall in self.walls:
+            res.append(Line(Vector2(wall[0], wall[1]), Vector2(wall[2], wall[3])))
+        return res
 # Simple Particles set
 
 class Particle:
