@@ -55,7 +55,7 @@ class Robot:
                 self.movement_module.move_linear(dist, speed_m)
                 self.pos = pos
 
-            self.update_real_pos()  # turn off monte carlo for now
+            self.update_real_pos()
 
     def move_particles(self, delta, dist):
         dist_sqrt = math.sqrt(dist)

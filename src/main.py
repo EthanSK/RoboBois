@@ -49,7 +49,7 @@ waypoints = [
 if __name__ == "__main__":
     try:
         montecarlo.draw_lines()
-        roboboi.move_to_pos(Vector2(5, 0))
+        # roboboi.move_to_pos(Vector2(5, 0))
         # roboboi.movement_module.turn(-10)
 
         split = montecarlo.split_path(waypoints, 20)
