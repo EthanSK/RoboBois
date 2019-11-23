@@ -23,7 +23,7 @@ body_radius = 8.4  # cm #works on carpet at 8.4
 
 
 BP = brickpi3.BrickPi3()
-BP.reset_all()
+# BP.reset_all()
 
 movement_module = movement.MovementModule(
     BP, motor_port_left, motor_port_right, wheel_radius, body_radius)
@@ -32,6 +32,8 @@ sensor_module = sensor.SensorModule(
     BP, touch_port_left, touch_port_right, sonar_port, sonar_motor_port)
 
 roboboi = robot.Robot(BP, movement_module, sensor_module)
+
+roboboi.force_pos_rot(Vector2(0, 0), 0)
 
 waypoints = [
     Vector2(84, 30),
@@ -47,6 +49,8 @@ waypoints = [
 if __name__ == "__main__":
     try:
         montecarlo.draw_lines()
+        roboboi.move_to_pos(Vector2(5, 0))
+        # roboboi.movement_module.turn(-10)
 
         split = montecarlo.split_path(waypoints, 20)
         roboboi.force_pos_rot(waypoints[0], 0)

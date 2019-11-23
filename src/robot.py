@@ -42,7 +42,7 @@ class Robot:
             dist = delta.magnitude()
             angle = delta.angle()
 
-            angle_delta = (angle - self.rot) % 360
+            angle_delta = -(angle - self.rot) % 360
             if angle_delta != 0:
                 if angle_delta > 180:
                     angle_delta = angle_delta - 360
@@ -52,7 +52,7 @@ class Robot:
                 self.rot = angle
             if dist != 0:
                 self.move_particles(delta, dist)
-                self.movement_module.move_linear(-dist, speed_m)
+                self.movement_module.move_linear(dist, speed_m)
                 self.pos = pos
 
             self.update_real_pos()  # turn off monte carlo for now

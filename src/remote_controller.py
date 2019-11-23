@@ -33,10 +33,10 @@ def main(stdscr):
         # get keyboard input, returns -1 if none available
 
         if sensor_module.get_left_touch(): 
-            # crash_recovery_routine(lin_speed, turn_speed, -1)
+            crash_recovery_routine(-lin_speed, turn_speed, 1)
             pass
         if sensor_module.get_right_touch(): 
-            # crash_recovery_routine(lin_speed, turn_speed, 1)
+            crash_recovery_routine(-lin_speed, turn_speed, -1)
             pass
 
         c = stdscr.getch()
@@ -56,9 +56,9 @@ def main(stdscr):
                 turn_speed = c - 54
                 turn_speed = 8 + turn_speed * 30
                 if movement_state == MovementState.CLOCKWISE:
-                    movement.set_turn_speed(-turn_speed)
-                elif movement_state == MovementState.ANTICLOCKWISE:
                     movement.set_turn_speed(turn_speed)
+                elif movement_state == MovementState.ANTICLOCKWISE:
+                    movement.set_turn_speed(-turn_speed)
 
             lin_speed_mul = -1 if movement_state is MovementState.FORWARD else 1
 
@@ -82,7 +82,7 @@ def main(stdscr):
                     else: steer_amount = min(1, steer_amount + steer_step)
                     movement.steer(lin_speed * lin_speed_mul, steer_amount)
                 else:
-                    movement.set_turn_speed(-turn_speed)
+                    movement.set_turn_speed(turn_speed)
                     movement_state = MovementState.CLOCKWISE
             elif c == 260:  # left arrow
                 if movement_state is MovementState.FORWARD or movement_state is MovementState.BACKWARD:
@@ -90,7 +90,7 @@ def main(stdscr):
                     else: steer_amount = max(-1, steer_amount - steer_step)
                     movement.steer(lin_speed * lin_speed_mul, steer_amount)
                 else:
-                    movement.set_turn_speed(turn_speed)
+                    movement.set_turn_speed(-turn_speed)
                     movement_state = MovementState.ANTICLOCKWISE
 
             elif c == 113:  # q
