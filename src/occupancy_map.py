@@ -18,7 +18,6 @@ class OccupancyMap:
         self.build_grid()
 
     def build_grid(self):
-        # get longest width and height of map, scan through row by row, spawning particles if the index row and col are in or on the walls
         biggest_x, biggest_y = self.get_biggest_dimensions()
         map_as_polygon = self.map_as_polygon()
         for y in range(0, biggest_y + 1, self.spacing_cm):
@@ -34,13 +33,7 @@ class OccupancyMap:
         for wall in self.walls:
             map_points.append((wall.start_point.x, wall.start_point.y))
             map_points.append((wall.end_point.x, wall.end_point.y))
-
-        # map_points.append((self.walls[0].start_point.x, self.walls[0].start_point.y))
-
         return Polygon(map_points)
-
-
-# this is currently wrong. it returns the max length of a segment, no the total width and height!! we probably need to manually create the grid. or we could just give it the values lol since we know it
 
     def get_biggest_dimensions(self):
         biggest_x = 0

@@ -42,7 +42,7 @@ if __name__ == "__main__":
     try:
         montecarlo.draw_lines()
         walls = map_data.generate_map().convert_walls_to_lines()
-        occ_map = occupancy_map.OccupancyMap(walls, 2)
+        occ_map = occupancy_map.OccupancyMap(walls, 5)
         occ_map.draw_grid(canvas)
         # while True:
         #     full_rot = roboboi.sensor_module.get_sonar_full_rotation(
