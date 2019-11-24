@@ -5,7 +5,7 @@ from line import Line
 import map_data
 
 
-MAX_ANGLE = 40
+MAX_ANGLE = 45
 
 
 def draw_lines():
@@ -30,7 +30,7 @@ def find_nearest_wall(x, y, theta, map):
         m = calculate_forward_distance_to_wall(x, y, theta, wall)
 
         # and calculate_forward_angle_to_wall(x, y, theta, wall) < MAX_ANGLE:
-        if m > 0 and m < min_distance:
+        if m > 0 and m < min_distance and calculate_forward_angle_to_wall(x, y, theta, wall) < MAX_ANGLE:
             x_point_on_line = x + m * math.cos(math.radians(theta))
             y_point_on_line = y + m * math.sin(math.radians(theta))
 

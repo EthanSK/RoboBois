@@ -38,7 +38,7 @@ roboboi = robot.Robot(BP, movement_module, sensor_module)
 roboboi.force_pos_rot(Vector2(84, 30), 0)
 
 
-def montecarlo():
+def montecarlo_run():
     # old waypoints follow
     split = map_data.split_path(map_data.waypoints, 10)
     for point in split:
@@ -54,8 +54,8 @@ if __name__ == "__main__":
         occ_map = occupancy_map.OccupancyMap(walls, 5)
         occ_map.draw_grid(canvas)
 
-        # roboboi.move_to_pos_in_chunks_and_scan(
-        #     Vector2(130, 30), 10, 20, 45, False)
+        roboboi.find_bottles(
+            occ_map, Vector2(94, 30), 10, 20, 45, False)
 
         roboboi.reset()
 

@@ -3,7 +3,7 @@ import movement
 import sensor
 from vector2 import Vector2
 import math
-from particleDataStructures import Particles
+from particleDataStructures import Particles, canvas
 import weightedParticles as ptcls
 from cmath import rect, phase
 from math import radians, degrees
@@ -37,14 +37,19 @@ class Robot:
         self.rot = theta
         self.particles.init_particles(self.pos, self.rot)
     
-    def move_to_pos_in_chunks_and_scan(self, pos, chunk_size_cm=10, speed=20, turn_speed=45, should_use_montecarlo=True):
+    def find_bottles(self, occupancy_map, pos, chunk_size_cm=10, speed=20, turn_speed=45, should_use_montecarlo=True):
         waypoints = map_data.split_path([self.pos, pos], chunk_size_cm)
+
         for point in waypoints:
-            self.move_to_pos(point, speed, turn_speed, should_use_montecarlo)
-            self.sensor_module.get_sonar_full_rotation(1, 0.005, False, self.pos)
-            self.particles.draw()
+            self.move_to_pos(point, speed, turn_speed, should_use_montecarlo) #moves to current pos first loop iter
+            scan_res = self.sensor_module.get_sonar_full_rotation(90, 0.005, False, self.pos)
 
+            for reading in scan_res:
+                occupancy_map.update_cells_in_beam(self, reading, canvas, True)
+            return # for testing
+            
 
+ 
     def move_to_pos(self, pos, speed_m=20, turn_speed=45, should_use_montecarlo=True):
         if pos != self.pos:
             delta = pos - self.pos
