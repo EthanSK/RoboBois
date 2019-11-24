@@ -5,6 +5,7 @@ from shapely.geometry.polygon import Polygon
 from line import Line
 from vector2 import Vector2
 
+
 class CellOccupancyMap(Particle):
     def __init__(self, x, y, weight, is_wall):
         super().__init__(x, y, 0, weight)
@@ -12,8 +13,9 @@ class CellOccupancyMap(Particle):
 
 
 class OccupancyMap:
-    BEAM_SPREAD_DEGREES = 10
-    VALID_MAX_SONAR_DIST = 100 #after 100cm they become a bit b a d 
+    BEAM_SPREAD_DEGREES = 15
+    VALID_MAX_SONAR_DIST = 100  # after 100cm they become a bit b a d
+    SONAR_UNCERTAINTY_CM = 2
 
     def __init__(self, walls, spacing_cm=1):
         self.cells = []
@@ -59,21 +61,33 @@ class OccupancyMap:
 
     def update_cells_in_beam(self, robot, sonar_data, canvas, should_draw=True):
         angle = sonar_data[0] + robot.rot
+
         dist = sonar_data[1]
-        if dist > self.VALID_MAX_SONAR_DIST: return
+        if dist > self.VALID_MAX_SONAR_DIST:
+            # return  # because the sonar readings will prolly be bs
+            pass
 
         max_angle = angle + self.BEAM_SPREAD_DEGREES / 2
         min_angle = angle - self.BEAM_SPREAD_DEGREES / 2
 
+        valid_cells = []
+        print("angle: ", angle)
         for cell in self.cells:
-            line_to_robot = Line(Vector2(cell.x, cell.y), robot.pos)
-            canvas.draw_line_from_obj(line_to_robot)
+            line_to_robot = Line(robot.pos, cell.pos)
+            cell_angle = line_to_robot.angle()
 
+            phi = abs(angle - cell_angle) % 360
+            distance = 360 - phi if phi > 180 else phi
+            angle_from_centre_beam = distance
 
+            # print("angle center beam: ", angle_from_centre_beam)
+            if angle_from_centre_beam <= self.BEAM_SPREAD_DEGREES / 2 and line_to_robot.magnitude() <= dist:
+                valid_cells.append(cell)
 
         if should_draw:
             robot.sensor_module.draw_sonar_line(
                 (max_angle, dist), canvas, robot.pos.x, robot.pos.y)
             robot.sensor_module.draw_sonar_line(
                 (min_angle, dist), canvas, robot.pos.x, robot.pos.y)
+            canvas.drawParticles(valid_cells)
         # at the end, draw the beam and the cells that lie in it so we can see it's working

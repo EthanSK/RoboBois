@@ -139,4 +139,37 @@ class Particles:
 
         self.data
     
-canvas = Canvas()
+    def draw(self):
+        canvas.drawParticles(self.data)
+
+
+canvas = Canvas()  # global canvas we are going to draw on
+
+# mymap = Map()
+# # Definitions of walls
+# # a: O to A
+# # b: A to B
+# # c: C to D
+# # d: D to E
+# # e: E to F
+# # f: F to G
+# # g: G to H
+# # h: H to O
+# mymap.add_wall((0, 0, 0, 168))        # a
+# mymap.add_wall((0, 168, 84, 168))     # b
+# mymap.add_wall((84, 126, 84, 210))    # c
+# mymap.add_wall((84, 210, 168, 210))   # d
+# mymap.add_wall((168, 210, 168, 84))   # e
+# mymap.add_wall((168, 84, 210, 84))    # f
+# mymap.add_wall((210, 84, 210, 0))     # g
+# mymap.add_wall((210, 0, 0, 0))        # h
+# mymap.draw()
+
+# particles = Particles()
+
+t = 0
+# while True:
+#     particles.random_sample_data()
+#     particles.draw()
+#     t += 0.05
+#     time.sleep(0.05)

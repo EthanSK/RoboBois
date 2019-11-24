@@ -49,10 +49,13 @@ def montecarlo_run():
 
 if __name__ == "__main__":
     try:
+
         montecarlo.draw_lines()
         walls = map_data.generate_map().convert_walls_to_lines()
-        occ_map = occupancy_map.OccupancyMap(walls, 5)
+        occ_map = occupancy_map.OccupancyMap(walls, 2)
         occ_map.draw_grid(canvas)
+        # canvas.drawParticles(
+        #     [Particle(85, 65, 0, 0.5)])
 
         roboboi.find_bottles(
             occ_map, Vector2(94, 30), 10, 20, 45, False)

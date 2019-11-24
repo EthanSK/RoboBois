@@ -21,6 +21,9 @@ class Vector2:
     def normalized(self):
         return self / self.magnitude()
 
+    def dot_product(self, other):
+        return self.x * other.x + self.y * other.y
+
     def __add__(self, other):
         return Vector2(self.x + other.x, self.y + other.y)
 

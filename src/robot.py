@@ -8,12 +8,12 @@ import weightedParticles as ptcls
 from cmath import rect, phase
 from math import radians, degrees
 import map_data
-
+import time
 
 class Robot:
-    SD_X_FIXED = 2  # cm 
+    SD_X_FIXED = 2  # cm
     SD_Y_FIXED = 2  # cm
-    SD_THETA_MOV_FIXED = 3 # degrees
+    SD_THETA_MOV_FIXED = 3  # degrees
     SD_THETA_ROT_FIXED = 5  # degrees
 
     SD_X_GROWTH = 0.005  # cm
@@ -36,20 +36,21 @@ class Robot:
         self.pos = pos
         self.rot = theta
         self.particles.init_particles(self.pos, self.rot)
-    
+
     def find_bottles(self, occupancy_map, pos, chunk_size_cm=10, speed=20, turn_speed=45, should_use_montecarlo=True):
         waypoints = map_data.split_path([self.pos, pos], chunk_size_cm)
 
         for point in waypoints:
-            self.move_to_pos(point, speed, turn_speed, should_use_montecarlo) #moves to current pos first loop iter
-            scan_res = self.sensor_module.get_sonar_full_rotation(90, 0.005, False, self.pos)
+            # moves to current pos first loop iter
+            self.move_to_pos(point, speed, turn_speed, should_use_montecarlo)
+            scan_res = self.sensor_module.get_sonar_full_rotation(
+                45, 0.005, False, self.pos)
 
             for reading in scan_res:
                 occupancy_map.update_cells_in_beam(self, reading, canvas, True)
-            return # for testing
-            
+                time.sleep(1)
+            return  # for testing
 
- 
     def move_to_pos(self, pos, speed_m=20, turn_speed=45, should_use_montecarlo=True):
         if pos != self.pos:
             delta = pos - self.pos
@@ -70,7 +71,7 @@ class Robot:
                 self.pos = pos
 
             if should_use_montecarlo:
-                self.update_real_pos() 
+                self.update_real_pos()
 
     def move_particles(self, delta, dist):
         dist_sqrt = math.sqrt(dist)
@@ -107,6 +108,3 @@ class Robot:
 
         self.pos = acc_pos / self.particles.count
         self.rot = mean_angle([p.theta for p in self.particles.data])
-        
-
-
