@@ -7,18 +7,19 @@ from particleDataStructures import Particles
 import weightedParticles as ptcls
 from cmath import rect, phase
 from math import radians, degrees
+import map_data
 
 
 class Robot:
-    SD_X_FIXED = 3  # cm 
-    SD_Y_FIXED = 3  # cm
-    SD_THETA_MOV_FIXED = 5 # degrees
-    SD_THETA_ROT_FIXED = 10  # degrees
+    SD_X_FIXED = 2  # cm 
+    SD_Y_FIXED = 2  # cm
+    SD_THETA_MOV_FIXED = 3 # degrees
+    SD_THETA_ROT_FIXED = 5  # degrees
 
-    SD_X_GROWTH = 0.2  # cm
-    SD_Y_GROWTH = 0.2  # cm
-    SD_THETA_MOV_GROWTH = 0.1  # degrees
-    SD_THETA_ROT_GROWTH = 0.3  # degrees
+    SD_X_GROWTH = 0.005  # cm
+    SD_Y_GROWTH = 0.005  # cm
+    SD_THETA_MOV_GROWTH = 0.05  # degrees
+    SD_THETA_ROT_GROWTH = 0.1  # degrees
 
     def __init__(self, BP, movement_module, sensor_module, num_particles=100):
         self.BP = BP
@@ -35,8 +36,16 @@ class Robot:
         self.pos = pos
         self.rot = theta
         self.particles.init_particles(self.pos, self.rot)
+    
+    def move_to_pos_in_chunks_and_scan(self, pos, chunk_size_cm=10, speed=20, turn_speed=45, should_use_montecarlo=True):
+        waypoints = map_data.split_path([self.pos, pos], chunk_size_cm)
+        for point in waypoints:
+            self.move_to_pos(point, speed, turn_speed, should_use_montecarlo)
+            self.sensor_module.get_sonar_full_rotation(1, 0.005, False, self.pos)
+            self.particles.draw()
 
-    def move_to_pos(self, pos, speed_m=20, turn_speed=45):
+
+    def move_to_pos(self, pos, speed_m=20, turn_speed=45, should_use_montecarlo=True):
         if pos != self.pos:
             delta = pos - self.pos
             dist = delta.magnitude()
@@ -55,7 +64,8 @@ class Robot:
                 self.movement_module.move_linear(dist, speed_m)
                 self.pos = pos
 
-            self.update_real_pos()  # turn off monte carlo for now
+            if should_use_montecarlo:
+                self.update_real_pos() 
 
     def move_particles(self, delta, dist):
         dist_sqrt = math.sqrt(dist)

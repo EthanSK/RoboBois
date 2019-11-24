@@ -21,7 +21,7 @@ sonar_port = brickpi3.BrickPi3.PORT_2
 sonar_motor_port = brickpi3.BrickPi3.PORT_C
 
 wheel_radius = 3.5  # 3.5cm
-body_radius = 8.4  # cm #works on carpet at 8.4
+body_radius = 7.6  # cm #works on carpet at 8.4
 
 
 BP = brickpi3.BrickPi3()
@@ -35,7 +35,16 @@ sensor_module = sensor.SensorModule(
 
 roboboi = robot.Robot(BP, movement_module, sensor_module)
 
-roboboi.force_pos_rot(Vector2(0, 0), 0)
+roboboi.force_pos_rot(Vector2(84, 30), 0)
+
+
+def montecarlo():
+    # old waypoints follow
+    split = map_data.split_path(map_data.waypoints, 10)
+    for point in split:
+        roboboi.move_to_pos(point, 20, 45, True)
+        roboboi.particles.draw()
+        time.sleep(0.4)
 
 
 if __name__ == "__main__":
@@ -44,17 +53,9 @@ if __name__ == "__main__":
         walls = map_data.generate_map().convert_walls_to_lines()
         occ_map = occupancy_map.OccupancyMap(walls, 5)
         occ_map.draw_grid(canvas)
-        # while True:
-        #     full_rot = roboboi.sensor_module.get_sonar_full_rotation(
-        #         1, 0.004, True, (180, 30))
-        #     print(full_rot)
 
-        # input("set in location to guess (Press Enter when ready)")
-        # res = place_recog.recognize_location(roboboi, signatures, False)
-        # print("location index: ", res[0], "angle shift: ", res[1])
-        # while True:
-        #     dist = roboboi.sensor_module.get_sonar_distance()
-        #     print(dist)
+        # roboboi.move_to_pos_in_chunks_and_scan(
+        #     Vector2(130, 30), 10, 20, 45, False)
 
         roboboi.reset()
 

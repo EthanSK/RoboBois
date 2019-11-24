@@ -3,7 +3,7 @@ import math
 import time
 from movement import MovementModule
 from particleDataStructures import Canvas
-
+from vector2 import Vector2
 
 class SensorModule:
     def __init__(self, BP, ltouch, rtouch, sonar, sonar_motor, sonar_offset=0):
@@ -72,7 +72,7 @@ class SensorModule:
 
         return acc / n
 
-    def get_sonar_full_rotation(self, snapshot_interval=1, rot_speed=0.005, should_draw_live=True, start_pos=(84, 30)):
+    def get_sonar_full_rotation(self, snapshot_interval=1, rot_speed=0.005, should_draw_live=True, start_pos=Vector2(84, 30)):
         rot_speed = rot_speed * snapshot_interval
         self.BP.set_motor_limits(
             self.sonar_motor, MovementModule.max_power, MovementModule.max_dps)
@@ -80,7 +80,7 @@ class SensorModule:
             self.sonar_motor, self.BP.get_motor_encoder(self.sonar_motor))  # reset encoder
         res = []
         canvas = Canvas()  # for live drawing
-        cur_degrees = 0  # using motor encoder is too unreliable, we need hard theoretical values
+        cur_degrees = 0
 
         def rotate_and_observe(up_to_degrees, no_observe=False):
             step = snapshot_interval if cur_degrees < up_to_degrees else -snapshot_interval
@@ -95,7 +95,7 @@ class SensorModule:
                 new = (-new_rot, dist)
                 res.append(new)
                 if should_draw_live:
-                    self.draw_sonar_line(new, canvas, start_pos[0], start_pos[1])
+                    self.draw_sonar_line(new, canvas, start_pos.x, start_pos.y)
             return up_to_degrees #python is so retarded i have to do this
 
         # rotate 180 one way, rotate 360 other way, then rotate 180 until reach start

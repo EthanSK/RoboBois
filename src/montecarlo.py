@@ -7,6 +7,7 @@ import map_data
 
 MAX_ANGLE = 40
 
+
 def draw_lines():
     mymap = map_data.generate_map()
     mymap.draw()
@@ -16,7 +17,7 @@ def calculate_likelihood(x, y, theta, z):
     mymap = map_data.generate_map()
     (nearest_wall, m) = find_nearest_wall(x, y, theta, mymap)
     # print("nearest wall: ", chr(65 + mymap.walls.index((nearest_wall.start_point.x, nearest_wall.start_point.y, nearest_wall.end_point.x, nearest_wall.end_point.y))))
-    return likelihood(z, m, 3, 0)
+    return likelihood(z, m, 3, 0.00001)
 
 
 # return (x0, y0, x1, y1)
@@ -45,7 +46,8 @@ def find_nearest_wall(x, y, theta, map):
 def calculate_forward_distance_to_wall(x, y, theta, wall):
     Ax, Ay, Bx, By = wall.start_point.x, wall.start_point.y, wall.end_point.x, wall.end_point.y
     # uses var names from lecture slides so easier to implement
-    denominator = (By - Ay) * math.cos(math.radians(theta)) - (Bx - Ax) * math.sin(math.radians(theta))
+    denominator = (By - Ay) * math.cos(math.radians(theta)) - \
+        (Bx - Ax) * math.sin(math.radians(theta))
     if denominator == 0:
         return math.inf
 
@@ -68,19 +70,3 @@ def calculate_forward_angle_to_wall(x, y, theta, wall):
     denominator = math.sqrt((Ay - By) ** 2 + (Bx - Ax) ** 2)
 
     return math.degrees(math.acos(numerator/denominator))
-
-
-def split_path(waypoints, split_dist):
-    new_points = []
-    for i in range(len(waypoints) - 1):
-        start = waypoints[i]
-        end = waypoints[i + 1]
-        delta = end - start
-        path_dist = delta.magnitude()
-        split_delta = delta.normalized() * split_dist
-        split_count = int(path_dist // split_dist)
-        for i in range(split_count + 1):
-            new_points.append(start + split_delta * i)
-
-    new_points.append(waypoints[-1])
-    return new_points

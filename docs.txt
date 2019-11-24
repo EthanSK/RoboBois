@@ -20,8 +20,11 @@ plan for the challenge:
 
 - create an occupancy grid of particles, each particle having a flag stating if it is part of the wall or not (to ensure we don't change the weights of particles that are walls)
 
+
+
 - go to the center of each area A B and C, spin the sonar, and update the occupancy grid (we update it by adding sonar angle and depth measurement to the robot rotation and position)
 - remember we have to stop every few cm and spin sonar along the way to the center of each area
+-to move the robot, we need to move it in chunks, so we can use the split path function but giving it 2 points. It's current position, and its target in the center of the area. We make a new function called move_to_pos_in_chunks that uses move_to_pos. this way we can spin the sonar at every smol movement.
 
 - after the update, scan the new grid of particles for clusters of particles (that are not part of the wall) where each particle in that cluster have weight > n.
 

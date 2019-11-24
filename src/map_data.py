@@ -24,6 +24,7 @@ def generate_map():
     return mymap
 
 
+
 waypoints = [
     Vector2(84, 30),
     Vector2(180, 30),
@@ -35,3 +36,19 @@ waypoints = [
     Vector2(84, 84),
     Vector2(84, 30)
 ]
+
+
+def split_path(waypoints, split_dist):
+    new_points = []
+    for i in range(len(waypoints) - 1):
+        start = waypoints[i]
+        end = waypoints[i + 1]
+        delta = end - start
+        path_dist = delta.magnitude()
+        split_delta = delta.normalized() * split_dist
+        split_count = int(path_dist // split_dist)
+        for i in range(split_count + 1):
+            new_points.append(start + split_delta * i)
+
+    new_points.append(waypoints[-1])
+    return new_points
