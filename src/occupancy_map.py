@@ -18,7 +18,7 @@ class OccupancyMap:
     VALID_MAX_SONAR_DIST = 100  # after 100cm they become a bit b a d
     SONAR_UNCERTAINTY_CM = 2
     BOTTLE_DIAMETER_CM = 10
-    KERNEL_BORDER_CM = 2
+    KERNEL_BORDER_CM = 3
     KERNEL_IGNORE_BORDER_CM = 1 #the ring around the bottle that should be ignored due to inaccuracies
     BOTTLE_DETECTION_MIN_SCORE = 20
 
@@ -119,14 +119,22 @@ class OccupancyMap:
     def detect_bottle_with_kernel(self, should_draw = False):
         # 2L coke bottle is 11cm in diameter
         kernel_cell_count_width = len(self.kernel)
+
+        air_score = 0 #score of all cells weight at 0.5 in kernel
+        for kernel_y in range(kernel_cell_count_width):
+            for kernel_x in range(kernel_cell_count_width):
+                air_score += 0.5 * self.kernel[kernel_y][kernel_x]
+        wall_contribution = air_score / (kernel_cell_count_width ** 2)
+
+
         for cell_y in range(len(self.cells) - kernel_cell_count_width):
             for cell_x in range(len(self.cells[cell_y]) - kernel_cell_count_width):
                 score = 0
                 for kernel_y in range(kernel_cell_count_width):
                     for kernel_x in range(kernel_cell_count_width):
                         cell = self.cells[cell_y + kernel_y][cell_x + kernel_x]
-                        if cell.is_wall: continue
-                        score += cell.weight * self.kernel[kernel_y][kernel_x]
+                        if cell.is_wall: score += wall_contribution
+                        else: score += cell.weight * self.kernel[kernel_y][kernel_x]
                 print("score: ", score, cell_y, cell_x)
 
     #can only get it to work when diameter of bottle is even number
