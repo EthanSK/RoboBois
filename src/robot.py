@@ -40,12 +40,13 @@ class Robot:
 
     def find_bottles(self, occupancy_map, pos, chunk_size_cm=10, speed=20, turn_speed=45, should_use_montecarlo=True):
         waypoints = map_data.split_path([self.pos, pos], chunk_size_cm)
-
+        occupancy_map.create_kernel(canvas)
+        return
         for point in waypoints:
             # moves to current pos first loop iter
             self.move_to_pos(point, speed, turn_speed, should_use_montecarlo)
             scan_res = self.sensor_module.get_sonar_full_rotation(
-                15, 0.005, False, self.pos)
+                15, 0.01, False, self.pos)
 
             for reading in scan_res:
                 occupancy_map.update_cells_in_beam(
@@ -111,3 +112,4 @@ class Robot:
 
         self.pos = acc_pos / self.particles.count
         self.rot = mean_angle([p.theta for p in self.particles.data])
+ 
