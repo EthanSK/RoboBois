@@ -13,7 +13,7 @@ class CellOccupancyMap(Particle):
 
 
 class OccupancyMap:
-    BEAM_SPREAD_DEGREES = 15
+    BEAM_SPREAD_DEGREES = 10
     VALID_MAX_SONAR_DIST = 100  # after 100cm they become a bit b a d
     SONAR_UNCERTAINTY_CM = 2
 
@@ -64,11 +64,6 @@ class OccupancyMap:
 
         dist = sonar_data[1]
 
-        # hold on. i should actually USE this info to update all the cells in front of it to moreempty
-        # what we should do is update the cells up to N cm (100 cm) as more empty, but don't make anything more occupied
-        # if dist > self.VALID_MAX_SONAR_DIST:
-        #     return  # because the sonar readings will prolly be bs
-
         max_angle = angle + self.BEAM_SPREAD_DEGREES / 2
         min_angle = angle - self.BEAM_SPREAD_DEGREES / 2
     
@@ -94,9 +89,11 @@ class OccupancyMap:
             cell_dist = line_to_robot.magnitude()
             phi = abs(angle - cell_angle) % 360
             angle_from_centre_beam = 360 - phi if phi > 180 else phi
-
+    
             if angle_from_centre_beam <= self.BEAM_SPREAD_DEGREES / 2 and cell_dist <= dist + self.SONAR_UNCERTAINTY_CM:
-                update_cell_weight(cell, -1 if cell_dist < dist - self.SONAR_UNCERTAINTY_CM else 1)
+                occupied_or_empty_direction = -1 if cell_dist < dist - self.SONAR_UNCERTAINTY_CM else 1
+                if occupied_or_empty_direction == 1 and dist > VALID_MAX_SONAR_DIST: continue #we can't be sure that it's occupied, but we can be sure that cells up to it are empty
+                update_cell_weight(cell, occupied_or_empty_direction)
                 
 
         if should_draw:
@@ -104,6 +101,6 @@ class OccupancyMap:
                 (max_angle, dist), canvas, robot.pos.x, robot.pos.y)
             robot.sensor_module.draw_sonar_line(
                 (min_angle, dist), canvas, robot.pos.x, robot.pos.y)
-            self.draw_grid(canvas)
+            # self.draw_grid(canvas)
 
   

@@ -45,11 +45,13 @@ class Robot:
             # moves to current pos first loop iter
             self.move_to_pos(point, speed, turn_speed, should_use_montecarlo)
             scan_res = self.sensor_module.get_sonar_full_rotation(
-                45, 0.005, False, self.pos)
+                10, 0.005, False, self.pos)
 
             for reading in scan_res:
-                occupancy_map.update_cells_in_beam(self, reading, canvas, True)
-                time.sleep(1.5)
+                occupancy_map.update_cells_in_beam(
+                    self, reading, canvas, False)
+                # time.sleep(1.5)
+            occupancy_map.draw_grid(canvas)
             return  # for testing
 
     def move_to_pos(self, pos, speed_m=20, turn_speed=45, should_use_montecarlo=True):
