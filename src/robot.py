@@ -40,8 +40,6 @@ class Robot:
 
     def find_bottles(self, occupancy_map, pos, chunk_size_cm=10, speed=20, turn_speed=45, should_use_montecarlo=True):
         waypoints = map_data.split_path([self.pos, pos], chunk_size_cm)
-        occupancy_map.create_kernel(canvas)
-        return
         for point in waypoints:
             # moves to current pos first loop iter
             self.move_to_pos(point, speed, turn_speed, should_use_montecarlo)
@@ -53,6 +51,7 @@ class Robot:
                     self, reading, canvas, False)
                 # time.sleep(1.5)
             occupancy_map.draw_grid(canvas)
+            occupancy_map.detect_bottle_with_kernel()
             return  # for testing
 
     def move_to_pos(self, pos, speed_m=20, turn_speed=45, should_use_montecarlo=True):

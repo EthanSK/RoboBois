@@ -1,5 +1,5 @@
 import particleDataStructures
-from particleDataStructures import Particle
+from particleDataStructures import Particle, canvas
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
 from line import Line
@@ -19,12 +19,16 @@ class OccupancyMap:
     SONAR_UNCERTAINTY_CM = 2
     BOTTLE_DIAMETER_CM = 10
     KERNEL_BORDER_CM = 2
+    KERNEL_IGNORE_BORDER_CM = 1 #the ring around the bottle that should be ignored due to inaccuracies
+    BOTTLE_DETECTION_MIN_SCORE = 20
 
     def __init__(self, walls, spacing_cm=1):
         self.cells = []
         self.walls = walls
         self.spacing_cm = spacing_cm
+        self.kernel = []
         self.build_grid()
+        self.create_kernel(canvas, True)
 
     def build_grid(self):
         biggest_x, biggest_y = self.get_biggest_dimensions()
@@ -112,19 +116,21 @@ class OccupancyMap:
                 (min_angle, dist), canvas, robot.pos.x, robot.pos.y)
             # self.draw_grid(canvas)
 
-    def detect_bottle_with_kernel(self):
+    def detect_bottle_with_kernel(self, should_draw = False):
         # 2L coke bottle is 11cm in diameter
-
-        for cell_y in range(len(self.cells) - kernel_cell_length):
-            for cell_x in range(len(self.cells[y]) - kernel_cell_length):
+        kernel_cell_count_width = len(self.kernel)
+        for cell_y in range(len(self.cells) - kernel_cell_count_width):
+            for cell_x in range(len(self.cells[cell_y]) - kernel_cell_count_width):
                 score = 0
-                for kernel_y in range(kernel_cell_length):
-                    for kernel_x in range(kernel_cell_length):
-                        self.cells[cell_y + kernel_y][cell_x + kernel_x]
-
+                for kernel_y in range(kernel_cell_count_width):
+                    for kernel_x in range(kernel_cell_count_width):
+                        cell = self.cells[cell_y + kernel_y][cell_x + kernel_x]
+                        if cell.is_wall: continue
+                        score += cell.weight * self.kernel[kernel_y][kernel_x]
+                print("score: ", score, cell_y, cell_x)
 
     #can only get it to work when diameter of bottle is even number
-    def create_kernel(self, canvas):
+    def create_kernel(self, canvas, should_draw = False):
         def normal_round(n):
             if n - math.floor(n) < 0.5:
                 return math.floor(n)
@@ -133,16 +139,13 @@ class OccupancyMap:
         kernel_cell_count_exact = 2 * self.KERNEL_BORDER_CM + \
             self.BOTTLE_DIAMETER_CM / self.spacing_cm
         kernel_cell_count = normal_round(kernel_cell_count_exact)
-        # if kernel_cell_length % 2 == 0:
-        #     kernel_cell_length += 1
         kernel = []
         bottle_radius = (kernel_cell_count_exact / 2) - self.KERNEL_BORDER_CM
-        # if kernel_cell_length % 2 == 0:
-        print("lentgth; ", kernel_cell_count_exact,
-              kernel_cell_count, bottle_radius)
+        # print("lentgth; ", kernel_cell_count_exact,
+            #   kernel_cell_count, bottle_radius)
         kernel_center = Vector2(
             kernel_cell_count_exact / 2, kernel_cell_count_exact / 2)
-        print("center: ", kernel_center.x, kernel_center.y)
+        # print("center: ", kernel_center.x, kernel_center.y)
         for y in range(kernel_cell_count):
             kernel.append([])
             for x in range(kernel_cell_count):
@@ -152,15 +155,19 @@ class OccupancyMap:
                                    kernel_cell_count) / 2
                 dist_from_kernel_center = math.sqrt((
                     kernel_center.x - real_cell_x) ** 2 + (kernel_center.y - real_cell_y) ** 2)
-                if dist_from_kernel_center <= (bottle_radius):
+                if dist_from_kernel_center <= bottle_radius:
                     kernel[y].append(1)
-                else:
+                elif dist_from_kernel_center > bottle_radius and dist_from_kernel_center < bottle_radius + self.KERNEL_IGNORE_BORDER_CM:
                     kernel[y].append(0)
+                else:
+                    kernel[y].append(-1)
+        self.kernel = kernel
 
-        # draw test
-        particles = []
-        for y in range(len(kernel)):
-            for x in range(len(kernel[y])):
-                particles.append(CellOccupancyMap(
-                    x * self.spacing_cm + 100, y * self.spacing_cm + 100, kernel[y][x], False))
-        canvas.drawParticles(particles)
+        # # draw test
+        if should_draw:
+            particles = []
+            for y in range(len(kernel)):
+                for x in range(len(kernel[y])):
+                    particles.append(CellOccupancyMap(
+                        x * self.spacing_cm + 100, y * self.spacing_cm + 100, (kernel[y][x] + 1) / 2, False))
+            canvas.drawParticles(particles)
