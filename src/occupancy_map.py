@@ -16,9 +16,10 @@ class OccupancyMap:
     BEAM_SPREAD_DEGREES = 10
     VALID_MAX_SONAR_DIST = 100  # after 100cm they become a bit b a d
     SONAR_UNCERTAINTY_CM = 2
+    BOTTLE_DIAMETER_CM = 11
 
     def __init__(self, walls, spacing_cm=1):
-        self.cells = []
+        self.cells = [[]]
         self.walls = walls
         self.spacing_cm = spacing_cm
         self.build_grid()
@@ -26,13 +27,14 @@ class OccupancyMap:
     def build_grid(self):
         biggest_x, biggest_y = self.get_biggest_dimensions()
         map_as_polygon = self.map_as_polygon()
-        for y in range(0, biggest_y + 1, self.spacing_cm):
+        for i, y in enumerate(range(0, biggest_y + 1, self.spacing_cm)):
+            self.cells.append([])
             for x in range(0, biggest_x + 1, self.spacing_cm):
                 # check if coordinate is in map
                 is_wall = not map_as_polygon.contains(Point(x, y))
                 cell = CellOccupancyMap(
                     x, y, 1 if is_wall else 0.5, is_wall)
-                self.cells.append(cell)
+                self.cells[i].append(cell)
 
     def map_as_polygon(self):
         map_points = []
@@ -57,7 +59,10 @@ class OccupancyMap:
         return (int(biggest_x), int(biggest_y))
 
     def draw_grid(self, canvas):
-        canvas.drawParticles(self.cells)
+        particles = []
+        for cell_row in self.cells:
+            particles += cell_row
+        canvas.drawParticles(particles)
 
     def update_cells_in_beam(self, robot, sonar_data, canvas, should_draw=True):
         angle = sonar_data[0] + robot.rot
@@ -66,7 +71,7 @@ class OccupancyMap:
 
         max_angle = angle + self.BEAM_SPREAD_DEGREES / 2
         min_angle = angle - self.BEAM_SPREAD_DEGREES / 2
-    
+
         def update_cell_weight(cell, occupied_or_empty_direction):
             # -1 for more empty, 1 for more full
             # this method of weight keeps weights normalized.
@@ -81,20 +86,22 @@ class OccupancyMap:
                 else:
                     cell.weight -= 1 - cell.weight
 
- 
-        for cell in self.cells:
-            if cell.is_wall: continue # we don't wanna update cell walls
-            line_to_robot = Line(robot.pos, cell.pos)
-            cell_angle = line_to_robot.angle()
-            cell_dist = line_to_robot.magnitude()
-            phi = abs(angle - cell_angle) % 360
-            angle_from_centre_beam = 360 - phi if phi > 180 else phi
-    
-            if angle_from_centre_beam <= self.BEAM_SPREAD_DEGREES / 2 and cell_dist <= dist + self.SONAR_UNCERTAINTY_CM:
-                occupied_or_empty_direction = -1 if cell_dist < dist - self.SONAR_UNCERTAINTY_CM else 1
-                if occupied_or_empty_direction == 1 and dist > VALID_MAX_SONAR_DIST: continue #we can't be sure that it's occupied, but we can be sure that cells up to it are empty
-                update_cell_weight(cell, occupied_or_empty_direction)
-                
+        for cell_row in self.cells:
+            for cell in cell_row:
+                if cell.is_wall:
+                    continue  # we don't wanna update cell walls
+                line_to_robot = Line(robot.pos, cell.pos)
+                cell_angle = line_to_robot.angle()
+                cell_dist = line_to_robot.magnitude()
+                phi = abs(angle - cell_angle) % 360
+                angle_from_centre_beam = 360 - phi if phi > 180 else phi
+
+                if angle_from_centre_beam <= self.BEAM_SPREAD_DEGREES / 2 and cell_dist <= dist + self.SONAR_UNCERTAINTY_CM:
+                    occupied_or_empty_direction = -1 if cell_dist < dist - \
+                        self.SONAR_UNCERTAINTY_CM else 1
+                    if occupied_or_empty_direction == 1 and dist > self.VALID_MAX_SONAR_DIST:
+                        continue  # we can't be sure that it's occupied, but we can be sure that cells up to it are empty
+                    update_cell_weight(cell, occupied_or_empty_direction)
 
         if should_draw:
             robot.sensor_module.draw_sonar_line(
@@ -103,4 +110,7 @@ class OccupancyMap:
                 (min_angle, dist), canvas, robot.pos.x, robot.pos.y)
             # self.draw_grid(canvas)
 
-  
+    def detect_bottle_with_kernel(self):
+        # 2L coke bottle is 11cm in diameter
+        kernel_cell_length = round(self.BOTTLE_DIAMETER_CM / self.spacing_cm)
+        # the cells are a 1d array, but we know that every <biggest dimension> we have a new row.

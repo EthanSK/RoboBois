@@ -37,3 +37,7 @@ plan for the challenge:
 - move until the bump sensor detects a collision. If we have moved way past the average (y cm) and still havent detected a bump, then something fucked up and we need to go back to step 1.
 
 - After a successful collision, move to the next area and repeat.
+
+- If the bumper is triggered unexpectedly, on our way to area X, then we just assume the robot managed to find X, and we go to the next location. with this rule, we can make the robot go to the center of each area to start scanning, as oppossed to having to scan from outside hte area first
+
+# a 2L coke bottle has diameter 11cm
