@@ -25,7 +25,7 @@ body_radius = 7.6  # cm #works on carpet at 8.4
 
 
 BP = brickpi3.BrickPi3()
-# BP.reset_all()
+BP.reset_all()
 
 movement_module = movement.MovementModule(
     BP, motor_port_left, motor_port_right, wheel_radius, body_radius)
@@ -49,7 +49,6 @@ def montecarlo_run():
 
 if __name__ == "__main__":
     try:
-
         montecarlo.draw_lines()
         walls = map_data.generate_map().convert_walls_to_lines()
         occ_map = occupancy_map.OccupancyMap(walls, 2)

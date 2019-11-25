@@ -10,6 +10,7 @@ from math import radians, degrees
 import map_data
 import time
 
+
 class Robot:
     SD_X_FIXED = 2  # cm
     SD_Y_FIXED = 2  # cm
@@ -48,7 +49,7 @@ class Robot:
 
             for reading in scan_res:
                 occupancy_map.update_cells_in_beam(self, reading, canvas, True)
-                time.sleep(1)
+                time.sleep(0.2)
             return  # for testing
 
     def move_to_pos(self, pos, speed_m=20, turn_speed=45, should_use_montecarlo=True):

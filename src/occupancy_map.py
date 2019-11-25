@@ -63,31 +63,55 @@ class OccupancyMap:
         angle = sonar_data[0] + robot.rot
 
         dist = sonar_data[1]
-        if dist > self.VALID_MAX_SONAR_DIST:
-            # return  # because the sonar readings will prolly be bs
-            pass
+
+        # hold on. i should actually USE this info to update all the cells in front of it to moreempty
+        # what we should do is update the cells up to N cm (100 cm) as more empty, but don't make anything more occupied
+        # if dist > self.VALID_MAX_SONAR_DIST:
+        #     return  # because the sonar readings will prolly be bs
 
         max_angle = angle + self.BEAM_SPREAD_DEGREES / 2
         min_angle = angle - self.BEAM_SPREAD_DEGREES / 2
 
-        valid_cells = []
-        print("angle: ", angle)
+        # get valid cells
+        valid_cells_and_dist = []
         for cell in self.cells:
             line_to_robot = Line(robot.pos, cell.pos)
             cell_angle = line_to_robot.angle()
-
+            cell_dist = line_to_robot.magnitude()
             phi = abs(angle - cell_angle) % 360
-            distance = 360 - phi if phi > 180 else phi
-            angle_from_centre_beam = distance
+            angle_from_centre_beam = 360 - phi if phi > 180 else phi
 
             # print("angle center beam: ", angle_from_centre_beam)
-            if angle_from_centre_beam <= self.BEAM_SPREAD_DEGREES / 2 and line_to_robot.magnitude() <= dist:
-                valid_cells.append(cell)
+            if angle_from_centre_beam <= self.BEAM_SPREAD_DEGREES / 2 and cell_dist <= dist + self.SONAR_UNCERTAINTY_CM:
+                valid_cells_and_dist.append((cell, dist))
+                
 
         if should_draw:
             robot.sensor_module.draw_sonar_line(
                 (max_angle, dist), canvas, robot.pos.x, robot.pos.y)
             robot.sensor_module.draw_sonar_line(
                 (min_angle, dist), canvas, robot.pos.x, robot.pos.y)
-            canvas.drawParticles(valid_cells)
-        # at the end, draw the beam and the cells that lie in it so we can see it's working
+            canvas.drawParticles(valid_cells_and_dist)
+
+        def update_cell_weight(cell, occupied_or_empty_direction):
+            # -1 for more empty, 1 for more full
+            # this method of weight keeps weights normalized.
+            if occupied_or_empty_direction == 1:
+                if cell.weight >= 0.5:
+                    cell.weight += (1 - cell.weight)/2
+                else:
+                    cell.weight *= 2
+            if occupied_or_empty_direction == -1:
+                if cell.weight <= 0.5:
+                    cell.weight /= 2
+                else:
+                    cell.weight -= 1 - cell.weight
+
+        # update weights of valid cells
+        for cell_info in valid_cells_arond_dist:
+            cell = cell_info[0]
+            if cell.is_wall: continue
+            cell_dist = cell_info[1]
+            
+            update_cell_weight(cell, -1 if cell_dist < dist - self.SONAR_UNCERTAINTY_CM else 1)
+
