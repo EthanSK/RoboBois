@@ -69,25 +69,34 @@ class MovementModule:
         self.ldps = 0
         self.rdps = 0
 
-    def get_linear_degrees(self, length_m, speed_ms=10):
-        rotations = length_m / self.wh_circ
+    def calc_degrees_for_len(self, length_cm, speed=10):
+        rotations = length_cm / self.wh_circ
         degrees = rotations * 360
-        if speed_ms < 0:
+        if speed < 0:
             degrees *= -1
 
         return degrees
 
-    def move_linear(self, length_cm, speed_ms=10):
+    def calc_len_for_degrees(self, degrees, speed=10):
+        rotations = degrees / 360
+        length_cm = rotations * self.wh_circ
+        if speed < 0:
+            length_cm *= -1
+        return length_cm
+
+    def move_linear(self, length_cm, speed=10, robot=None, with_bump_detection=False):
         if length_cm < 0:
             length_cm *= -1
-            speed_ms *= -1
-
-        degrees = self.get_linear_degrees(length_cm, speed_ms)
+            speed *= -1
+        len_remaining = length_cm
+        degrees = self.calc_degrees_for_len(length_cm, speed)
         if degrees != 0:
-            self.set_linear_speed(speed_ms)
-            self.wait_x_degrees(degrees)
+            self.set_linear_speed(speed)
+            degrees_remaining = self.wait_x_degrees(degrees, robot, with_bump_detection)
+            len_remaining = self.calc_len_for_degrees(degrees_remaining, speed)
 
         self.set_linear_speed(0)
+        return len_remaining
 
     def get_turn_degrees(self, degrees, turn_dps=90):
         turn_rotations = degrees / 360
@@ -111,7 +120,7 @@ class MovementModule:
 
         self.set_linear_speed(0)
 
-    def wait_x_degrees(self, degrees):
+    def wait_x_degrees(self, degrees, robot=None, with_bump_detection=False):
         degrees_remaining = abs(degrees)
         sign = degrees / degrees_remaining
 
@@ -121,6 +130,10 @@ class MovementModule:
             delta = current_rot - last_rot
             degrees_remaining -= delta * sign
             last_rot = current_rot
+            if with_bump_detection:
+                if robot.sensor_module.get_left_touch() or robot.sensor_module.get_right_touch():
+                    return degrees_remaining #so we can calculate where the bump happened
+        return 0
 
     def steer(self, speed_ms, turn_amount):
         turn_abs = abs(turn_amount)

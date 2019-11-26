@@ -38,11 +38,12 @@ class Robot:
         self.rot = theta
         self.particles.init_particles(self.pos, self.rot)
 
-    def find_bottles(self, occupancy_map, pos, chunk_size_cm=10, speed=20, turn_speed=45, should_use_montecarlo=True):
-        waypoints = map_data.split_path([self.pos, pos], chunk_size_cm)
-        for point in waypoints:
+    def find_bottles(self, occupancy_map, chunk_size_cm=10, speed=20, turn_speed=45):
+        area_centers_abc = [Vector2(166, 39), Vector2(124,163), Vector2(44,123)] #[a, b, c]
+        # split_waypoints = map_data.split_path([self.pos, pos], chunk_size_cm)
+        for area_center in area_centers_abc:
             # moves to current pos first loop iter
-            self.move_to_pos(point, speed, turn_speed, should_use_montecarlo)
+            self.move_to_pos(area_center, speed, turn_speed, False, True) #has bump detection
             scan_res = self.sensor_module.get_sonar_full_rotation(
                 15, 0.01, False, self.pos)
 
@@ -54,11 +55,12 @@ class Robot:
             # occupancy_map.detect_bottle_with_kernel()
             return  # for testing
 
-    def move_to_pos(self, pos, speed_m=20, turn_speed=45, should_use_montecarlo=True):
+    def move_to_pos(self, pos, speed_m=20, turn_speed=45, should_use_montecarlo=True, with_bump_detection=False):
         if pos != self.pos:
             delta = pos - self.pos
             dist = delta.magnitude()
             angle = delta.angle()
+            angle_rads = delta.angle_rads()
 
             angle_delta = -(angle - self.rot) % 360
             if angle_delta != 0:
@@ -69,10 +71,13 @@ class Robot:
                 self.movement_module.turn(angle_delta, turn_speed)
                 self.rot = angle
             if dist != 0:
-                self.move_particles(delta, dist)
-                self.movement_module.move_linear(dist, speed_m)
-                self.pos = pos
+                len_remaining = self.movement_module.move_linear(dist, speed_m, self, with_bump_detection)
+                dist_moved = dist - len_remaining
+                real_new_pos = self.pos + Vector2(dist_moved * math.cos(angle_rads), dist_moved * math.sin(angle_rads))
 
+                self.move_particles(delta, dist_moved)
+                self.pos = real_new_pos
+                print("new pos; ", self.pos)
             if should_use_montecarlo:
                 self.update_real_pos()
 

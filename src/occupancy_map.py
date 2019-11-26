@@ -124,9 +124,10 @@ class OccupancyMap:
         for kernel_y in range(kernel_cell_count_width):
             for kernel_x in range(kernel_cell_count_width):
                 air_score += 0.5 * self.kernel[kernel_y][kernel_x]
-        wall_contribution = air_score / (kernel_cell_count_width ** 2)
+        wall_contribution = air_score / (kernel_cell_count_width ** 2) #make it an average
 
-
+        max_valid_score = 0
+        kernel_center_max_valid_score = Vector2(0, 0)
         for cell_y in range(len(self.cells) - kernel_cell_count_width):
             for cell_x in range(len(self.cells[cell_y]) - kernel_cell_count_width):
                 score = 0
@@ -136,6 +137,11 @@ class OccupancyMap:
                         if cell.is_wall: score += wall_contribution
                         else: score += cell.weight * self.kernel[kernel_y][kernel_x]
                 #print("score: ", score, cell_y, cell_x)
+                if score > air_score + self.BOTTLE_DETECTION_MIN_SCORE_OVER_AIR and score > max_valid_score:
+                    max_valid_score = score
+                    kernel_center_max_valid_score = Vector2(cell_x + kernel_cell_count_width / 2, cell_y + kernel_cell_count_width / 2)
+        return kernel_center_max_valid_score
+                    
 
     #can only get it to work when diameter of bottle is even number
     def create_kernel(self, canvas, should_draw = False):

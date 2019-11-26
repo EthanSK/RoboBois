@@ -51,4 +51,4 @@ class Vector2:
         return not (self == other)
 
     def __str__(self):
-        return "(" + str(int(self.x)) + ", " + str(int(self.y)) + ")"
+        return "(" + str(self.x) + ", " + str(self.y) + ")"
