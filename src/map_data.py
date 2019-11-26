@@ -1,5 +1,6 @@
 import particleDataStructures
 from vector2 import Vector2
+from line import Line
 
 
 def generate_map():
@@ -22,7 +23,6 @@ def generate_map():
     mymap.add_wall((210, 84, 210, 0))     # g
     mymap.add_wall((210, 0, 0, 0))        # h
     return mymap
-
 
 
 waypoints = [
@@ -52,3 +52,14 @@ def split_path(waypoints, split_dist):
 
     new_points.append(waypoints[-1])
     return new_points
+
+
+def draw_pos(pos, size, canvas):
+    line1 = Line(pos, pos + Vector2(size, size))
+    line2 = Line(pos, pos + Vector2(size, -size))
+    line3 = Line(pos, pos + Vector2(-size, size))
+    line4 = Line(pos, pos + Vector2(-size, -size))
+    canvas.draw_line_from_obj(line1)
+    canvas.draw_line_from_obj(line2)
+    canvas.draw_line_from_obj(line3)
+    canvas.draw_line_from_obj(line4)

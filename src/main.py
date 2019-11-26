@@ -21,11 +21,11 @@ sonar_port = brickpi3.BrickPi3.PORT_2
 sonar_motor_port = brickpi3.BrickPi3.PORT_C
 
 wheel_radius = 3.5  # 3.5cm
-body_radius = 7.6  # cm #works on carpet at 8.4
+body_radius = 8  # cm #works on carpet at 8.4
 
 
 BP = brickpi3.BrickPi3()
-# BP.reset_all()
+BP.reset_all()
 
 movement_module = movement.MovementModule(
     BP, motor_port_left, motor_port_right, wheel_radius, body_radius)
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     try:
         montecarlo.draw_lines()
         walls = map_data.generate_map().convert_walls_to_lines()
-        occ_map = occupancy_map.OccupancyMap(walls, 10)
+        occ_map = occupancy_map.OccupancyMap(walls, 2)
         occ_map.draw_grid(canvas)
         # canvas.drawParticles(
         #     [Particle(85, 65, 0, 0.5)])

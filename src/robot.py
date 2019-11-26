@@ -9,6 +9,7 @@ from cmath import rect, phase
 from math import radians, degrees
 import map_data
 import time
+import random
 
 
 class Robot:
@@ -39,21 +40,47 @@ class Robot:
         self.particles.init_particles(self.pos, self.rot)
 
     def find_bottles(self, occupancy_map, chunk_size_cm=10, speed=20, turn_speed=45):
-        area_centers_abc = [Vector2(166, 39), Vector2(124,163), Vector2(44,123)] #[a, b, c]
+        area_centers_abc = [Vector2(180, 45), Vector2(124,163), Vector2(44,123)] #[a, b, c]
         # split_waypoints = map_data.split_path([self.pos, pos], chunk_size_cm)
+        def move_to_map_center():
+            self.move_to_pos(Vector2(105, 105), speed, 45, False, False)
+        def move_random():
+            # find a random offset to current pos that is not outside (or near the bounds of ) the map
+            pass
         for area_center in area_centers_abc:
-            # moves to current pos first loop iter
-            self.move_to_pos(area_center, speed, turn_speed, False, True) #has bump detection
-            scan_res = self.sensor_module.get_sonar_full_rotation(
-                15, 0.01, False, self.pos)
+            pos_arr = [area_center, area_center + Vector2(0,20) , area_center - Vector2(0, 20)] # off for now
+            for pos in [area_center]:
+                # moves to current pos first loop iter
+                did_fully_move = self.move_to_pos(pos, speed, turn_speed, False, True) #has bump detection
+                if not did_fully_move:
+                    #then it bumped into a bottle. we can count this as a success and move to the next one
+                    move_to_map_center()
+                    continue
+                scan_res = self.sensor_module.get_sonar_full_rotation(
+                    int(360 / occupancy_map.BEAM_SPREAD_DEGREES), 0.01, False, self.pos)
+                for reading in scan_res:
+                    occupancy_map.update_cells_in_beam(
+                        self, reading, canvas, False)
+                    # time.sleep(1.5)
+                occupancy_map.draw_grid(canvas)
+            bottle_pos = occupancy_map.detect_bottle_with_kernel()
+            map_data.draw_pos(bottle_pos, 4, canvas)
+            found_and_bumped_bottle = False
+            while not found_and_bumped_bottle:
+                if bottle_pos.x != -1:
+                    #we found the bottle! move to it and bump
+                    self.move_to_pos(bottle_pos, speed, turn_speed, False, True)
+                    move_to_map_center()
+                    found_and_bumped_bottle = True
+                else:
+                    #we should move randomly a bit within the area and rescan
+                    print("didn't find a bottle so moving randomly")
+                    move_random()
 
-            for reading in scan_res:
-                occupancy_map.update_cells_in_beam(
-                    self, reading, canvas, False)
-                # time.sleep(1.5)
-            occupancy_map.draw_grid(canvas)
-            # occupancy_map.detect_bottle_with_kernel()
-            return  # for testing
+                    #this is temp
+                    move_to_map_center()
+                    break
+
 
     def move_to_pos(self, pos, speed_m=20, turn_speed=45, should_use_montecarlo=True, with_bump_detection=False):
         if pos != self.pos:
@@ -80,6 +107,8 @@ class Robot:
                 print("new pos; ", self.pos)
             if should_use_montecarlo:
                 self.update_real_pos()
+
+            return math.isclose(pos.x, self.pos.x) and math.isclose(pos.y, self.pos.y) 
 
     def move_particles(self, delta, dist):
         dist_sqrt = math.sqrt(dist)

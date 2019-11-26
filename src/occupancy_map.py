@@ -14,13 +14,13 @@ class CellOccupancyMap(Particle):
 
 
 class OccupancyMap:
-    BEAM_SPREAD_DEGREES = 10
+    BEAM_SPREAD_DEGREES = 20 #from testing it seems to be huge
     VALID_MAX_SONAR_DIST = 100  # after 100cm they become a bit b a d
     SONAR_UNCERTAINTY_CM = 2
     BOTTLE_DIAMETER_CM = 10
     KERNEL_BORDER_CM = 3
     KERNEL_IGNORE_BORDER_CM = 1 #the ring around the bottle that should be ignored due to inaccuracies
-    BOTTLE_DETECTION_MIN_SCORE_OVER_AIR = 5
+    BOTTLE_DETECTION_MIN_SCORE_OVER_AIR = 3
 
     def __init__(self, walls, spacing_cm=1):
         self.cells = []
@@ -65,13 +65,14 @@ class OccupancyMap:
         return (int(biggest_x), int(biggest_y))
 
     def draw_grid(self, canvas):
+        print("drawing grid")
         particles = []
         for cell_row in self.cells:
             particles += cell_row
         canvas.drawParticles(particles)
 
     def update_cells_in_beam(self, robot, sonar_data, canvas, should_draw=True):
-        angle = sonar_data[0] + robot.rot
+        angle = sonar_data[0] + robot.rot 
 
         dist = sonar_data[1]
 
@@ -106,7 +107,7 @@ class OccupancyMap:
                     occupied_or_empty_direction = -1 if cell_dist < dist - \
                         self.SONAR_UNCERTAINTY_CM else 1
                     if occupied_or_empty_direction == 1 and dist > self.VALID_MAX_SONAR_DIST:
-                        continue  # we can't be sure that it's occupied, but we can be sure that cells up to it are empty
+                        continue  # we can't be sure that it's occupied, but we can be sure that cells up to it are empty 
                     update_cell_weight(cell, occupied_or_empty_direction)
 
         if should_draw:
@@ -125,9 +126,9 @@ class OccupancyMap:
             for kernel_x in range(kernel_cell_count_width):
                 air_score += 0.5 * self.kernel[kernel_y][kernel_x]
         wall_contribution = air_score / (kernel_cell_count_width ** 2) #make it an average
-
-        max_valid_score = 0
-        kernel_center_max_valid_score = Vector2(0, 0)
+        print("air score", air_score)
+        max_valid_score = float("-inf")
+        kernel_center_max_valid_score = Vector2(-1, -1)
         for cell_y in range(len(self.cells) - kernel_cell_count_width):
             for cell_x in range(len(self.cells[cell_y]) - kernel_cell_count_width):
                 score = 0
@@ -140,6 +141,7 @@ class OccupancyMap:
                 if score > air_score + self.BOTTLE_DETECTION_MIN_SCORE_OVER_AIR and score > max_valid_score:
                     max_valid_score = score
                     kernel_center_max_valid_score = Vector2(cell_x + kernel_cell_count_width / 2, cell_y + kernel_cell_count_width / 2)
+        print("max valid score: ", max_valid_score, kernel_center_max_valid_score)
         return kernel_center_max_valid_score
                     
 
