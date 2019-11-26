@@ -51,7 +51,7 @@ class Robot:
                     self, reading, canvas, False)
                 # time.sleep(1.5)
             occupancy_map.draw_grid(canvas)
-            occupancy_map.detect_bottle_with_kernel()
+            # occupancy_map.detect_bottle_with_kernel()
             return  # for testing
 
     def move_to_pos(self, pos, speed_m=20, turn_speed=45, should_use_montecarlo=True):
@@ -111,4 +111,3 @@ class Robot:
 
         self.pos = acc_pos / self.particles.count
         self.rot = mean_angle([p.theta for p in self.particles.data])
- 

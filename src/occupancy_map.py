@@ -20,7 +20,7 @@ class OccupancyMap:
     BOTTLE_DIAMETER_CM = 10
     KERNEL_BORDER_CM = 3
     KERNEL_IGNORE_BORDER_CM = 1 #the ring around the bottle that should be ignored due to inaccuracies
-    BOTTLE_DETECTION_MIN_SCORE = 20
+    BOTTLE_DETECTION_MIN_SCORE_OVER_AIR = 5
 
     def __init__(self, walls, spacing_cm=1):
         self.cells = []
@@ -135,7 +135,7 @@ class OccupancyMap:
                         cell = self.cells[cell_y + kernel_y][cell_x + kernel_x]
                         if cell.is_wall: score += wall_contribution
                         else: score += cell.weight * self.kernel[kernel_y][kernel_x]
-                print("score: ", score, cell_y, cell_x)
+                #print("score: ", score, cell_y, cell_x)
 
     #can only get it to work when diameter of bottle is even number
     def create_kernel(self, canvas, should_draw = False):
