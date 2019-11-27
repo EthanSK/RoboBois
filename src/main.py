@@ -56,9 +56,9 @@ if __name__ == "__main__":
         # occ_map.draw_grid(canvas)
         # canvas.drawParticles(
         #     [Particle(85, 65, 0, 0.5)])
-
+        _map = map_data.generate_map()
         roboboi.find_bottles_mk2(
-            map_data.generate_map(), 20, 45)
+            _map, 20, 45)
 
         roboboi.reset()
 

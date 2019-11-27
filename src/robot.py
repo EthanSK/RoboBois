@@ -70,9 +70,10 @@ class Robot:
                         max_diff = dist_diff
                         max_diff_angle = angle
                         max_diff_dist = actual_dist
-                move_to_pos = Vector2(max_diff_dist * math.cos(math.radians(max_diff_angle)), max_diff_dist * math.sin(math.radians(max_diff_angle)))
+                move_to_pos = Vector2(max_diff_dist * math.cos(math.radians(max_diff_angle)), max_diff_dist * math.sin(math.radians(max_diff_angle))) + self.pos
                 map_data.draw_pos(move_to_pos, 3, canvas)
                 did_fully_move = self.move_to_pos(move_to_pos, speed, turn_speed, False, True) #has bump detection
+                return #test
                 if not did_fully_move:
                     #then it bumped into a bottle. we can count this as a success and move to the next one
                     move_to_map_center()
