@@ -33,7 +33,7 @@ movement_module = movement.MovementModule(
     BP, motor_port_left, motor_port_right, wheel_radius, body_radius)
 
 sensor_module = sensor.SensorModule(
-    BP, touch_port_left, touch_port_right, sonar_port, sonar_motor_port)
+    BP, touch_port_left, touch_port_right, sonar_port, sonar_motor_port, -1)
 
 roboboi = robot.Robot(BP, movement_module, sensor_module)
 
@@ -45,7 +45,7 @@ def montecarlo_run():
     split = map_data.split_path(map_data.waypoints, 10)
     for point in map_data.waypoints:
         roboboi.move_to_pos(point, 15, 30, False)
-        roboboi.particles.draw()
+        roboboi.draw_pos()
         time.sleep(0.4)
 
 

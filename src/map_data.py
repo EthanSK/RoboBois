@@ -2,6 +2,9 @@ import particleDataStructures
 from vector2 import Vector2
 from line import Line
 import math
+import numpy as np
+from point2line import pnt2line, vector
+
 
 def generate_map():
     mymap = particleDataStructures.Map()
@@ -38,6 +41,23 @@ waypoints = [
 ]
 
 
+def nearest_line_to_point_dist(point, lines):
+    min_dist = math.inf
+    for line in lines:
+        d = point_dist_to_wall(point, line)
+        if d < min_dist:
+            min_dist = d
+    return min_dist
+
+
+def point_dist_to_wall(point, line):
+    p1 = (line.start_point.x, line.start_point.y, 0)
+    p2 = (line.end_point.x, line.end_point.y, 0)
+    p3 = (point.x, point.y, 0)
+    dist, nearest = pnt2line(p3, p1, p2)
+    return dist
+
+
 def split_path(waypoints, split_dist):
     new_points = []
     for i in range(len(waypoints) - 1):
@@ -64,11 +84,15 @@ def draw_pos(pos, size, canvas):
     canvas.draw_line_from_obj(line3)
     canvas.draw_line_from_obj(line4)
 
-def draw_pos_rot(pos,rot_degrees, size, canvas):
-    arrow_tip = pos + Vector2(size * math.cos(math.radians(rot_degrees)), size * math.sin(math.radians(rot_degrees)))
+
+def draw_pos_rot(pos, rot_degrees, size, canvas):
+    arrow_tip = pos + Vector2(size * math.cos(math.radians(rot_degrees)),
+                              size * math.sin(math.radians(rot_degrees)))
     head_size = size / 2
-    right_arrow_head_end = arrow_tip + Vector2(head_size * math.cos(math.radians(rot_degrees + 135)), head_size * math.sin(math.radians(rot_degrees + 135)))
-    left_arrow_head_end = arrow_tip + Vector2(head_size * math.cos(math.radians(rot_degrees - 135)), head_size * math.sin(math.radians(rot_degrees - 135)))
+    right_arrow_head_end = arrow_tip + Vector2(head_size * math.cos(math.radians(
+        rot_degrees + 135)), head_size * math.sin(math.radians(rot_degrees + 135)))
+    left_arrow_head_end = arrow_tip + Vector2(head_size * math.cos(math.radians(
+        rot_degrees - 135)), head_size * math.sin(math.radians(rot_degrees - 135)))
     line1 = Line(pos, arrow_tip)
     line2 = Line(arrow_tip, right_arrow_head_end)
     line3 = Line(arrow_tip, left_arrow_head_end)
