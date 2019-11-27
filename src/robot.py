@@ -41,7 +41,7 @@ class Robot:
 
     def find_bottles_mk2(self, _map, speed=20, turn_speed=45, move_bottle_speed=5):
         #area_centers_abc = [Vector2(168, 42), Vector2(126,147), Vector2(42,112)] #[a, b, c]
-        area_points_abc = [Vector2(168, 42), Vector2(145,147), Vector2(42,112)] #[a, b, c]
+        area_points_abc = [Vector2(168, 42), Vector2(145,170), Vector2(42,135)] #[a, b, c]
         #area_entrances_and_angles = [(Vector2(126, 42), (-45, 45), (0)), (Vector2(126,84), (-35, 35), (90)), (Vector2(84,84), (-60, 40), (135)) ]
         def move_back_a_bit():
             #print("pos before moving back: ", self.pos)
@@ -87,7 +87,7 @@ class Robot:
                         move_to_map_center()
                         continue
                     scan_res = self.sensor_module.get_sonar_full_rotation(
-                       5, 0.02, True, self.pos, self.rot)
+                       5, 0.01, True, self.pos, self.rot)
                     #scan_res = self.sensor_module.get_sonar_rotation_between(angles[0], angles[1],  1, 0.02, True, self.pos, self.rot)
                     #sometimes due to slight deceleration it can move a little bit aftert stopping move_to_pos. Therefore we should check the bump sensors again
 

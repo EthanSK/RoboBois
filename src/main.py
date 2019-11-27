@@ -44,7 +44,7 @@ def montecarlo_run():
     # old waypoints follow
     split = map_data.split_path(map_data.waypoints, 10)
     for point in map_data.waypoints:
-        roboboi.move_to_pos(point, 15, 30, False)
+        roboboi.move_to_pos(point, 20, 45, False)
         roboboi.draw_pos()
         time.sleep(0.4)
 
@@ -60,7 +60,7 @@ if __name__ == "__main__":
         #     [Particle(85, 65, 0, 0.5)])
         _map = map_data.generate_map()
         roboboi.find_bottles_mk2(
-            _map, 15, 30, 10)
+            _map, 15, 45, 10)
         roboboi.move_to_pos(Vector2(84, 30))
         roboboi.reset()
 
