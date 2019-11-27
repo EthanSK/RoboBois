@@ -66,6 +66,7 @@ class Robot:
             bottle_pos = occupancy_map.detect_bottle_with_kernel()
             map_data.draw_pos(bottle_pos, 3, canvas)
             found_and_bumped_bottle = False
+            return #temp
             while not found_and_bumped_bottle:
                 if bottle_pos.x != -1:
                     #we found the bottle! move to it and bump

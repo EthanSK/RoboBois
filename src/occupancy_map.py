@@ -19,9 +19,9 @@ class OccupancyMap:
     BEAM_SPREAD_DEGREES = 20 #from testing it seems to be huge
     VALID_MAX_SONAR_DIST = 100  # after 100cm they become a bit b a d
     SONAR_UNCERTAINTY_CM = 2
-    BOTTLE_DIAMETER_CM = 40
-    KERNEL_BORDER_CM = 10
-    KERNEL_IGNORE_BORDER_CM = 10 #the ring around the bottle that should be ignored due to inaccuracies
+    BOTTLE_DIAMETER_CM = 11
+    KERNEL_BORDER_CM = 4
+    KERNEL_IGNORE_BORDER_CM = 4 #the ring around the bottle that should be ignored due to inaccuracies
     BOTTLE_DETECTION_MIN_SCORE_MULTIPLIER_OVER_AIR = 0#0.05
     def __init__(self, walls, spacing_cm=1):
         self.cells = []
@@ -126,13 +126,13 @@ class OccupancyMap:
         for kernel_y in range(kernel_cell_count_width):
             for kernel_x in range(kernel_cell_count_width):
                 air_score += 0.5 * self.kernel[kernel_y][kernel_x]
-        wall_contribution = air_score / (kernel_cell_count_width ** 2) #make it an average
+        wall_contribution = 2 * air_score / (kernel_cell_count_width ** 2)
         print("air score", air_score)
         max_valid_score = float("-inf")
         kernel_center_max_valid_score = Vector2(-1, -1)
         for cell_y in range(len(self.cells) - kernel_cell_count_width):
             for cell_x in range(len(self.cells[cell_y]) - kernel_cell_count_width):
-                score = 0
+                score = 0 #something that won't even happen
                 for kernel_y in range(kernel_cell_count_width):
                     for kernel_x in range(kernel_cell_count_width):
                         cell = self.cells[cell_y + kernel_y][cell_x + kernel_x]
@@ -148,31 +148,7 @@ class OccupancyMap:
 
     #can only get it to work when diameter of bottle is even number
     def create_kernel(self, canvas, should_draw = False):
-        """kernel_cell_count_exact = (2 * self.KERNEL_BORDER_CM  + 2 * self.KERNEL_IGNORE_BORDER_CM + self.BOTTLE_DIAMETER_CM) / self.spacing_cm
-        kernel_cell_count = round(kernel_cell_count_exact) #round up to nearest odd
-        kernel = []
-        bottle_radius = self.BOTTLE_DIAMETER_CM / 2
-        print("lentgth; ", kernel_cell_count_exact,
-               kernel_cell_count, bottle_radius)
-        kernel_center = Vector2(
-            (kernel_cell_count_exact * self.spacing_cm) / 2, (kernel_cell_count_exact * self.spacing_cm) / 2)
-        print("center: ", kernel_center.x, kernel_center.y)
-        for y in range(kernel_cell_count):
-            kernel.append([])
-            for x in range(kernel_cell_count):
-                real_cell_x = x * self.spacing_cm
-                real_cell_y = y * self.spacing_cm
-                dist_from_kernel_center = math.sqrt((
-                    kernel_center.x - real_cell_x) ** 2 + (kernel_center.y - real_cell_y) ** 2)
-                #print("dist_from_kernel_center: ", dist_from_kernel_center)
-                if dist_from_kernel_center > bottle_radius:
-                    kernel[y].append(-0.1)
-                elif dist_from_kernel_center > bottle_radius and dist_from_kernel_center <= bottle_radius + self.KERNEL_IGNORE_BORDER_CM:
-                    kernel[y].append(0)
-                else:
-                    kernel[y].append(1)"""
-
-        empty_radius = int((self.BOTTLE_DIAMETER_CM / 2 + self.KERNEL_BORDER_CM) / self.spacing_cm)
+        empty_radius = int((self.BOTTLE_DIAMETER_CM / 2 + self.KERNEL_BORDER_CM + self.KERNEL_IGNORE_BORDER_CM) / self.spacing_cm)
         ignore_radius = int((self.BOTTLE_DIAMETER_CM / 2 + self.KERNEL_IGNORE_BORDER_CM )/ self.spacing_cm)
         radius = int((self.BOTTLE_DIAMETER_CM / 2) / self.spacing_cm)
         
@@ -197,4 +173,4 @@ class OccupancyMap:
                         x * self.spacing_cm + 100, y * self.spacing_cm + 100, (kernel[y][x] + 1) / 2, False))
             canvas.drawParticles(particles)
             time.sleep(1)
-            exit()
+            #exit()
