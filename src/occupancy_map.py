@@ -5,6 +5,8 @@ from shapely.geometry.polygon import Polygon
 from line import Line
 from vector2 import Vector2
 import math
+import numpy as np
+import time
 
 
 class CellOccupancyMap(Particle):
@@ -17,11 +19,10 @@ class OccupancyMap:
     BEAM_SPREAD_DEGREES = 20 #from testing it seems to be huge
     VALID_MAX_SONAR_DIST = 100  # after 100cm they become a bit b a d
     SONAR_UNCERTAINTY_CM = 2
-    BOTTLE_DIAMETER_CM = 10
-    KERNEL_BORDER_CM = 3
-    KERNEL_IGNORE_BORDER_CM = 1 #the ring around the bottle that should be ignored due to inaccuracies
-    BOTTLE_DETECTION_MIN_SCORE_OVER_AIR = 3
-
+    BOTTLE_DIAMETER_CM = 40
+    KERNEL_BORDER_CM = 10
+    KERNEL_IGNORE_BORDER_CM = 10 #the ring around the bottle that should be ignored due to inaccuracies
+    BOTTLE_DETECTION_MIN_SCORE_MULTIPLIER_OVER_AIR = 0#0.05
     def __init__(self, walls, spacing_cm=1):
         self.cells = []
         self.walls = walls
@@ -137,8 +138,8 @@ class OccupancyMap:
                         cell = self.cells[cell_y + kernel_y][cell_x + kernel_x]
                         if cell.is_wall: score += wall_contribution
                         else: score += cell.weight * self.kernel[kernel_y][kernel_x]
-                #print("score: ", score, cell_y, cell_x)
-                if score > air_score + self.BOTTLE_DETECTION_MIN_SCORE_OVER_AIR and score > max_valid_score:
+                print("score: ", score, Vector2(cell_x + kernel_cell_count_width / 2, cell_y + kernel_cell_count_width / 2))
+                if score > air_score + air_score * self.BOTTLE_DETECTION_MIN_SCORE_MULTIPLIER_OVER_AIR and score > max_valid_score:
                     max_valid_score = score
                     kernel_center_max_valid_score = Vector2(cell_x + kernel_cell_count_width / 2, cell_y + kernel_cell_count_width / 2)
         print("max valid score: ", max_valid_score, kernel_center_max_valid_score)
@@ -147,39 +148,47 @@ class OccupancyMap:
 
     #can only get it to work when diameter of bottle is even number
     def create_kernel(self, canvas, should_draw = False):
-        def normal_round(n):
-            if n - math.floor(n) < 0.5:
-                return math.floor(n)
-            return math.ceil(n)
-
-        kernel_cell_count_exact = 2 * self.KERNEL_BORDER_CM + \
-            self.BOTTLE_DIAMETER_CM / self.spacing_cm
-        kernel_cell_count = normal_round(kernel_cell_count_exact)
+        """kernel_cell_count_exact = (2 * self.KERNEL_BORDER_CM  + 2 * self.KERNEL_IGNORE_BORDER_CM + self.BOTTLE_DIAMETER_CM) / self.spacing_cm
+        kernel_cell_count = round(kernel_cell_count_exact) #round up to nearest odd
         kernel = []
-        bottle_radius = (kernel_cell_count_exact / 2) - self.KERNEL_BORDER_CM
-        # print("lentgth; ", kernel_cell_count_exact,
-            #   kernel_cell_count, bottle_radius)
+        bottle_radius = self.BOTTLE_DIAMETER_CM / 2
+        print("lentgth; ", kernel_cell_count_exact,
+               kernel_cell_count, bottle_radius)
         kernel_center = Vector2(
-            kernel_cell_count_exact / 2, kernel_cell_count_exact / 2)
-        # print("center: ", kernel_center.x, kernel_center.y)
+            (kernel_cell_count_exact * self.spacing_cm) / 2, (kernel_cell_count_exact * self.spacing_cm) / 2)
+        print("center: ", kernel_center.x, kernel_center.y)
         for y in range(kernel_cell_count):
             kernel.append([])
             for x in range(kernel_cell_count):
-                real_cell_x = x + (kernel_cell_count_exact /
-                                   kernel_cell_count) / 2
-                real_cell_y = y + (kernel_cell_count_exact /
-                                   kernel_cell_count) / 2
+                real_cell_x = x * self.spacing_cm
+                real_cell_y = y * self.spacing_cm
                 dist_from_kernel_center = math.sqrt((
                     kernel_center.x - real_cell_x) ** 2 + (kernel_center.y - real_cell_y) ** 2)
-                if dist_from_kernel_center <= bottle_radius:
-                    kernel[y].append(1)
-                elif dist_from_kernel_center > bottle_radius and dist_from_kernel_center < bottle_radius + self.KERNEL_IGNORE_BORDER_CM:
+                #print("dist_from_kernel_center: ", dist_from_kernel_center)
+                if dist_from_kernel_center > bottle_radius:
+                    kernel[y].append(-0.1)
+                elif dist_from_kernel_center > bottle_radius and dist_from_kernel_center <= bottle_radius + self.KERNEL_IGNORE_BORDER_CM:
                     kernel[y].append(0)
                 else:
-                    kernel[y].append(-1)
+                    kernel[y].append(1)"""
+
+        empty_radius = int((self.BOTTLE_DIAMETER_CM / 2 + self.KERNEL_BORDER_CM) / self.spacing_cm)
+        ignore_radius = int((self.BOTTLE_DIAMETER_CM / 2 + self.KERNEL_IGNORE_BORDER_CM )/ self.spacing_cm)
+        radius = int((self.BOTTLE_DIAMETER_CM / 2) / self.spacing_cm)
+        
+        kernel = np.full((2*empty_radius+1, 2*empty_radius+1), -1)
+
+        y,x = np.ogrid[-empty_radius:empty_radius+1, -empty_radius:empty_radius+1]
+
+        mask = x**2 + y**2 <= ignore_radius**2
+        kernel[mask] = 0 #ignore
+
+        mask = x**2 + y**2 <= radius**2
+        kernel[mask] = 1 #ignore
+
         self.kernel = kernel
 
-        # # draw test
+        # draw test
         if should_draw:
             particles = []
             for y in range(len(kernel)):
@@ -187,3 +196,5 @@ class OccupancyMap:
                     particles.append(CellOccupancyMap(
                         x * self.spacing_cm + 100, y * self.spacing_cm + 100, (kernel[y][x] + 1) / 2, False))
             canvas.drawParticles(particles)
+            time.sleep(1)
+            exit()

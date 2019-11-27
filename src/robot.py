@@ -64,7 +64,7 @@ class Robot:
                     # time.sleep(1.5)
                 occupancy_map.draw_grid(canvas)
             bottle_pos = occupancy_map.detect_bottle_with_kernel()
-            map_data.draw_pos(bottle_pos, 4, canvas)
+            map_data.draw_pos(bottle_pos, 3, canvas)
             found_and_bumped_bottle = False
             while not found_and_bumped_bottle:
                 if bottle_pos.x != -1:

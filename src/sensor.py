@@ -87,7 +87,7 @@ class SensorModule:
             loop = range(cur_degrees + step, up_to_degrees + step, step)
             for new_rot in loop:
                 self.BP.set_motor_position(self.sonar_motor, new_rot)
-                time.sleep(rot_speed)
+                time.sleep(rot_speed if not no_observe else 0)
                 if no_observe:
                     continue
                 dist = self.get_sonar_distance()
