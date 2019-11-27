@@ -10,6 +10,7 @@ from math import radians, degrees
 import map_data
 import time
 import random
+from montecarlo import find_nearest_wall
 
 
 class Robot:
@@ -39,6 +40,44 @@ class Robot:
         self.rot = theta
         self.particles.init_particles(self.pos, self.rot)
 
+    def find_bottles_mk2(self, _map, speed=20, turn_speed=45):
+        area_centers_abc = [Vector2(180, 45), Vector2(124,163), Vector2(44,123)] #[a, b, c]
+        def move_to_map_center():
+            self.move_to_pos(Vector2(105, 105), speed, 45, False, False)
+        def move_random():
+            # find a random offset to current pos that is not outside (or near the bounds of ) the map
+            pass
+        for area_center in area_centers_abc:
+            pos_arr = [area_center, area_center + Vector2(0,20) , area_center - Vector2(0, 20)] # off for now
+            for pos in [area_center]:
+                # moves to current pos first loop iter
+                did_fully_move = self.move_to_pos(pos, speed, turn_speed, False, True) #has bump detection
+                if not did_fully_move:
+                    #then it bumped into a bottle. we can count this as a success and move to the next one
+                    move_to_map_center()
+                    continue
+                scan_res = self.sensor_module.get_sonar_full_rotation(
+                    10, 0.01, False, self.pos)
+                max_diff = 0
+                max_diff_angle = 69
+                max_diff_dist = 420
+                for data in scan_res:
+                    angle = data[0]
+                    actual_dist = data[1]
+                    wall, expected_dist = find_nearest_wall(self.pos.x, self.pos.y, self.rot, _map)
+                    dist_diff = expected_dist - actual_dist # not abs, it should only work if it's shorter dist that it thought
+                    if dist_diff >= max_diff: 
+                        max_diff = dist_diff
+                        max_diff_angle = angle
+                        max_diff_dist = actual_dist
+                move_to_pos = Vector2(max_diff_dist * math.cos(math.radians(max_diff_angle)), max_diff_dist * math.sin(math.radians(max_diff_angle)))
+                map_data.draw_pos(move_to_pos, 3, canvas)
+                did_fully_move = self.move_to_pos(move_to_pos, speed, turn_speed, False, True) #has bump detection
+                if not did_fully_move:
+                    #then it bumped into a bottle. we can count this as a success and move to the next one
+                    move_to_map_center()
+                    continue
+                
     def find_bottles(self, occupancy_map, chunk_size_cm=10, speed=20, turn_speed=45):
         area_centers_abc = [Vector2(180, 45), Vector2(124,163), Vector2(44,123)] #[a, b, c]
         # split_waypoints = map_data.split_path([self.pos, pos], chunk_size_cm)
@@ -66,7 +105,6 @@ class Robot:
             bottle_pos = occupancy_map.detect_bottle_with_kernel()
             map_data.draw_pos(bottle_pos, 3, canvas)
             found_and_bumped_bottle = False
-            return #temp
             while not found_and_bumped_bottle:
                 if bottle_pos.x != -1:
                     #we found the bottle! move to it and bump

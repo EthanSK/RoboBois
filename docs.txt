@@ -41,3 +41,14 @@ plan for the challenge:
 - If the bumper is triggered unexpectedly, on our way to area X, then we just assume the robot managed to find X, and we go to the next location. with this rule, we can make the robot go to the center of each area to start scanning, as oppossed to having to scan from outside hte area first
 
 # a 2L coke bottle has diameter 11cm
+
+
+####ok well that plan did not work
+
+##new plan
+
+ - go to center of a, b and c
+ - do a scan (only regarding depths that are < n so we know they aren't bogus), each depth measurement should be compared against an expected measurement
+ - the measurement with the biggest difference is the bottle
+ - if it moves to the position and there was no hit, move and rotate a bit, and try again
+ - if along the way it bumps, we know it hit so move on

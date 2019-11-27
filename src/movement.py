@@ -119,6 +119,9 @@ class MovementModule:
             self.wait_x_degrees(wheel_degrees)
 
         self.set_linear_speed(0)
+    
+    def turn_to_angle(self, current_degrees, angle_degrees, turn_dps=90):
+        self.turn(current_degrees - angle_degrees)
 
     def wait_x_degrees(self, degrees, robot=None, with_bump_detection=False):
         degrees_remaining = abs(degrees)
