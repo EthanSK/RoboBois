@@ -5,6 +5,7 @@ from movement import MovementModule
 from particleDataStructures import Canvas
 from vector2 import Vector2
 
+
 class SensorModule:
     def __init__(self, BP, ltouch, rtouch, sonar, sonar_motor, sonar_offset=0):
         self.BP = BP
@@ -87,7 +88,7 @@ class SensorModule:
             loop = range(cur_degrees + step, up_to_degrees + step, step)
             for new_rot in loop:
                 self.BP.set_motor_position(self.sonar_motor, new_rot)
-                time.sleep(rot_speed if not no_observe else 0)
+                time.sleep(rot_speed if not no_observe else rot_speed / 3)
                 if no_observe:
                     continue
                 dist = self.get_sonar_distance()
@@ -96,10 +97,10 @@ class SensorModule:
                 res.append(new)
                 if should_draw_live:
                     self.draw_sonar_line(new, canvas, start_pos.x, start_pos.y)
-            return up_to_degrees #python is so retarded i have to do this
+            return up_to_degrees  # python is so retarded i have to do this
 
         # rotate 180 one way, rotate 360 other way, then rotate 180 until reach start
-        cur_degrees = rotate_and_observe(180) 
+        cur_degrees = rotate_and_observe(180)
         time.sleep(0.3)  # for accuracy
         cur_degrees = rotate_and_observe(-180, True)  # no observing here
         time.sleep(0.3)

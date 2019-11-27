@@ -17,7 +17,7 @@ class CellOccupancyMap(Particle):
 
 class OccupancyMap:
     BEAM_SPREAD_DEGREES = 20 #from testing it seems to be huge
-    VALID_MAX_SONAR_DIST = 100  # after 100cm they become a bit b a d
+    VALID_MAX_SONAR_DIST = 30  # after 100cm they become a bit b a d
     SONAR_UNCERTAINTY_CM = 2
     BOTTLE_DIAMETER_CM = 11
     KERNEL_BORDER_CM = 4
@@ -109,6 +109,9 @@ class OccupancyMap:
                         self.SONAR_UNCERTAINTY_CM else 1
                     if occupied_or_empty_direction == 1 and dist > self.VALID_MAX_SONAR_DIST:
                         continue  # we can't be sure that it's occupied, but we can be sure that cells up to it are empty 
+                    if occupied_or_empty_direction == -1 and cell_dist > self.VALID_MAX_SONAR_DIST:
+                        continue
+                    
                     update_cell_weight(cell, occupied_or_empty_direction)
 
         if should_draw:
@@ -138,7 +141,7 @@ class OccupancyMap:
                         cell = self.cells[cell_y + kernel_y][cell_x + kernel_x]
                         if cell.is_wall: score += wall_contribution
                         else: score += cell.weight * self.kernel[kernel_y][kernel_x]
-                print("score: ", score, Vector2(cell_x + kernel_cell_count_width / 2, cell_y + kernel_cell_count_width / 2))
+                #print("score: ", score, Vector2(cell_x + kernel_cell_count_width / 2, cell_y + kernel_cell_count_width / 2))
                 if score > air_score + air_score * self.BOTTLE_DETECTION_MIN_SCORE_MULTIPLIER_OVER_AIR and score > max_valid_score:
                     max_valid_score = score
                     kernel_center_max_valid_score = Vector2(cell_x + kernel_cell_count_width / 2, cell_y + kernel_cell_count_width / 2)
