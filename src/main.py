@@ -15,17 +15,19 @@ import occupancy_map
 # this script can only be run as root
 motor_port_left = brickpi3.BrickPi3.PORT_D
 motor_port_right = brickpi3.BrickPi3.PORT_A
-touch_port_left = brickpi3.BrickPi3.PORT_4
+touch_port_left = brickpi3.BrickPi3.PORT_1
 touch_port_right = brickpi3.BrickPi3.PORT_3
 sonar_port = brickpi3.BrickPi3.PORT_2
 sonar_motor_port = brickpi3.BrickPi3.PORT_C
 
 wheel_radius = 3.5  # 3.5cm
-body_radius = 8  # cm #works on carpet at 8.4
+body_radius = 8.6  # cm #works on carpet at 8.6 at turn speed 30
 
 
 BP = brickpi3.BrickPi3()
-# BP.reset_all()
+time.sleep(0.5)
+BP.reset_all()
+time.sleep(0.5)
 
 movement_module = movement.MovementModule(
     BP, motor_port_left, motor_port_right, wheel_radius, body_radius)
@@ -41,8 +43,8 @@ roboboi.force_pos_rot(Vector2(84, 30), 0)
 def montecarlo_run():
     # old waypoints follow
     split = map_data.split_path(map_data.waypoints, 10)
-    for point in split:
-        roboboi.move_to_pos(point, 20, 45, True)
+    for point in map_data.waypoints:
+        roboboi.move_to_pos(point, 15, 30, False)
         roboboi.particles.draw()
         time.sleep(0.4)
 
@@ -58,8 +60,8 @@ if __name__ == "__main__":
         #     [Particle(85, 65, 0, 0.5)])
         _map = map_data.generate_map()
         roboboi.find_bottles_mk2(
-            _map, 20, 45)
-
+            _map, 15, 30, 10)
+        roboboi.move_to_pos(Vector2(84, 30))
         roboboi.reset()
 
     except KeyboardInterrupt:

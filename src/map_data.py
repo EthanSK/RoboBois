@@ -1,7 +1,7 @@
 import particleDataStructures
 from vector2 import Vector2
 from line import Line
-
+import math
 
 def generate_map():
     mymap = particleDataStructures.Map()
@@ -63,3 +63,15 @@ def draw_pos(pos, size, canvas):
     canvas.draw_line_from_obj(line2)
     canvas.draw_line_from_obj(line3)
     canvas.draw_line_from_obj(line4)
+
+def draw_pos_rot(pos,rot_degrees, size, canvas):
+    arrow_tip = pos + Vector2(size * math.cos(math.radians(rot_degrees)), size * math.sin(math.radians(rot_degrees)))
+    head_size = size / 2
+    right_arrow_head_end = arrow_tip + Vector2(head_size * math.cos(math.radians(rot_degrees + 135)), head_size * math.sin(math.radians(rot_degrees + 135)))
+    left_arrow_head_end = arrow_tip + Vector2(head_size * math.cos(math.radians(rot_degrees - 135)), head_size * math.sin(math.radians(rot_degrees - 135)))
+    line1 = Line(pos, arrow_tip)
+    line2 = Line(arrow_tip, right_arrow_head_end)
+    line3 = Line(arrow_tip, left_arrow_head_end)
+    canvas.draw_line_from_obj(line1)
+    canvas.draw_line_from_obj(line2)
+    canvas.draw_line_from_obj(line3)

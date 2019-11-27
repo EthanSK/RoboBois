@@ -40,44 +40,74 @@ class Robot:
         self.rot = theta
         self.particles.init_particles(self.pos, self.rot)
 
-    def find_bottles_mk2(self, _map, speed=20, turn_speed=45):
-        area_centers_abc = [Vector2(180, 45), Vector2(124,163), Vector2(44,123)] #[a, b, c]
+    def find_bottles_mk2(self, _map, speed=20, turn_speed=45, move_bottle_speed=5):
+        #area_centers_abc = [Vector2(168, 42), Vector2(126,147), Vector2(42,112)] #[a, b, c]
+        area_entrances_and_angles = [(Vector2(126, 42), (-45, 45), (0)), (Vector2(126,84), (-35, 35), (90)), (Vector2(84,84), (-60, 40), (135)) ]
+        def move_back_a_bit():
+            dist = -10
+            self.movement_module.move_linear(dist, move_bottle_speed, None, False) # no bump detection
+            #update position!!!
+            self.pos = self.pos + Vector2(dist * math.cos(math.radians(self.rot)), dist * math.sin(math.radians(self.rot)))
         def move_to_map_center():
-            self.move_to_pos(Vector2(105, 105), speed, 45, False, False)
-        def move_random():
-            # find a random offset to current pos that is not outside (or near the bounds of ) the map
-            pass
-        for area_center in area_centers_abc:
-            pos_arr = [area_center, area_center + Vector2(0,20) , area_center - Vector2(0, 20)] # off for now
-            for pos in [area_center]:
+            map_data.draw_pos_rot(self.pos, self.rot, 6, canvas)           
+            self.move_to_pos(Vector2(126, 80), speed, 45, False, False)
+        for data in area_entrances_and_angles:
+            point = data[0]
+            angles = data[1]
+            start_angle_at_entrance = data[2]
+            #pos_arr = [area_center, area_center + Vector2(0,20), area_center - Vector2(0, 20)] # off for now
+            for pos in [point]:
                 # moves to current pos first loop iter
                 did_fully_move = self.move_to_pos(pos, speed, turn_speed, False, True) #has bump detection
                 if not did_fully_move:
                     #then it bumped into a bottle. we can count this as a success and move to the next one
-                    move_to_map_center()
-                    continue
-                scan_res = self.sensor_module.get_sonar_full_rotation(
-                    10, 0.01, False, self.pos)
-                max_diff = 0
-                max_diff_angle = 69
-                max_diff_dist = 420
-                for data in scan_res:
-                    angle = data[0]
-                    actual_dist = data[1]
-                    wall, expected_dist = find_nearest_wall(self.pos.x, self.pos.y, self.rot, _map)
-                    dist_diff = expected_dist - actual_dist # not abs, it should only work if it's shorter dist that it thought
-                    if dist_diff >= max_diff: 
-                        max_diff = dist_diff
-                        max_diff_angle = angle
-                        max_diff_dist = actual_dist
-                move_to_pos = Vector2(max_diff_dist * math.cos(math.radians(max_diff_angle)), max_diff_dist * math.sin(math.radians(max_diff_angle))) + self.pos
-                map_data.draw_pos(move_to_pos, 3, canvas)
-                did_fully_move = self.move_to_pos(move_to_pos, speed, turn_speed, False, True) #has bump detection
-                return #test
-                if not did_fully_move:
-                    #then it bumped into a bottle. we can count this as a success and move to the next one
-                    move_to_map_center()
-                    continue
+                    print("did not fully move")
+                    move_back_a_bit()
+                    # move_to_map_center()
+                    break
+                self.movement_module.turn(self.rot - start_angle_at_entrance ,turn_speed)
+                self.rot = start_angle_at_entrance
+                self.draw_pos()
+                found_and_bumped_bottle = False
+                while not found_and_bumped_bottle:
+                    time.sleep(0.5) #let it decelerate
+                    if self.sensor_module.get_right_touch() or self.sensor_module.get_left_touch():
+                        #is hitting bottle
+                        print("hit bottle while decelerating")
+                        move_back_a_bit()
+                        # move_to_map_center()
+                        found_and_bumped_bottle = True
+                        continue
+                    #scan_res = self.sensor_module.get_sonar_full_rotation(
+                     #   5, 0.02, False, self.pos, self.rot)
+                    scan_res = self.sensor_module.get_sonar_rotation_between(angles[0], angles[1],  1, 0.02, True, self.pos, self.rot)
+                    #sometimes due to slight deceleration it can move a little bit aftert stopping move_to_pos. Therefore we should check the bump sensors again
+
+                    max_diff = 0
+                    abs_angle_to_use = 69 #abs as in not relative to robot
+                    dist_to_use = 420
+                    for data in scan_res:
+                        angle_rel_robot = data[0]
+                        actual_dist = data[1]
+                        wall, expected_dist = find_nearest_wall(self.pos.x, self.pos.y, angle_rel_robot + self.rot, _map)
+                        dist_diff = expected_dist - actual_dist # not abs, it should only work if it's shorter dist that it thought
+                        print("expected dist: ", expected_dist, " actual dist: ", actual_dist, "angle abs: ", angle_rel_robot + self.rot)
+                        if dist_diff > max_diff: 
+                            max_diff = dist_diff
+                            abs_angle_to_use = angle_rel_robot + self.rot
+                            dist_to_use = actual_dist
+                    print("abs angle: ", abs_angle_to_use, "dist: ", dist_to_use, "pos: ", self.pos)
+                    bottle_pos = Vector2(dist_to_use * math.cos(math.radians(abs_angle_to_use)), dist_to_use * math.sin(math.radians(abs_angle_to_use))) + self.pos
+                    map_data.draw_pos(bottle_pos, 6, canvas)
+                    did_fully_move = self.move_to_pos(bottle_pos, move_bottle_speed, turn_speed, False, True) #has bump detection
+                    if not did_fully_move:
+                        #then it bumped into a bottle. we can count this as a success and move to the next one
+                        print("found bottle normally")
+                        move_back_a_bit()
+                        # move_to_map_center()
+                        found_and_bumped_bottle = True
+                
+
                 
     def find_bottles(self, occupancy_map, chunk_size_cm=10, speed=20, turn_speed=45):
         area_centers_abc = [Vector2(180, 45), Vector2(124,163), Vector2(44,123)] #[a, b, c]
@@ -122,7 +152,7 @@ class Robot:
                     break
 
 
-    def move_to_pos(self, pos, speed_m=20, turn_speed=45, should_use_montecarlo=True, with_bump_detection=False):
+    def move_to_pos(self, pos, speed_m=20, turn_speed=45, should_use_montecarlo=False, with_bump_detection=False):
         if pos != self.pos:
             delta = pos - self.pos
             dist = delta.magnitude()
@@ -147,7 +177,7 @@ class Robot:
                 print("new pos; ", self.pos)
             if should_use_montecarlo:
                 self.update_real_pos()
-
+            self.draw_pos()
             return math.isclose(pos.x, self.pos.x) and math.isclose(pos.y, self.pos.y) 
 
     def move_particles(self, delta, dist):
@@ -185,3 +215,6 @@ class Robot:
 
         self.pos = acc_pos / self.particles.count
         self.rot = mean_angle([p.theta for p in self.particles.data])
+
+    def draw_pos(self):
+        map_data.draw_pos_rot(self.pos,self.rot, 4, canvas)

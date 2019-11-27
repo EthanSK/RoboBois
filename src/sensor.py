@@ -72,8 +72,45 @@ class SensorModule:
                 snaps += 1
 
         return acc / n
+    
+    def get_sonar_rotation_between(self, angle_left, angle_right, snapshot_interval=1, rot_time_del=0.005, should_draw_live=True, start_pos=Vector2(84, 30), draw_rot_offset=0):
+        rot_time_del = rot_time_del * snapshot_interval
+        self.BP.set_motor_limits(
+            self.sonar_motor, MovementModule.max_power, MovementModule.max_dps)
+        self.BP.offset_motor_encoder(
+            self.sonar_motor, self.BP.get_motor_encoder(self.sonar_motor))  # reset encoder
+        res = []
+        canvas = Canvas()  # for live drawing
+        cur_degrees = 0 #relative to robot
 
-    def get_sonar_full_rotation(self, snapshot_interval=1, rot_speed=0.005, should_draw_live=True, start_pos=Vector2(84, 30)):
+        def rotate_and_observe(up_to_degrees, no_observe=False):
+            step = snapshot_interval if cur_degrees < up_to_degrees else -snapshot_interval
+            loop = range(cur_degrees + step, up_to_degrees + step, step)
+            for new_rot in loop:
+                self.BP.set_motor_position(self.sonar_motor, new_rot)
+                time.sleep(rot_time_del if not no_observe else rot_time_del / 3)
+                if no_observe:
+                    continue
+                dist = self.get_sonar_distance()
+                # -ve so the angle matches with the map angle convention
+                new = (-new_rot, dist)
+                res.append(new)
+                if should_draw_live:
+
+                    self.draw_sonar_line((new[0] + draw_rot_offset, new[1]), canvas, start_pos.x, start_pos.y)
+            return up_to_degrees 
+
+        # rotate 180 one way, rotate 360 other way, then rotate 180 until reach start
+        cur_degrees = rotate_and_observe(angle_left, True)
+        time.sleep(0.3)  # for accuracy
+        cur_degrees = rotate_and_observe(angle_right)  # no observing here
+        time.sleep(0.3)
+        cur_degrees = rotate_and_observe(0, True)
+        time.sleep(0.3)
+
+        return res
+
+    def get_sonar_full_rotation(self, snapshot_interval=1, rot_speed=0.005, should_draw_live=True, start_pos=Vector2(84, 30), draw_rot_offset=0):
         rot_speed = rot_speed * snapshot_interval
         self.BP.set_motor_limits(
             self.sonar_motor, MovementModule.max_power, MovementModule.max_dps)
@@ -96,8 +133,9 @@ class SensorModule:
                 new = (-new_rot, dist)
                 res.append(new)
                 if should_draw_live:
-                    self.draw_sonar_line(new, canvas, start_pos.x, start_pos.y)
-            return up_to_degrees  # python is so retarded i have to do this
+
+                    self.draw_sonar_line((new[0] + draw_rot_offset, new[1]), canvas, start_pos.x, start_pos.y)
+            return up_to_degrees 
 
         # rotate 180 one way, rotate 360 other way, then rotate 180 until reach start
         cur_degrees = rotate_and_observe(180)
