@@ -43,6 +43,7 @@ class Robot:
         #area_centers_abc = [Vector2(168, 42), Vector2(126,147), Vector2(42,112)] #[a, b, c]
         area_points_abc = [Vector2(168, 42), Vector2(145,170), Vector2(42,135)] #[a, b, c]
         #area_entrances_and_angles = [(Vector2(126, 42), (-45, 45), (0)), (Vector2(126,84), (-35, 35), (90)), (Vector2(84,84), (-60, 40), (135)) ]
+        return_to_center_points = [Vector2(95, 40), Vector2(110, 80), Vector2(110, 80)] 
         def move_back_a_bit():
             #print("pos before moving back: ", self.pos)
             dist = -10
@@ -50,9 +51,9 @@ class Robot:
             #update position!!!
             self.pos = self.pos + Vector2(dist * math.cos(math.radians(self.rot)), dist * math.sin(math.radians(self.rot)))
             #print("pos after moving back", self.pos)
-        def move_to_map_center():
+        def move_to_map_center(i):
             map_data.draw_pos_rot(self.pos, self.rot, 6, canvas)           
-            self.move_to_pos(Vector2(126, 80), speed, turn_speed, False, False)
+            self.move_to_pos(return_to_center_points[i], speed, turn_speed, False, False)
             pass
         arr = area_points_abc
         for i in range(len(arr)):
@@ -69,7 +70,7 @@ class Robot:
                     print("did not fully move")
                     move_back_a_bit()
                     if i == len(arr) - 1: return
-                    move_to_map_center()
+                    move_to_map_center(i)
                     break
                 #self.movement_module.turn(self.rot - start_angle_at_entrance ,turn_speed)
                 #self.rot = start_angle_at_entrance
@@ -84,7 +85,7 @@ class Robot:
                         found_and_bumped_bottle = True
                         move_back_a_bit()
                         if i == len(arr) - 1: return
-                        move_to_map_center()
+                        move_to_map_center(i)
                         continue
                     scan_res = self.sensor_module.get_sonar_full_rotation(
                        5, 0.01, True, self.pos, self.rot)
@@ -120,7 +121,7 @@ class Robot:
                         print("found bottle normally")                        
                         move_back_a_bit()
                         if i == len(arr) - 1: return
-                        move_to_map_center()
+                        move_to_map_center(i)
                         found_and_bumped_bottle = True
                         
                 

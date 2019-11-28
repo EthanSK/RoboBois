@@ -60,8 +60,10 @@ if __name__ == "__main__":
         #     [Particle(85, 65, 0, 0.5)])
         _map = map_data.generate_map()
         roboboi.find_bottles_mk2(
-            _map, 15, 45, 10)
-        roboboi.move_to_pos(Vector2(84, 30))
+            _map, 15, 30, 10)
+        # we minus 10 because it always overshoots
+        roboboi.move_to_pos(
+            Vector2(84, 30) + Vector2(10, 10), 20, 30, False, True)
         roboboi.reset()
 
     except KeyboardInterrupt:
