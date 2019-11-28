@@ -26,7 +26,7 @@ body_radius = 8.6  # cm #works on carpet at 8.6 at turn speed 30
 
 BP = brickpi3.BrickPi3()
 time.sleep(0.5)
-BP.reset_all()
+# BP.reset_all()
 time.sleep(0.5)
 
 movement_module = movement.MovementModule(
@@ -54,16 +54,16 @@ if __name__ == "__main__":
         montecarlo.draw_lines()
         # walls = map_data.generate_map().convert_walls_to_lines()
         # don't make the spacing more than the bottle radius!
-        #occ_map = occupancy_map.OccupancyMap(walls, 2)
+        # occ_map = occupancy_map.OccupancyMap(walls, 2)
         # occ_map.draw_grid(canvas)
         # canvas.drawParticles(
         #     [Particle(85, 65, 0, 0.5)])
         _map = map_data.generate_map()
         roboboi.find_bottles_mk2(
-            _map, 15, 30, 10)
+            _map, 15, 30, 10, 25)
         # we minus 10 because it always overshoots
         roboboi.move_to_pos(
-            Vector2(84, 30) + Vector2(10, 10), 20, 30, False, True)
+            Vector2(84, 30) + Vector2(-28, 28), 20, 30, False, True)
         roboboi.reset()
 
     except KeyboardInterrupt:

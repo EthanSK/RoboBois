@@ -39,7 +39,7 @@ class Robot:
         self.rot = theta
         self.particles.init_particles(self.pos, self.rot)
 
-    def find_bottles_mk2(self, _map, speed=20, turn_speed=45, move_bottle_speed=5):
+    def find_bottles_mk2(self, _map, speed=20, turn_speed=45, move_bottle_speed=5, move_to_center_speed = 25):
         #area_centers_abc = [Vector2(168, 42), Vector2(126,147), Vector2(42,112)] #[a, b, c]
         area_points_abc = [Vector2(168, 42), Vector2(145,170), Vector2(42,135)] #[a, b, c]
         #area_entrances_and_angles = [(Vector2(126, 42), (-45, 45), (0)), (Vector2(126,84), (-35, 35), (90)), (Vector2(84,84), (-60, 40), (135)) ]
@@ -53,7 +53,7 @@ class Robot:
             #print("pos after moving back", self.pos)
         def move_to_map_center(i):
             map_data.draw_pos_rot(self.pos, self.rot, 6, canvas)           
-            self.move_to_pos(return_to_center_points[i], speed, turn_speed, False, False)
+            self.move_to_pos(return_to_center_points[i], move_to_center_speed, turn_speed, False, False)
             pass
         arr = area_points_abc
         for i in range(len(arr)):
