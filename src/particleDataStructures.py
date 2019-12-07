@@ -47,7 +47,8 @@ class Canvas:
         print("drawLine:" + str((x1, y1, x2, y2)))
 
     def draw_line_from_obj(self, line_obj):
-        self.drawLine((line_obj.start_point.x, line_obj.start_point.y, line_obj.end_point.x, line_obj.end_point.y))        
+        self.drawLine((line_obj.start_point.x, line_obj.start_point.y,
+                       line_obj.end_point.x, line_obj.end_point.y))
 
     def drawParticles(self, data):
         display = [(self.__screenX(d.pos.x), self.__screenY(d.pos.y)) + (d.theta, d.weight)
@@ -80,15 +81,18 @@ class Map:
     def convert_walls_to_lines(self):
         res = []
         for wall in self.walls:
-            res.append(Line(Vector2(wall[0], wall[1]), Vector2(wall[2], wall[3])))
+            res.append(
+                Line(Vector2(wall[0], wall[1]), Vector2(wall[2], wall[3])))
         return res
 # Simple Particles set
+
 
 class Particle:
     def __init__(self, x, y, theta, weight):
         self.pos = Vector2(x, y)
         self.theta = theta
         self.weight = weight
+
 
 class Particles:
     def __init__(self, num_particles):
@@ -102,43 +106,45 @@ class Particles:
 
     def init_particles(self, pos, theta):
         self.data = [Particle(pos.x, pos.y, theta, 1 / self.count)
-                     for i in range(self.count)] 
+                     for i in range(self.count)]
 
     def update_weights(self, sensor_distance):
         for p in self.data:
-            likelihood = montecarlo.calculate_likelihood(p.pos.x, p.pos.y, p.theta, sensor_distance)
+            likelihood = montecarlo.calculate_likelihood(
+                p.pos.x, p.pos.y, p.theta, sensor_distance)
             p.weight = likelihood  # update weight
 
     def normalize_weights(self):
         acc = 0
-        for p in self.data:   
+        for p in self.data:
             acc += p.weight
-                    
+
         for p in self.data:
             p.weight /= acc
 
     def resample(self):
-        cum = [] 
+        cum = []
         # generate cumulative weight array
-        acc = 0 # weight accumulator
+        acc = 0  # weight accumulator
         for p in self.data:
             acc += p.weight
             cum.append(acc)
 
         # generate <count> random numbers and create a copy of self.data[i] where i is the index of the upper bound of where the random number falls in the range of two consectutive values in the cum array
-        #https://robotics.stackexchange.com/a/481
+        # https://robotics.stackexchange.com/a/481
         new = []
         for i in range(self.count):
             rando = random.random()
             for j in range(len(cum)):
                 if cum[j] > rando:
                     old_p = self.data[j]
-                    new_p = Particle(old_p.pos.x, old_p.pos.y, old_p.theta, 1 / self.count)
+                    new_p = Particle(old_p.pos.x, old_p.pos.y,
+                                     old_p.theta, 1 / self.count)
                     new.append(new_p)
                     break
 
-        self.data
-    
+        self.data = new
+
     def draw(self):
         canvas.drawParticles(self.data)
 
